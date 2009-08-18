@@ -22,7 +22,7 @@ namespace VTemplate.WebTester
         {
             TemplateDocument document = new TemplateDocument(context.Server.MapPath("template/commontemplate_test.html"), Encoding.UTF8);
 
-            //定义男和女用户数据列表(当前这里的数据.你可以从数据库取得)
+            //定义男和女用户数据列表(当然这里的数据.你可以从数据库取得)
             Dictionary<string, List<object>> userTables = new Dictionary<string, List<object>>();
             List<object> users1 = new List<object>()
             {
@@ -50,7 +50,7 @@ namespace VTemplate.WebTester
                 string userType = template.Attributes.GetValue("usertype");
                 if (userType != null && userTables.ContainsKey(userType))
                 {
-                    //测试当前模版块的users变量值
+                    //设置当前模版块的users变量值
                     template.Variables.SetValue("users", userTables[userType]);
                 }
             }
