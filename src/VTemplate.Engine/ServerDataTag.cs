@@ -174,6 +174,7 @@ namespace VTemplate.Engine
             if (this.Type != ServerDataType.Random 
                 && this.Type != ServerDataType.Time
                 && this.Type != ServerDataType.Request
+                && this.Type != ServerDataType.Environment
                 && this.Item == null) throw new ParserException(string.Format("当{0}标签type=\"{1}\"时必须设置item属性值", this.TagName, this.Type));
             
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);

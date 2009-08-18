@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.ComponentModel;
+using System.IO;
 
 namespace VTemplate.Engine
 {
@@ -374,6 +375,29 @@ namespace VTemplate.Engine
                 }
             }
             this.OnAfterRender(EventArgs.Empty);
+        }
+        #endregion
+
+        #region 保存本标签的呈现数据
+        /// <summary>
+        /// 将本标签的呈现数据保存到文件,采用系统默认编码
+        /// </summary>
+        /// <param name="fileName">文件地址</param>
+        public virtual void RenderTo(string fileName)
+        {
+            this.RenderTo(fileName, Encoding.Default);
+        }
+        /// <summary>
+        /// 将本标签的呈现数据保存到文件
+        /// </summary>
+        /// <param name="fileName">文件地址</param>
+        /// <param name="charset">文件编码</param>
+        public virtual void RenderTo(string fileName, Encoding charset)
+        {
+            using (StreamWriter writer = new StreamWriter(fileName, false, charset))
+            {
+                this.Render(writer);
+            }
         }
         #endregion
 
