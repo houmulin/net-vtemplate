@@ -47,8 +47,9 @@ namespace VTemplate.WebTester
             ElementCollection<Template> userTemplates = document.GetChildTemplatesByName("usertable");
             foreach (Template template in userTemplates)
             {
+                //获取模版里定义的usertype属性条件
                 string userType = template.Attributes.GetValue("usertype");
-                if (userType != null && userTables.ContainsKey(userType))
+                if (!string.IsNullOrEmpty(userType) && userTables.ContainsKey(userType))
                 {
                     //设置当前模版块的users变量值
                     template.Variables.SetValue("users", userTables[userType]);
