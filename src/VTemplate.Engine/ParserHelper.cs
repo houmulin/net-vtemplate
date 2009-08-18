@@ -52,7 +52,12 @@ namespace VTemplate.Engine
         {
             if (length > 0)
             {
-                container.AppendChild(new TextNode(ownerTemplate, text.Substring(offset, length)));
+                string content = text.Substring(offset, length);
+                //不建立空行文本节点
+                if (!((length == 1 && (content[0] == '\r' || content[0] == '\n')) || (length == 2 && content == "\r\n")))
+                {
+                    container.AppendChild(new TextNode(ownerTemplate, content));
+                }
             }
         }
 
