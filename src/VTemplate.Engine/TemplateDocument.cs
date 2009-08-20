@@ -76,10 +76,10 @@ namespace VTemplate.Engine
         #endregion
 
         #region 属性定义
-        /// <summary>
-        /// 模版文本数据
-        /// </summary>
-        ///public string Text { get; private set; }
+        ///// <summary>
+        ///// 模版文本数据
+        ///// </summary>
+        /////public string Text { get; private set; }
 
         /// <summary>
         /// 根文档模版

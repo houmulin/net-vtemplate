@@ -15,13 +15,13 @@ namespace VTemplate.WebTester
     /// </summary>
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    public class commontemplate_test : IHttpHandler
+    public class commontemplate_test : PageBase
     {
-
-        public void ProcessRequest(HttpContext context)
+        /// <summary>
+        /// 初始化当前页面模版数据
+        /// </summary>
+        protected override void InitPageTemplate()
         {
-            TemplateDocument document = new TemplateDocument(context.Server.MapPath("template/commontemplate_test.html"), Encoding.UTF8);
-
             //定义男和女用户数据列表(当然这里的数据.你可以从数据库取得)
             Dictionary<string, List<object>> userTables = new Dictionary<string, List<object>>();
             List<object> users1 = new List<object>()
@@ -44,7 +44,7 @@ namespace VTemplate.WebTester
 
 
             //获取名称为usertable的模版块
-            ElementCollection<Template> userTemplates = document.GetChildTemplatesByName("usertable");
+            ElementCollection<Template> userTemplates = this.Document.GetChildTemplatesByName("usertable");
             foreach (Template template in userTemplates)
             {
                 //获取模版里定义的usertype属性条件
@@ -54,16 +54,6 @@ namespace VTemplate.WebTester
                     //设置当前模版块的users变量值
                     template.Variables.SetValue("users", userTables[userType]);
                 }
-            }
-
-            document.Render(context.Response.Output);
-        }
-
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
             }
         }
     }

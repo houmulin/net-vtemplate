@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A84BBBF-4E73-4D1D-BD96-AD6458655294}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -47,6 +47,7 @@
     <Compile Include="iftag_test.ashx.cs">
       <DependentUpon>iftag_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="PageBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="fortag_test.ashx.cs">
       <DependentUpon>fortag_test.ashx</DependentUpon>
@@ -129,6 +130,9 @@
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

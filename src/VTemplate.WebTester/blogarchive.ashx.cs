@@ -13,29 +13,8 @@ namespace VTemplate.WebTester
     /// <summary>
     /// 博客日记页面测试
     /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    public class blogarchive : IHttpHandler
+    public class blogarchive : PageBase
     {
-
-        public void ProcessRequest(HttpContext context)
-        {
-            //VT模版的文件地址
-            string fileName = context.Server.MapPath("template/blogarchive.html");
-
-            //根据VT模版实例化TemplateDocument对象
-            TemplateDocument document = new TemplateDocument(fileName, Encoding.UTF8);
-            //或者从缓存模版里构造实例(在实际的Web项目里建议采用此方法构造实例)
-            //TemplateDocument document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8);
-
-            //对VT模版里的blogarchive变量赋值
-            document.Variables.SetValue("blogarchive", this.GetBlogArchive());
-
-            //输出最终呈现的数据
-            document.Render(context.Response.Output);
-        }
-
-
         /// <summary>
         /// 获取博客日记数据
         /// </summary>
@@ -56,13 +35,13 @@ namespace VTemplate.WebTester
                 }
             };
         }
-
-        public bool IsReusable
+        /// <summary>
+        /// 初始化当前页面模版数据
+        /// </summary>
+        protected override void InitPageTemplate()
         {
-            get
-            {
-                return false;
-            }
+            //对VT模版里的blogarchive变量赋值
+            this.Document.Variables.SetValue("blogarchive", this.GetBlogArchive());
         }
     }
 }

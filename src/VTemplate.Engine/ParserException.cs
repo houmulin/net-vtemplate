@@ -30,7 +30,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Point">行号列号(x = 列号, y = 行号)</param>
+        /// <param name="p">行号列号(x = 列号, y = 行号)</param>
         /// <param name="text">模版文本数据</param>
         /// <param name="message">描述信息</param>
         public ParserException(Point p, string text, string message)

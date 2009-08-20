@@ -19,6 +19,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="ownerTemplate"></param>
         /// <param name="text"></param>
         internal TextNode(Template ownerTemplate, string text)
             : base(ownerTemplate)

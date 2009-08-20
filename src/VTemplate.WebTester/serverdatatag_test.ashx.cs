@@ -13,23 +13,13 @@ namespace VTemplate.WebTester
     /// <summary>
     /// 测试serverdata标签
     /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    public class serverdatatag_test : IHttpHandler
+    public class serverdatatag_test : PageBase
     {
-
-        public void ProcessRequest(HttpContext context)
+        /// <summary>
+        /// 初始化当前页面模版数据
+        /// </summary>
+        protected override void InitPageTemplate()
         {
-            TemplateDocument document = new TemplateDocument(context.Server.MapPath("template/serverdatatag_test.html"), Encoding.UTF8);
-            document.Render(context.Response.Output);
-        }
-
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
-            }
         }
     }
 }

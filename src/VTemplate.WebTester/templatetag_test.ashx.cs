@@ -13,14 +13,13 @@ namespace VTemplate.WebTester
     /// <summary>
     /// 测试template标签
     /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    public class templatetag_test : IHttpHandler
+    public class templatetag_test : PageBase
     {
-
-        public void ProcessRequest(HttpContext context)
+        /// <summary>
+        /// 初始化当前页面模版数据
+        /// </summary>
+        protected override void InitPageTemplate()
         {
-            TemplateDocument document = new TemplateDocument(context.Server.MapPath("template/templatetag_test.html"), Encoding.UTF8);
             List<object> users1 = new List<object>()
             {
                 new {Name = "张三", age="20"},
@@ -34,17 +33,8 @@ namespace VTemplate.WebTester
                 new {Name = "张燕", age="20"},
                 new {Name = "陈梅", age="23"}
             };
-            document.Variables.SetValue("users", users1);
-            document.GetChildTemplateById("female").Variables.SetValue("users", users2);
-            document.Render(context.Response.Output);
-        }
-
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
-            }
+            this.Document.Variables.SetValue("users", users1);
+            this.Document.GetChildTemplateById("female").Variables.SetValue("users", users2);
         }
     }
 }

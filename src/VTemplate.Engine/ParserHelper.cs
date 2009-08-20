@@ -106,6 +106,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 从变量表达式文本(如:name.age)中构建变量表达式
         /// </summary>
+        /// <param name="ownerTemplate"></param>
         /// <param name="expressionText"></param>
         /// <returns></returns>
         internal static VariableExpression CreateVariableExpression(Template ownerTemplate, string expressionText)

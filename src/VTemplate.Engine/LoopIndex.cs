@@ -60,87 +60,155 @@ namespace VTemplate.Engine
         }
 
         #region IConvertible 成员
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public TypeCode GetTypeCode()
         {
             return this.Value.GetTypeCode();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public bool ToBoolean(IFormatProvider provider)
         {
             return Convert.ToBoolean(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public byte ToByte(IFormatProvider provider)
         {
             return Convert.ToByte(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public char ToChar(IFormatProvider provider)
         {
             return Convert.ToChar(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public DateTime ToDateTime(IFormatProvider provider)
         {
             return Convert.ToDateTime(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public decimal ToDecimal(IFormatProvider provider)
         {
             return Convert.ToDecimal(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public double ToDouble(IFormatProvider provider)
         {
             return Convert.ToDouble(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public short ToInt16(IFormatProvider provider)
         {
             return Convert.ToInt16(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public int ToInt32(IFormatProvider provider)
         {
             return Convert.ToInt32(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public long ToInt64(IFormatProvider provider)
         {
             return Convert.ToInt64(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public sbyte ToSByte(IFormatProvider provider)
         {
             return Convert.ToSByte(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public float ToSingle(IFormatProvider provider)
         {
             return Convert.ToSingle(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public string ToString(IFormatProvider provider)
         {
             return Convert.ToString(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conversionType"></param>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public object ToType(Type conversionType, IFormatProvider provider)
         {
             return ((IConvertible)this.Value).ToType(conversionType, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public ushort ToUInt16(IFormatProvider provider)
         {
             return Convert.ToUInt16(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public uint ToUInt32(IFormatProvider provider)
         {
             return Convert.ToUInt32(this.Value, provider);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <returns></returns>
         public ulong ToUInt64(IFormatProvider provider)
         {
             return Convert.ToUInt64(this.Value, provider);
