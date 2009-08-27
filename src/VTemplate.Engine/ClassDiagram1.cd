@@ -39,7 +39,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="VTemplate.Engine.ElseTag" Collapsed="true">
-    <Position X="8.25" Y="4.5" Width="1.5" />
+    <Position X="7.5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAACkAAAACBA=</HashCode>
       <FileName>ElseTag.cs</FileName>
@@ -53,7 +53,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.ForEachElseTag" Collapsed="true">
-    <Position X="3.75" Y="3.25" Width="1.5" />
+    <Position X="8.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAEAAAACBA=</HashCode>
       <FileName>ForEachElseTag.cs</FileName>
@@ -74,14 +74,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.IfConditionTag" Collapsed="true">
-    <Position X="7.25" Y="3.25" Width="1.5" />
+    <Position X="6.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAgAAAAAAAAAQAAAAAAQAADkAAAACRA=</HashCode>
       <FileName>IfConditionTag.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.IfTag" Collapsed="true">
-    <Position X="6" Y="4.5" Width="1.5" />
+    <Position X="5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAJAAAAAAAAAAgAAAAAEAAAAAAAABBAEAAAASBQ=</HashCode>
       <FileName>IfTag.cs</FileName>
@@ -159,15 +159,15 @@
       <FileName>Template.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VTemplate.Engine.TemplateDocument" Collapsed="true">
-    <Position X="21.75" Y="4.5" Width="1.5" />
+  <Class Name="VTemplate.Engine.TemplateDocument">
+    <Position X="21.75" Y="4.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAABI=</HashCode>
       <FileName>TemplateDocument.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.TextNode" Collapsed="true">
-    <Position X="1.5" Y="1.75" Width="1.5" />
+    <Position X="7.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAACAAAABA=</HashCode>
       <FileName>TextNode.cs</FileName>
@@ -205,7 +205,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="VTemplate.Engine.VariableTag" Collapsed="true">
-    <Position X="24" Y="1.75" Width="1.5" />
+    <Position X="18" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAIAAAAAAQEAAAAgABYAAgACAAAABCAAAAAARA=</HashCode>
       <FileName>VariableTag.cs</FileName>
@@ -248,14 +248,14 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="VTemplate.Engine.ICloneableElement&lt;T&gt;" Collapsed="true">
-    <Position X="0.5" Y="3.5" Width="1.5" />
+    <Position X="31.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
       <FileName>IElementCloneable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="VTemplate.Engine.IExpression" Collapsed="true">
-    <Position X="0.5" Y="4.75" Width="1.5" />
+    <Position X="31.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IExpression.cs</FileName>

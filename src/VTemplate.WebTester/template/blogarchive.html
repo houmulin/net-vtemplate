@@ -15,6 +15,10 @@
 {
 	padding-bottom: 5px; line-height: 25px; padding-left: 5px; padding-right: 5px; padding-top: 5px;
 }
+.evenfloor 
+{
+	background-color: #C8E7BC;
+}
 </style>
 </head>
 <body>
@@ -22,13 +26,17 @@
 
   <hr class="blogsplit"/>  {$:blogarchive.content}  <div style="margin-bottom: 20px" align="right">posted @ {$:blogarchive.time format="yyyy-MM-dd HH:mm"} {$:blogarchive.author htmlencode="true"} 阅读(1) 评论(2)</div>
 
-  <strong>评论列表</strong> 
+<strong>评论列表</strong>
+<vt:foreach from="blogarchive.comments" item="comment" index="floor">
+<hr class="blogsplit"/>
+<vt:if var="#.floor.iseven" value="true">
+<div class="blogcomment evenfloor">#{$:#.floor}楼 {$:#.comment.time format="yyyy-MM-dd HH:mm"} | {$:#.comment.author htmlencode="true"} </div> <div style="padding-left: 20px">{$:#.comment.content htmlencode="true"}</div>
+<vt:else />
+<div class="blogcomment">#{$:#.floor}楼 {$:#.comment.time format="yyyy-MM-dd HH:mm"} | {$:#.comment.author htmlencode="true"} </div> <div style="padding-left: 20px">{$:#.comment.content htmlencode="true"}</div>
+</vt:if>
+</vt:foreach>
+ 
 
-  <vt:foreach from="blogarchive.comments" item="comment" index="floor">  <hr class="blogsplit"/> 
-  <div class="blogcomment">#{$:#.floor}楼 {$:#.comment.time format="yyyy-MM-dd HH:mm"} | {$:#.comment.author htmlencode="true"} </div>
-
-  <div style="padding-left: 20px">{$:#.comment.content htmlencode="true"}</div>
-  </vt:foreach>
 
 </div>
 </body>
