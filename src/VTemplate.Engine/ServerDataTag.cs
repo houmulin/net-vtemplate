@@ -190,16 +190,10 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             ServerDataTag tag = new ServerDataTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            this.CopyTo(tag);
             tag.Type = this.Type;
             tag.Item = this.Item == null ? null : this.Item.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
             return tag;
         }
         #endregion

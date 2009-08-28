@@ -109,15 +109,9 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             IncludeTag tag = new IncludeTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            this.CopyTo(tag);
             tag.File = this.File;
             tag.Charset = this.Charset;
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
             return tag;
         }
         #endregion

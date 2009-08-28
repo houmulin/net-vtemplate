@@ -160,18 +160,11 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             ForTag tag = new ForTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            base.CopyTo(tag);
             tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
             tag.To = this.To == null ? null : this.To.Clone(ownerTemplate);
             tag.Step = this.Step == null ? null : this.Step.Clone(ownerTemplate);
             tag.Index = this.Index == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Index.Name);
-
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
             return tag;
         }
         #endregion

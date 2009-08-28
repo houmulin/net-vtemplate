@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FFE421FA-C56D-466D-BCBE-5C451F2C82BC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -42,6 +43,7 @@
     <Compile Include="Attribute.cs" />
     <Compile Include="AttributeCollection.cs" />
     <Compile Include="ConstantExpression.cs" />
+    <Compile Include="DataReaderTag.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementCollection.cs" />
     <Compile Include="ElseTag.cs" />

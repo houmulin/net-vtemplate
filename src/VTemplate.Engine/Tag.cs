@@ -240,7 +240,7 @@ namespace VTemplate.Engine
             charOffset = offset = match.Index + match.Length;
             while (offset < text.Length)
             {
-                if ((match = ParserRegex.VarRegex.Match(text, offset)).Success)                //匹配到模版变量
+                if ((match = ParserRegex.VarTagRegex.Match(text, offset)).Success)                //匹配到模版变量
                 {
                     //构建文本节点
                     ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
@@ -416,6 +416,23 @@ namespace VTemplate.Engine
             }
             buffer.AppendFormat(">");
             return buffer.ToString();
+        }
+        #endregion
+
+        #region 拷贝自身数据对某个新对象上
+        /// <summary>
+        /// 拷贝自身数据对某个新对象上
+        /// </summary>
+        /// <param name="tag"></param>
+        protected virtual void CopyTo(Tag tag)
+        {
+            tag.Id = this.Id;
+            tag.Name = this.Name;
+            tag.Attributes = this.Attributes;
+            foreach (Element element in this.InnerElements)
+            {
+                tag.AppendChild(element.Clone(tag.OwnerTemplate));
+            }
         }
         #endregion
     }

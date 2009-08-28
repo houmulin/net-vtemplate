@@ -126,7 +126,7 @@ namespace VTemplate.Engine
             }
         }
         /// <summary>
-        /// 从表达式文本中构造表达式.如果表达式是以$字符开头.并且不是以$$字符开头.则认为是变量表达式.否则则认为为常量表达式
+        /// 从表达式文本中构造表达式.如果表达式是以$字符开头.并且不是以$$字符开头.则认为是变量表达式.否则则认为是常量表达式
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <param name="expressionText"></param>

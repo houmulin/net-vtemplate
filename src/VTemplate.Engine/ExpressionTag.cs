@@ -25,7 +25,6 @@ namespace VTemplate.Engine
         internal ExpressionTag(Template ownerTemplate)
             : base(ownerTemplate)
         {
-            //注册添加属性时触发事件.用于设置自身的某些属性值
             this.ExpArgs = new ElementCollection<VariableExpression>();
         }
 
@@ -153,18 +152,12 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             ExpressionTag tag = new ExpressionTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            this.CopyTo(tag);
             tag.Expression = this.Expression;
             tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
             foreach (VariableExpression exp in this.ExpArgs)
             {
                 tag.ExpArgs.Add((VariableExpression)(exp.Clone(ownerTemplate)));
-            }
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
             }
             return tag;
         }

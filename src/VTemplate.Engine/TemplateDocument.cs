@@ -155,7 +155,7 @@ namespace VTemplate.Engine
             {
                 while (offset < text.Length)
                 {
-                    if ((match = ParserRegex.VarRegex.Match(text, offset)).Success)  //匹配到模版变量
+                    if ((match = ParserRegex.VarTagRegex.Match(text, offset)).Success)  //匹配到模版变量
                     {
                         //构建文本节点
                         ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);

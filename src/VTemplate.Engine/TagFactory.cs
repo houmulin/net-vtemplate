@@ -48,6 +48,8 @@ namespace VTemplate.Engine
                         return new ExpressionTag(ownerTemplate);
                     case "serverdata":
                         return new ServerDataTag(ownerTemplate);
+                    case "datareader":
+                        return new DataReaderTag(ownerTemplate);
                 }
             }
             return null;

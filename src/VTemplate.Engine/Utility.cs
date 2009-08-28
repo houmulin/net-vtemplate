@@ -16,6 +16,8 @@ using System.Collections;
 using System.Drawing;
 using System.Reflection;
 using System.Collections.Specialized;
+using System.Data;
+using System.Data.Common;
 
 namespace VTemplate.Engine
 {
@@ -30,9 +32,10 @@ namespace VTemplate.Engine
         static Utility()
         {
             RenderInstanceCache = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+            DbFactoriesCache = new Dictionary<string, DbProviderFactory>(StringComparer.InvariantCultureIgnoreCase);
         }
 
-        #region 数据格式化函数块
+        #region 数据判断函数块
         /// <summary>
         /// 判断是否是空数据(null或DBNull)
         /// </summary>
@@ -42,6 +45,24 @@ namespace VTemplate.Engine
         {
             return value == null || value == DBNull.Value;
         }
+        /// <summary>
+        /// 判断是否是整数
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static bool IsInteger(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return false;
+
+            foreach (char c in value)
+            {
+                if (!char.IsDigit(c)) return false;
+            }
+            return true;
+        }
+        #endregion
+
+        #region 数据格式化函数块
         /// <summary>
         /// XML编码
         /// </summary>
@@ -237,6 +258,49 @@ namespace VTemplate.Engine
 
         #region 数据源处理函数块
         /// <summary>
+        /// 获取某个对象对应的DbType
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static DbType GetObjectDbType(object value)
+        {
+            if (value == null) return DbType.Object;
+            switch (Type.GetTypeCode(value is Type ? (Type)value : value.GetType()))
+            {
+                case TypeCode.Boolean:
+                    return DbType.Boolean;
+                case TypeCode.Byte:
+                    return DbType.Byte;
+                case TypeCode.Char:
+                case TypeCode.String:
+                    return DbType.String;
+                case TypeCode.DateTime:
+                    return DbType.DateTime;
+                case TypeCode.Decimal:
+                    return DbType.Decimal;
+                case TypeCode.Double:
+                    return DbType.Double;
+                case TypeCode.Int16:
+                    return DbType.Int16;
+                case TypeCode.Int32:
+                    return DbType.Int32;
+                case TypeCode.Int64:
+                    return DbType.Int64;
+                case TypeCode.SByte:
+                    return DbType.SByte;
+                case TypeCode.Single:
+                    return DbType.Single;
+                case TypeCode.UInt16:
+                    return DbType.UInt16;
+                case TypeCode.UInt32:
+                    return DbType.UInt32;
+                case TypeCode.UInt64:
+                    return DbType.UInt64;
+                default:
+                    return DbType.Object;
+            }
+        }
+        /// <summary>
         /// 获取某个属性的值
         /// </summary>
         /// <param name="container">数据源</param>
@@ -255,64 +319,132 @@ namespace VTemplate.Engine
             {
                 throw new ArgumentNullException("propName");
             }
-            PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
-            if (descriptor != null)
+            if (Utility.IsInteger(propName))
             {
-                exist = true;
-                value = descriptor.GetValue(container);
-            }
-            else if (container is IDictionary)
-            {
-                //是IDictionary集合
-                IDictionary idic = (IDictionary)container;
-                if (idic.Contains(propName))
+                #region 索引值部分
+                //属性名只为数字.则取数组索引
+                int index = Utility.ConverToInt32(propName);
+                if (container is IList)
                 {
-                    exist = true;
-                    value = idic[propName];
+                    IList iList = (IList)container;
+                    if (iList.Count > index)
+                    {
+                        exist = true;
+                        value = iList[index];
+                    }
                 }
-            }
-            else if (container is NameObjectCollectionBase)
-            {
-                //是NameObjectCollectionBase派生对象
-                NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
-                //调用私有方法
-                MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
-                if (method != null)
+                else if (container is ICollection)
                 {
-                    value = method.Invoke(container, new object[] { propName });
-                    exist = value == null;
-                }
-            }
-            else if (container is Type)
-            {
-                Type type = (Type)container;
-                //查找字段
-                FieldInfo field = type.GetField(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
-                if (field != null)
-                {
-                    exist = true;
-                    value = field.GetValue(container);
+                    ICollection ic = (ICollection)container;
+                    if (ic.Count > index)
+                    {
+                        exist = true;
+                        IEnumerator ie = ic.GetEnumerator();
+                        int i = 0;
+                        while (i++ <= index) { ie.MoveNext(); }
+                        value = ie.Current;
+                    }
                 }
                 else
                 {
-                    //查找属性
-                    PropertyInfo property = type.GetProperty(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, null, new Type[0], new ParameterModifier[0]);
-                    if (property != null)
+                    //判断是否含有索引属性
+                    PropertyInfo item = container.GetType().GetProperty("Item", new Type[] { typeof(int) });
+                    if (item != null)
                     {
-                        exist = true;
-                        value = property.GetValue(container, null);
-                    }
-                    else
-                    {
-                        //查找方法
-                        MethodInfo method = type.GetMethod(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, new Type[0], new ParameterModifier[0]);
-                        if (method != null)
+                        try
                         {
-                            value = method.Invoke(container, null);
-                            exist = value == null;
+                            value = item.GetValue(container, new object[] { index });
+                            exist = true;
+                        }
+                        catch
+                        {
+                            exist = false;
                         }
                     }
                 }
+                #endregion
+            }
+            else
+            {
+                #region 字段/属性/键值
+                PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
+                if (descriptor != null)
+                {
+                    exist = true;
+                    value = descriptor.GetValue(container);
+                }
+                else if (container is IDictionary)
+                {
+                    //是IDictionary集合
+                    IDictionary idic = (IDictionary)container;
+                    if (idic.Contains(propName))
+                    {
+                        exist = true;
+                        value = idic[propName];
+                    }
+                }
+                else if (container is NameObjectCollectionBase)
+                {
+                    //是NameObjectCollectionBase派生对象
+                    NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
+
+                    //调用私有方法
+                    MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
+                    if (method != null)
+                    {
+                        value = method.Invoke(container, new object[] { propName });
+                        exist = value == null;
+                    }
+                }
+                else if (container is Type)
+                {
+                    Type type = (Type)container;
+                    //查找字段
+                    FieldInfo field = type.GetField(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+                    if (field != null)
+                    {
+                        exist = true;
+                        value = field.GetValue(container);
+                    }
+                    else
+                    {
+                        //查找属性
+                        PropertyInfo property = type.GetProperty(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, null, new Type[0], new ParameterModifier[0]);
+                        if (property != null)
+                        {
+                            exist = true;
+                            value = property.GetValue(container, null);
+                        }
+                        else
+                        {
+                            //查找方法
+                            MethodInfo method = type.GetMethod(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, new Type[0], new ParameterModifier[0]);
+                            if (method != null)
+                            {
+                                value = method.Invoke(container, null);
+                                exist = value == null;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //判断是否含有索引属性
+                    PropertyInfo item = container.GetType().GetProperty("Item", new Type[] { typeof(string) });
+                    if (item != null)
+                    {
+                        try
+                        {
+                            value = item.GetValue(container, new object[] { propName });
+                            exist = true;
+                        }
+                        catch
+                        {
+                            exist = false;
+                        }
+                    }
+                }
+                #endregion
             }
             return value;
         }
@@ -601,6 +733,49 @@ namespace VTemplate.Engine
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// 数据驱动工厂实例的缓存
+        /// </summary>
+        private static Dictionary<string, DbProviderFactory> DbFactoriesCache;
+
+        /// <summary>
+        /// 建立数据驱动工厂
+        /// </summary>
+        /// <param name="providerName"></param>
+        internal static DbProviderFactory CreateDbProviderFactory(string providerName)
+        {
+            if(string.IsNullOrEmpty(providerName)) return null;
+
+            //从缓存读取
+            DbProviderFactory factory;
+            bool flag = false;
+            lock (DbFactoriesCache)
+            {
+                flag = DbFactoriesCache.TryGetValue(providerName, out factory);
+            }
+            if (!flag || factory == null)
+            {
+                factory = DbProviderFactories.GetFactory(providerName);
+                //缓存
+                if (factory != null)
+                {
+                    lock (DbFactoriesCache)
+                    {
+                        if (DbFactoriesCache.ContainsKey(providerName))
+                        {
+                            DbFactoriesCache[providerName] = factory;
+                        }
+                        else
+                        {
+                            DbFactoriesCache.Add(providerName, factory);
+                        }
+                    }
+                }
+            }
+            return factory;
         }
         #endregion
     }

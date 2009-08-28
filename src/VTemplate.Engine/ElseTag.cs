@@ -108,15 +108,7 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             ElseTag tag = new ElseTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
-            tag.Compare = this.Compare;
-            tag.Expression = this.Expression;
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
+            this.CopyTo((IfConditionTag)tag);
             return tag;
         }
         #endregion

@@ -88,13 +88,7 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             ForEachElseTag tag = new ForEachElseTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
+            this.CopyTo(tag);
             return tag;
         }
         #endregion

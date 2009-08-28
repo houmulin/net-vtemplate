@@ -235,28 +235,12 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             IfTag tag = new IfTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
-            tag.Compare = this.Compare;
-            tag.Expression = this.Expression;
-            tag.VarExpression = this.VarExpression == null ? null : (VariableExpression)(this.VarExpression.Clone(ownerTemplate));
+            this.CopyTo((IfConditionTag)tag);
             tag.Else = this.Else == null ? null : (ElseTag)(this.Else.Clone(ownerTemplate));
 
-            if (this.Values != null)
-            {
-                foreach (IExpression exp in this.Values)
-                {
-                    tag.Values.Add(exp.Clone(ownerTemplate));
-                }
-            }
             foreach (IfConditionTag elseTag in this.ElseIfs)
             {
                 tag.AddElseCondition((IfConditionTag)elseTag.Clone(ownerTemplate));
-            }
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
             }
             return tag;
         }

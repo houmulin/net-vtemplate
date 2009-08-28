@@ -341,6 +341,24 @@ namespace VTemplate.Engine
 
         #region 克隆当前元素到新的宿主模版
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tag"></param>
+        protected void CopyTo(IfConditionTag tag)
+        {
+            base.CopyTo(tag);
+            tag.Compare = this.Compare;
+            tag.Expression = this.Expression;
+            tag.VarExpression = this.VarExpression == null ? null : (VariableExpression)(this.VarExpression.Clone(tag.OwnerTemplate));
+            if (this.Values != null)
+            {
+                foreach (IExpression exp in this.Values)
+                {
+                    tag.Values.Add(exp.Clone(tag.OwnerTemplate));
+                }
+            }
+        }
+        /// <summary>
         /// 克隆当前元素到新的宿主模版
         /// </summary>
         /// <param name="ownerTemplate"></param>
@@ -348,20 +366,7 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             IfConditionTag tag = new IfConditionTag(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
-            tag.Compare = this.Compare;
-            tag.Expression = this.Expression;
-            tag.VarExpression = this.VarExpression == null ? null : (VariableExpression)(this.VarExpression.Clone(ownerTemplate));
-            foreach (IExpression exp in this.Values)
-            {
-                tag.Values.Add(exp.Clone(ownerTemplate));
-            }
-            foreach (Element element in this.InnerElements)
-            {
-                tag.AppendChild(element.Clone(ownerTemplate));
-            }
+            this.CopyTo(tag);
             return tag;
         }
         #endregion
