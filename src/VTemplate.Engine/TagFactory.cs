@@ -49,7 +49,14 @@ namespace VTemplate.Engine
                     case "serverdata":
                         return new ServerDataTag(ownerTemplate);
                     case "datareader":
-                        return new DataReaderTag(ownerTemplate);
+                        if (TemplateDocument.SafeLevel == SafeLevel.Full)
+                        {
+                            return new DataReaderTag(ownerTemplate);
+                        }
+                        else
+                        {
+                            return null;
+                        }
                 }
             }
             return null;

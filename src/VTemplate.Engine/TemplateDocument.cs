@@ -15,12 +15,41 @@ using System.Web.Caching;
 
 namespace VTemplate.Engine
 {
+    #region 模版文档的安全等级
+    /// <summary>
+    /// 模版文档的安全等级
+    /// </summary>
+    public enum SafeLevel
+    {
+        /// <summary>
+        /// 简单的.不支持&lt;vt:datareader&gt;等标签
+        /// </summary>
+        Simple,
+        /// <summary>
+        /// 完全的.将支持所有标签
+        /// </summary>
+        Full
+    }
+    #endregion
+
     /// <summary>
     /// 模版文档
     /// </summary>
     [Serializable]
     public class TemplateDocument : Template
     {
+        /// <summary>
+        /// 模版文档的安全等级,默认为Simple
+        /// </summary>
+        public static volatile SafeLevel SafeLevel;
+        /// <summary>
+        /// 
+        /// </summary>
+        static TemplateDocument()
+        {
+            TemplateDocument.SafeLevel = SafeLevel.Simple;
+        }
+
         #region 构造函数
         /// <summary>
         /// 
