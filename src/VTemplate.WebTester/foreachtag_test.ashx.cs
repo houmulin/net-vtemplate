@@ -22,9 +22,9 @@ namespace VTemplate.WebTester
         {
             List<object> users = new List<object>()
             {
-                new {Name = "张三", age="20"},
-                new {Name = "李四", age="24"},
-                new {Name = "王五", age="30"}
+                //new {Name = "张三", age="20"},
+                //new {Name = "李四", age="24"},
+                //new {Name = "王五", age="30"}
             };
             this.Document.Variables.SetValue("users", users);
         }
