@@ -172,19 +172,16 @@ namespace VTemplate.Engine
                 List<object> data = new List<object>();
                 while (list.MoveNext()) { data.Add(list.Current); }
 
-                if (data.Count > 0)
+                LoopIndex li = new LoopIndex(0);
+                if (this.Index != null) this.Index.Value = li;
+                for (index = 0; index < data.Count; index++)
                 {
-                    LoopIndex li = new LoopIndex(0);
-                    if (this.Index != null) this.Index.Value = li;
-                    for (index = 1; index <= data.Count; index++)
-                    {
-                        li.Value = index;
-                        li.IsFirst = (index == 1);
-                        li.IsLast = (index == data.Count);
-                        if (this.Index != null) this.Index.ClearCache();
-                        if (this.Item != null) this.Item.Value = data[index - 1];
-                        base.Render(writer);
-                    }
+                    li.Value = index + 1;
+                    li.IsFirst = (index == 0);
+                    li.IsLast = (index == data.Count);
+                    if (this.Index != null) this.Index.ClearCache();
+                    if (this.Item != null) this.Item.Value = data[index];
+                    base.Render(writer);
                 }
             }
             if (index == 0 && this.Else != null)
