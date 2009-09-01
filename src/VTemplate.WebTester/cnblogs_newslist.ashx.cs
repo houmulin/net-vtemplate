@@ -113,10 +113,20 @@ namespace VTemplate.WebTester
         void Tag_BeforeRender(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ForEachTag t = (ForEachTag)sender;
+
+            #region 方法一: 根据foreach标签的Item属性取得变量
             //取得当前项的值(因为foreach标签的数据源是List<News>集合,所以当前项的值类型为News实体)
-            News news = (News)t.Item.Value;
+            //News news = (News)t.Item.Value;
             //设置当前项的变量表达式的值.也即是"{$:#.news.url}"变量表达式
-            t.Item.SetExpValue("url", GetNewsUrl(news));
+            //t.Item.SetExpValue("url", GetNewsUrl(news));
+            #endregion
+
+            #region 方法二: 直接获取news变量
+            //或者也可以直接取得news变量
+            Variable newsVar = t.OwnerTemplate.Variables["news"];
+            News news = (News)newsVar.Value;
+            newsVar.SetExpValue("url", GetNewsUrl(news));
+            #endregion
 
             //当新闻不可见时.你可以取消本次输出
             if (!news.Visible) e.Cancel = true;
