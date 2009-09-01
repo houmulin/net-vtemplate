@@ -73,6 +73,9 @@
     <Compile Include="datareadertag_test.ashx.cs">
       <DependentUpon>datareadertag_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="cnblogs_newslist.ashx.cs">
+      <DependentUpon>cnblogs_newslist.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VTemplate.Engine\VTemplate.Engine.csproj">
@@ -118,6 +121,11 @@
     </Content>
     <Content Include="datareadertag_test.ashx" />
     <Content Include="template\datareadertag_test.html" />
+    <Content Include="template\cnblogs_newslist.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="cnblogs_newslist.ashx" />
+    <Content Include="template\cnblogs_newsdata.html" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
