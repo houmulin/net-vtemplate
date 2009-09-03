@@ -166,14 +166,14 @@ namespace VTemplate.Engine
         {
             IEnumerable array = (IEnumerable)Utility.GetResolvedDataSource(this.From.GetValue());
             int index = 0;
+            LoopIndex li = new LoopIndex(0);
+            if (this.Index != null) this.Index.Value = li;
             if (array != null)
             {
                 IEnumerator list = array.GetEnumerator();
                 List<object> data = new List<object>();
                 while (list.MoveNext()) { data.Add(list.Current); }
 
-                LoopIndex li = new LoopIndex(0);
-                if (this.Index != null) this.Index.Value = li;
                 for (index = 0; index < data.Count; index++)
                 {
                     li.Value = index + 1;
