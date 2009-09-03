@@ -76,6 +76,9 @@
     <Compile Include="cnblogs_newslist.ashx.cs">
       <DependentUpon>cnblogs_newslist.ashx</DependentUpon>
     </Compile>
+    <Compile Include="template_include_test.ashx.cs">
+      <DependentUpon>template_include_test.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VTemplate.Engine\VTemplate.Engine.csproj">
@@ -126,6 +129,11 @@
   <ItemGroup>
     <Content Include="cnblogs_newslist.ashx" />
     <Content Include="template\cnblogs_newsdata.html" />
+    <Content Include="template\inc_content.html" />
+    <Content Include="template\template_include_test.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="template_include_test.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
