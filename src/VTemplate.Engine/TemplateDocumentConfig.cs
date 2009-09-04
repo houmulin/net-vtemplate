@@ -73,12 +73,12 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 标签的开放模式,默认为Simple
+        /// 标签的开放模式
         /// </summary>
         public TagOpenMode TagOpenMode { get; private set; }
 
         /// <summary>
-        /// 是否压缩文本.默认不压缩
+        /// 是否压缩文本
         /// </summary>
         /// <remarks>
         /// 压缩文本.即是删除换行符和无用的空格(换行符前后的空格)
