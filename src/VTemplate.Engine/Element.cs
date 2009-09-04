@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 元素
     /// </summary>
-    [Serializable]
     public abstract class Element
     {
         /// <summary>

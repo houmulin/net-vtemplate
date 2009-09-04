@@ -11,20 +11,19 @@ using System.Collections.Generic;
 namespace VTemplate.WebTester
 {
     /// <summary>
-    /// 测试DataReader标记
+    /// 测试DataReader标签
     /// </summary>
     public class datareadertag_test : PageBase
     {
         /// <summary>
-        /// 重载父级的方法.在装载模版文件前设置模版文档的安全等级.以便可以使用datareader标签
+        /// 重载父级方法.返回一个可使用DataReader标签的文档配置
         /// </summary>
-        /// <param name="fileName"></param>
-        protected override void LoadTemplateFile(string fileName)
+        protected override TemplateDocumentConfig DocumentConfig
         {
-            //设置安全等级为完全.
-            TemplateDocument.SafeLevel = SafeLevel.Full;
-
-            base.LoadTemplateFile(fileName);
+            get
+            {
+                return new TemplateDocumentConfig(TagOpenMode.Full);
+            }
         }
         /// <summary>
         /// 初始化当前页面模版数据

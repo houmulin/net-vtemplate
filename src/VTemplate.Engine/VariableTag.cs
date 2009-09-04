@@ -16,7 +16,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 变量元素.如变量: {$:member.name} 或带前缀与属性的变量: {$:#.member.name htmlencode='true'}
     /// </summary>
-    [Serializable]
     public class VariableTag : Element, IAttributesElement
     {
         /// <summary>
@@ -71,6 +70,11 @@ namespace VTemplate.Engine
         public bool TextEncode { get; protected set; }
 
         /// <summary>
+        /// 是否需要对输出数据进行文本压缩(删除换行符和换行符前后的空格)
+        /// </summary>
+        public bool CompressText { get; protected set; }
+
+        /// <summary>
         /// 数据的输出长度
         /// </summary>
         public int Length { get; protected set; }
@@ -123,6 +127,10 @@ namespace VTemplate.Engine
                 case "urlencode":
                     //数据输出时是否进行URL地址编码
                     this.UrlEncode = Utility.ConverToBoolean(e.Item.Value);
+                    break;
+                case "compresstext":
+                    //是否需要对输出数据进行文本压缩(删除换行符和换行符前后的空格)
+                    this.CompressText = Utility.ConverToBoolean(e.Item.Value);
                     break;
                 case "charset":
                     //进行URL编码时使用的文本编码
@@ -181,11 +189,13 @@ namespace VTemplate.Engine
                 if (this.XmlEncode) text = Utility.XmlEncode(text);
                 if (this.JsEncode) text = Utility.JsEncode(text);
                 if (this.UrlEncode) text = HttpUtility.UrlEncode(text, this.Charset);
+                if (this.CompressText) text = Utility.CompressText(text);
 
                 if (!formated && !string.IsNullOrEmpty(this.Format))
                 {
                     text = string.Format(this.Format, text);
                 }
+                
 
                 writer.Write(text);
             }
@@ -225,6 +235,7 @@ namespace VTemplate.Engine
             tag.TextEncode = this.TextEncode;
             tag.UrlEncode = this.UrlEncode;
             tag.XmlEncode = this.XmlEncode;
+            tag.CompressText = this.CompressText;
             return tag;
         }
         #endregion

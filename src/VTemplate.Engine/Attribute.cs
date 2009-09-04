@@ -13,7 +13,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 元素属性
     /// </summary>
-    [Serializable]
     public class Attribute
     {
         /// <summary>

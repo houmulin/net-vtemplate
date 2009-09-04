@@ -15,7 +15,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 变量集合
     /// </summary>
-    [Serializable]
     public class VariableCollection
         : IEnumerable<Variable>
     {

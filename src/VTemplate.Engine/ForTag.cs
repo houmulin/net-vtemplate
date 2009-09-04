@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// For标签.如:&lt;vt:for from="1" to="100" step="1" index="i"&gt;...&lt;/vt:for&gt;
     /// </summary>
-    [Serializable]
     public class ForTag : Tag
     {
         /// <summary>

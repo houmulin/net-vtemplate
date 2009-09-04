@@ -18,7 +18,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// DataReader标签.如:&lt;vt:datareader var="members" connection="sitedb"  commandtext="select * from [member]"&gt;...&lt;/vt:foreach&gt;
     /// </summary>
-    [Serializable]
     public class DataReaderTag : Tag
     {
         /// <summary>

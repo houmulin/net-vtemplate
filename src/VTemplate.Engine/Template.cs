@@ -14,17 +14,16 @@ namespace VTemplate.Engine
     /// <summary>
     /// 模版块标签.如: &lt;vt:template id="member"&gt;.......&lt;/vt:template&gt; 或自闭合的模版:&lt;vt:template id="member" file="member.html" /&gt;
     /// </summary>
-    [Serializable]
     public class Template : Tag
     {
         /// <summary>
         /// 
         /// </summary>
-        internal Template() : this(null) { }
+        internal Template(TemplateDocumentConfig documentConfig) : this(null, documentConfig) { }
         /// <summary>
         /// 
         /// </summary>
-        internal Template(Template ownerTemplate)
+        internal Template(Template ownerTemplate, TemplateDocumentConfig documentConfig)
             : base(ownerTemplate)
         {
             this.Visible = true;
@@ -33,6 +32,7 @@ namespace VTemplate.Engine
             this.ChildTemplates = new ElementCollection<Template>();
             this.fileDependencies = new List<string>();
             this.TagContainer = this;
+            this.DocumentConfig = documentConfig;
         }
 
         #region 重写Tag的方法
@@ -54,6 +54,11 @@ namespace VTemplate.Engine
         #endregion
 
         #region 属性定义
+        /// <summary>
+        /// 模版文档的配置参数
+        /// </summary>
+        public TemplateDocumentConfig DocumentConfig { get; internal set; }
+
         /// <summary>
         /// 模版的关联文件
         /// </summary>
@@ -262,7 +267,7 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
             {
                 //读取文件数据进行解析
-                new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset));
+                new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.DocumentConfig);
             }
             //非闭合标签则查找结束标签
             if (!isClosedTag)
@@ -282,7 +287,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            Template tag = new Template(ownerTemplate);
+            Template tag = new Template(ownerTemplate, this.DocumentConfig);
             tag.Id = this.Id;
             tag.Name = this.Name;
             tag.Attributes = this.Attributes;
@@ -292,6 +297,7 @@ namespace VTemplate.Engine
             tag.Visible = this.Visible;
             tag.RenderInstance = this.RenderInstance;
             tag.RenderMethod = this.RenderMethod;
+            tag.DocumentConfig = this.DocumentConfig;
 
             //优先克隆变量
             foreach (Variable var in this.Variables)

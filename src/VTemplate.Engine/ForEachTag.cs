@@ -15,7 +15,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// ForEach标签.如:&lt;vt:foreach from="collection" item="variable"  index="i"&gt;...&lt;/vt:foreach&gt;
     /// </summary>
-    [Serializable]
     public class ForEachTag : Tag
     {
         /// <summary>
@@ -164,7 +163,7 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         public override void Render(System.IO.TextWriter writer)
         {
-            IEnumerable array = (IEnumerable)Utility.GetResolvedDataSource(this.From.GetValue());
+            IEnumerable array = Utility.GetResolvedDataSource(this.From.GetValue());
             int index = 0;
             LoopIndex li = new LoopIndex(0);
             if (this.Index != null) this.Index.Value = li;
@@ -174,13 +173,13 @@ namespace VTemplate.Engine
                 List<object> data = new List<object>();
                 while (list.MoveNext()) { data.Add(list.Current); }
 
-                for (index = 0; index < data.Count; index++)
+                foreach (object d in data)
                 {
-                    li.Value = index + 1;
-                    li.IsFirst = (index == 0);
+                    li.Value = ++index;
+                    li.IsFirst = (index == 1);
                     li.IsLast = (index == data.Count);
                     if (this.Index != null) this.Index.ClearCache();
-                    if (this.Item != null) this.Item.Value = data[index];
+                    if (this.Item != null) this.Item.Value = d;
                     base.Render(writer);
                 }
             }

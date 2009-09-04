@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// 元素集合
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [Serializable]
     public class ElementCollection<T> : IEnumerable<T> 
     {
         /// <summary>

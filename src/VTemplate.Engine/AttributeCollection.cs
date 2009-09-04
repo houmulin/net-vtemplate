@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 属性集合
     /// </summary>
-    [Serializable]
     public class AttributeCollection 
         : IEnumerable<Attribute>
     {

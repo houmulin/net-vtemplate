@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// ForEachElse标签.如:&lt;vt:foreachelse&gt;...&lt;/vt:foreach&gt;
     /// </summary>
-    [Serializable]
     public class ForEachElseTag : Tag
     {
         /// <summary>

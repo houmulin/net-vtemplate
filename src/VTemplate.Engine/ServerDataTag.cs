@@ -72,7 +72,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 服务器数据标签,.如: &lt;vt:serverdata var="request" type="request" /&gt;
     /// </summary>
-    [Serializable]
     public class ServerDataTag : Tag
     {
         /// <summary>

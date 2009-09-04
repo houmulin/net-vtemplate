@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 常数表达式.
     /// </summary>
-    [Serializable]
     public class ConstantExpression : IExpression
     {
         /// <summary>

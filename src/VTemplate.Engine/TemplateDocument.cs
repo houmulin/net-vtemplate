@@ -15,72 +15,65 @@ using System.Web.Caching;
 
 namespace VTemplate.Engine
 {
-    #region 模版文档的安全等级
-    /// <summary>
-    /// 模版文档的安全等级
-    /// </summary>
-    public enum SafeLevel
-    {
-        /// <summary>
-        /// 简单的.不支持&lt;vt:datareader&gt;等标签
-        /// </summary>
-        Simple,
-        /// <summary>
-        /// 完全的.将支持所有标签
-        /// </summary>
-        Full
-    }
-    #endregion
-
     /// <summary>
     /// 模版文档
     /// </summary>
-    [Serializable]
     public class TemplateDocument : Template
     {
-        /// <summary>
-        /// 模版文档的安全等级,默认为Simple
-        /// </summary>
-        public static volatile SafeLevel SafeLevel;
-        /// <summary>
-        /// 
-        /// </summary>
-        static TemplateDocument()
-        {
-            TemplateDocument.SafeLevel = SafeLevel.Simple;
-        }
 
         #region 构造函数
         /// <summary>
         /// 
         /// </summary>
-        private TemplateDocument() { }
+        private TemplateDocument(TemplateDocumentConfig documentConfig) : base(documentConfig) { }
+        /// <summary>
+        /// 采用默认的文档配置并根据TextRader数据进行解析
+        /// </summary>
+        /// <param name="reader"></param>
+        public TemplateDocument(TextReader reader) : this(reader, TemplateDocumentConfig.Default) { }
         /// <summary>
         /// 根据TextRader数据进行解析
         /// </summary>
         /// <param name="reader"></param>
-        public TemplateDocument(TextReader reader)
+        /// <param name="documentConfig"></param>
+        public TemplateDocument(TextReader reader, TemplateDocumentConfig documentConfig) 
+            : base(documentConfig)
         {
             this.ParseString(reader.ReadToEnd());
         }
+        /// <summary>
+        /// 采用默认的文档配置并根据文件内容进行解析
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="charset"></param>
+        public TemplateDocument(string fileName, Encoding charset) : this(fileName, charset, TemplateDocumentConfig.Default) { }
         /// <summary>
         /// 根据文件内容进行解析
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="charset"></param>
-        public TemplateDocument(string fileName, Encoding charset)
+        /// <param name="documentConfig"></param>
+        public TemplateDocument(string fileName, Encoding charset, TemplateDocumentConfig documentConfig) 
+            : base(documentConfig)
         {
             string text = System.IO.File.ReadAllText(fileName, charset);
-            this.File = Path.GetFullPath(fileName);            
+            this.File = Path.GetFullPath(fileName);
             this.Charset = charset;
             this.AddFileDependency(this.File);
             this.ParseString(this, text);
         }
         /// <summary>
+        /// 采用默认的文档配置并根据字符串进行解析
+        /// </summary>
+        /// <param name="text"></param>
+        public TemplateDocument(string text) : this(text, TemplateDocumentConfig.Default) { }
+        /// <summary>
         /// 根据字符串进行解析
         /// </summary>
         /// <param name="text"></param>
-        public TemplateDocument(string text)
+        /// <param name="documentConfig"></param>
+        public TemplateDocument(string text, TemplateDocumentConfig documentConfig)
+            : base(documentConfig)
         {
             this.ParseString(text);
         }
@@ -89,14 +82,16 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="documentElement"></param>
         /// <param name="text"></param>
-        internal TemplateDocument(Template documentElement, string text) : this(documentElement, documentElement, text) { }
+        /// <param name="documentConfig"></param>
+        internal TemplateDocument(Template documentElement, string text, TemplateDocumentConfig documentConfig) : this(documentElement, documentElement, text, documentConfig) { }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="documentElement"></param>
         /// <param name="container"></param>
         /// <param name="text"></param>
-        internal TemplateDocument(Template documentElement, Tag container, string text)
+        /// <param name="documentConfig"></param>
+        internal TemplateDocument(Template documentElement, Tag container, string text, TemplateDocumentConfig documentConfig) : base(documentConfig)
         {
             this.AppendChild(documentElement);
             this.ChildTemplates.Add(documentElement);
@@ -263,7 +258,7 @@ namespace VTemplate.Engine
         #endregion
 
         #region 从文件缓存中构建模版文档对象
-        /// <summary>
+                /// <summary>
         /// 从文件缓存中构建模版文档对象
         /// </summary>
         /// <param name="fileName"></param>
@@ -271,16 +266,29 @@ namespace VTemplate.Engine
         /// <returns></returns>
         public static TemplateDocument FromFileCache(string fileName, Encoding charset)
         {
+            return FromFileCache(fileName, charset, TemplateDocumentConfig.Default);
+        }
+        /// <summary>
+        /// 从文件缓存中构建模版文档对象
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="charset"></param>
+        /// <param name="documentConfig"></param>
+        /// <returns></returns>
+        public static TemplateDocument FromFileCache(string fileName, Encoding charset, TemplateDocumentConfig documentConfig)
+        {
             Cache cache = HttpRuntime.Cache;
+            if (documentConfig == null) documentConfig = TemplateDocumentConfig.Default;
+
             //没有缓存则直接返回实例
-            if (cache == null) return new TemplateDocument(fileName, charset);
+            if (cache == null) return new TemplateDocument(fileName, charset, documentConfig);
             fileName = Path.GetFullPath(fileName);
 
-            string cacheKey = string.Format("TEMPLATE_DOCUMENT_CACHE_ITEM_{0}", fileName);
+            string cacheKey = string.Format("TEMPLATE_DOCUMENT_CACHE_ITEM_{0}_{1}_{2}", documentConfig.TagOpenMode, documentConfig.CompressText, fileName);
             TemplateDocument document = cache.Get(cacheKey) as TemplateDocument;
             if (document == null)
             {
-                document = new TemplateDocument(fileName, charset);
+                document = new TemplateDocument(fileName, charset, documentConfig);
                 cache.Insert(cacheKey, document, new CacheDependency(document.FileDependencies));
             }
             //返回副本
@@ -308,7 +316,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            TemplateDocument tag = new TemplateDocument();
+            TemplateDocument tag = new TemplateDocument(this.DocumentConfig);
             tag.Id = this.Id;
             tag.Name = this.Name;
             tag.Attributes = this.Attributes;

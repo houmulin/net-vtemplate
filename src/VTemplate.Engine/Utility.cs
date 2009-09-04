@@ -115,6 +115,20 @@ namespace VTemplate.Engine
             }
             return value;
         }
+
+        /// <summary>
+        /// 压缩文本
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static string CompressText(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                value = Regex.Replace(value, @"[ \t]*\r?\n[ \t]*", "");
+            }
+            return value;
+        }
         #endregion
 
         #region 数据转换函数块

@@ -72,6 +72,7 @@
     <Compile Include="TagFactory.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="TemplateDocument.cs" />
+    <Compile Include="TemplateDocumentConfig.cs" />
     <Compile Include="TextNode.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Variable.cs" />

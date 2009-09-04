@@ -53,8 +53,15 @@ namespace VTemplate.Engine
             if (length > 0)
             {
                 string content = text.Substring(offset, length);
+                if (ownerTemplate.DocumentConfig != null 
+                    && ownerTemplate.DocumentConfig.CompressText)
+                {
+                    //压缩文本
+                    content = Utility.CompressText(content);
+                }
                 //不建立空行文本节点
-                if (!((length == 1 && (content[0] == '\r' || content[0] == '\n')) || (length == 2 && content == "\r\n")))
+                if (content.Length > 0 && 
+                    !((length == 1 && (content[0] == '\r' || content[0] == '\n')) || (length == 2 && content == "\r\n")))
                 {
                     container.AppendChild(new TextNode(ownerTemplate, content));
                 }

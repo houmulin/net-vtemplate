@@ -13,7 +13,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 变量
     /// </summary>
-    [Serializable]
     public class Variable : ICloneableElement<Variable>
     {
         /// <summary>

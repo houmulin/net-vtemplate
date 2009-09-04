@@ -15,7 +15,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 表达式标签.如: &lt;vt:expression var="totalAge" args="user1.age" args="user2.age" expression="{0}+{1}" /&gt;
     /// </summary>
-    [Serializable]
     public class ExpressionTag : Tag
     {
         /// <summary>

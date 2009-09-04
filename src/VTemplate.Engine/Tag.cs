@@ -17,7 +17,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 标签元素
     /// </summary>
-    [Serializable]
     public abstract class Tag : Element, IAttributesElement
     {
         /// <summary>

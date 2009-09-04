@@ -41,7 +41,7 @@ namespace VTemplate.Engine
                     case "else":
                         return new ElseTag(ownerTemplate);
                     case "template":
-                        return new Template(ownerTemplate);
+                        return new Template(ownerTemplate, ownerTemplate.DocumentConfig);
                     case "include":
                         return new IncludeTag(ownerTemplate);
                     case "expression":
@@ -49,7 +49,8 @@ namespace VTemplate.Engine
                     case "serverdata":
                         return new ServerDataTag(ownerTemplate);
                     case "datareader":
-                        if (TemplateDocument.SafeLevel == SafeLevel.Full)
+                        if (ownerTemplate.DocumentConfig != null
+                            && ownerTemplate.DocumentConfig.TagOpenMode == TagOpenMode.Full)
                         {
                             return new DataReaderTag(ownerTemplate);
                         }

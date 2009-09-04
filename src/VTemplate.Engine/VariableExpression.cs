@@ -13,7 +13,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 变量的表达式.如:{$:name.age} 变量元素中的变量表达式则是".age"
     /// </summary>
-    [Serializable]
     public class VariableExpression : IExpression
     {
         /// <summary>

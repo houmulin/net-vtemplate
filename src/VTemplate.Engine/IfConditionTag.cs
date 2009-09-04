@@ -48,7 +48,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// If条件标签.
     /// </summary>
-    [Serializable]
     public class IfConditionTag : Tag
     {
         /// <summary>

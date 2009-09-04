@@ -110,7 +110,16 @@ namespace VTemplate.WebTester
             get;
             private set;
         }
-
+        /// <summary>
+        /// 当前页面的模版文档的配置参数
+        /// </summary>
+        protected virtual TemplateDocumentConfig DocumentConfig
+        {
+            get
+            {
+                return TemplateDocumentConfig.Default;
+            }
+        }
         /// <summary>
         /// 装载当前页面的模版文档
         /// </summary>
@@ -129,12 +138,12 @@ namespace VTemplate.WebTester
             if ("cache".Equals(this.TestType, StringComparison.InvariantCultureIgnoreCase))
             {
                 //测试缓存模版文档
-                this.Document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8);
+                this.Document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8, this.DocumentConfig);
             }
             else
             {
                 //测试实例模版文档
-                this.Document = new TemplateDocument(fileName, Encoding.UTF8);
+                this.Document = new TemplateDocument(fileName, Encoding.UTF8, this.DocumentConfig);
             }
         }
 

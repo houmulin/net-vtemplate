@@ -15,7 +15,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 文件包含标签.如: &lt;vt:include file="include.html" charset="utf-8" /&gt;
     /// </summary>
-    [Serializable]
     public class IncludeTag : Tag
     {
         /// <summary>
@@ -94,7 +93,7 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
             {
                 //解析数据
-                new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset));
+                new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.DocumentConfig);
             }
             return !isClosedTag;
         }

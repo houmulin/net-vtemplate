@@ -15,7 +15,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// If条件标签,如: &lt;vt:if var="member.age" value="20" compare="&lt;="&gt;..&lt;vt:elseif value="30"&gt;..&lt;/vt:if&gt;
     /// </summary>
-    [Serializable]
     public class IfTag : IfConditionTag
     {
         /// <summary>

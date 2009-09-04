@@ -14,7 +14,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// Else标签..只适用于if标签内.如&lt;vt:if var="member.age" value="20" compare="&lt;="&gt;..&lt;vt:else&gt;..&lt;/vt:if&gt;
     /// </summary>
-    [Serializable]
     public class ElseTag : IfConditionTag
     {
         /// <summary>

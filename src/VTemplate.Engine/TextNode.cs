@@ -13,7 +13,6 @@ namespace VTemplate.Engine
     /// <summary>
     /// 文本节点
     /// </summary>
-    [Serializable]
     public class TextNode : Element
     {
         /// <summary>
@@ -58,5 +57,14 @@ namespace VTemplate.Engine
             return new TextNode(ownerTemplate, this.Text);
         }
         #endregion
+
+        /// <summary>
+        /// 返回文本节点的文本字符
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Text;
+        }
     }
 }
