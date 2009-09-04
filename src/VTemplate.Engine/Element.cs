@@ -31,7 +31,7 @@ namespace VTemplate.Engine
         public Template OwnerTemplate { get; protected set; }
 
         /// <summary>
-        /// 返回此元素的宿主模版文档
+        /// 此元素的宿主模版文档
         /// </summary>
         public virtual TemplateDocument OwnerDocument
         {
