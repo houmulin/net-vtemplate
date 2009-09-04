@@ -44,6 +44,10 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CnblogsNewsRender.cs" />
+    <Compile Include="Core\CnblogsNewsRenderMethod.cs" />
+    <Compile Include="Core\News.cs" />
+    <Compile Include="Core\NewsDbProvider.cs" />
     <Compile Include="iftag_test.ashx.cs">
       <DependentUpon>iftag_test.ashx</DependentUpon>
     </Compile>
@@ -78,6 +82,12 @@
     </Compile>
     <Compile Include="template_include_test.ashx.cs">
       <DependentUpon>template_include_test.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="templaterender_test.ashx.cs">
+      <DependentUpon>templaterender_test.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="templaterendermethod_test.ashx.cs">
+      <DependentUpon>templaterendermethod_test.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +144,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="template_include_test.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templaterender_test.ashx" />
+    <Content Include="template\templaterender_test.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templaterendermethod_test.ashx" />
+    <Content Include="template\templaterendermethod_test.html" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
