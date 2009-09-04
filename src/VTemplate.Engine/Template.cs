@@ -19,11 +19,12 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
-        internal Template(TemplateDocumentConfig documentConfig) : this(null, documentConfig) { }
+        internal Template() : this(null) { }
         /// <summary>
         /// 
         /// </summary>
-        internal Template(Template ownerTemplate, TemplateDocumentConfig documentConfig)
+        /// <param name="ownerTemplate"></param>
+        internal Template(Template ownerTemplate)
             : base(ownerTemplate)
         {
             this.Visible = true;
@@ -32,7 +33,6 @@ namespace VTemplate.Engine
             this.ChildTemplates = new ElementCollection<Template>();
             this.fileDependencies = new List<string>();
             this.TagContainer = this;
-            this.DocumentConfig = documentConfig;
         }
 
         #region 重写Tag的方法
@@ -54,11 +54,6 @@ namespace VTemplate.Engine
         #endregion
 
         #region 属性定义
-        /// <summary>
-        /// 模版文档的配置参数
-        /// </summary>
-        public TemplateDocumentConfig DocumentConfig { get; internal set; }
-
         /// <summary>
         /// 模版的关联文件
         /// </summary>
@@ -267,7 +262,7 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
             {
                 //读取文件数据进行解析
-                new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.DocumentConfig);
+                new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
             }
             //非闭合标签则查找结束标签
             if (!isClosedTag)
@@ -287,7 +282,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            Template tag = new Template(ownerTemplate, this.DocumentConfig);
+            Template tag = new Template(ownerTemplate);
             tag.Id = this.Id;
             tag.Name = this.Name;
             tag.Attributes = this.Attributes;
@@ -297,7 +292,6 @@ namespace VTemplate.Engine
             tag.Visible = this.Visible;
             tag.RenderInstance = this.RenderInstance;
             tag.RenderMethod = this.RenderMethod;
-            tag.DocumentConfig = this.DocumentConfig;
 
             //优先克隆变量
             foreach (Variable var in this.Variables)

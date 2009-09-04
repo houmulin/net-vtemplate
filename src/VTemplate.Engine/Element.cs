@@ -31,6 +31,16 @@ namespace VTemplate.Engine
         public Template OwnerTemplate { get; protected set; }
 
         /// <summary>
+        /// 返回此元素的宿主模版文档
+        /// </summary>
+        public virtual TemplateDocument OwnerDocument
+        {
+            get
+            {
+                return this.OwnerTemplate == null ? null : this.OwnerTemplate.OwnerDocument;
+            }
+        }
+        /// <summary>
         /// 此元素的父级标签
         /// </summary>
         public Tag Parent { get; internal set; }

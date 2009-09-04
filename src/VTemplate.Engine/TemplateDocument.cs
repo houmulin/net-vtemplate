@@ -25,7 +25,10 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
-        private TemplateDocument(TemplateDocumentConfig documentConfig) : base(documentConfig) { }
+        private TemplateDocument(TemplateDocumentConfig documentConfig)
+        {
+            this.DocumentConfig = documentConfig;
+        }
         /// <summary>
         /// 采用默认的文档配置并根据TextRader数据进行解析
         /// </summary>
@@ -36,9 +39,9 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="documentConfig"></param>
-        public TemplateDocument(TextReader reader, TemplateDocumentConfig documentConfig) 
-            : base(documentConfig)
+        public TemplateDocument(TextReader reader, TemplateDocumentConfig documentConfig)
         {
+            this.DocumentConfig = documentConfig;
             this.ParseString(reader.ReadToEnd());
         }
         /// <summary>
@@ -53,13 +56,13 @@ namespace VTemplate.Engine
         /// <param name="fileName"></param>
         /// <param name="charset"></param>
         /// <param name="documentConfig"></param>
-        public TemplateDocument(string fileName, Encoding charset, TemplateDocumentConfig documentConfig) 
-            : base(documentConfig)
+        public TemplateDocument(string fileName, Encoding charset, TemplateDocumentConfig documentConfig)
         {
             string text = System.IO.File.ReadAllText(fileName, charset);
             this.File = Path.GetFullPath(fileName);
             this.Charset = charset;
             this.AddFileDependency(this.File);
+            this.DocumentConfig = documentConfig;
             this.ParseString(this, text);
         }
         /// <summary>
@@ -73,8 +76,8 @@ namespace VTemplate.Engine
         /// <param name="text"></param>
         /// <param name="documentConfig"></param>
         public TemplateDocument(string text, TemplateDocumentConfig documentConfig)
-            : base(documentConfig)
         {
+            this.DocumentConfig = documentConfig;
             this.ParseString(text);
         }
         /// <summary>
@@ -91,8 +94,9 @@ namespace VTemplate.Engine
         /// <param name="container"></param>
         /// <param name="text"></param>
         /// <param name="documentConfig"></param>
-        internal TemplateDocument(Template documentElement, Tag container, string text, TemplateDocumentConfig documentConfig) : base(documentConfig)
+        internal TemplateDocument(Template documentElement, Tag container, string text, TemplateDocumentConfig documentConfig)
         {
+            this.DocumentConfig = documentConfig;
             this.AppendChild(documentElement);
             this.ChildTemplates.Add(documentElement);
             this.ParseString(documentElement, container, text);
@@ -119,6 +123,22 @@ namespace VTemplate.Engine
                 this.TagContainer = value;
             }
         }
+
+        /// <summary>
+        /// 返回此模版块的宿主模版文档
+        /// </summary>
+        public override TemplateDocument OwnerDocument
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        /// <summary>
+        /// 模版文档的配置参数
+        /// </summary>
+        public TemplateDocumentConfig DocumentConfig { get; private set; }
         #endregion
 
         #region 方法定义
@@ -324,6 +344,7 @@ namespace VTemplate.Engine
             tag.File = this.File;
             tag.fileDependencies = this.fileDependencies;
             tag.Visible = this.Visible;
+
             //优先克隆变量
             foreach (Variable var in this.Variables)
             {

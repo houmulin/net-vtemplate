@@ -53,8 +53,8 @@ namespace VTemplate.Engine
             if (length > 0)
             {
                 string content = text.Substring(offset, length);
-                if (ownerTemplate.DocumentConfig != null 
-                    && ownerTemplate.DocumentConfig.CompressText)
+                if (ownerTemplate.OwnerDocument.DocumentConfig != null
+                    && ownerTemplate.OwnerDocument.DocumentConfig.CompressText)
                 {
                     //压缩文本
                     content = Utility.CompressText(content);

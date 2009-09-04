@@ -93,7 +93,7 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
             {
                 //解析数据
-                new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.DocumentConfig);
+                new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
             }
             return !isClosedTag;
         }
