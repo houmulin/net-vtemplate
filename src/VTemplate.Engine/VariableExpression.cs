@@ -16,13 +16,13 @@ namespace VTemplate.Engine
     public class VariableExpression : IExpression
     {
         /// <summary>
-        /// 变量字段
+        /// 变量的表达式
         /// </summary>
         /// <param name="varPrefix"></param>
         /// <param name="variable"></param>
         internal VariableExpression(string varPrefix, Variable variable) : this(varPrefix, variable, null, false) { }
         /// <summary>
-        /// 变量字段
+        /// 变量的表达式
         /// </summary>
         /// <param name="varPrefix"></param>
         /// <param name="variable"></param>
@@ -36,7 +36,7 @@ namespace VTemplate.Engine
             this.IsMethod = isMethod;
         }
         /// <summary>
-        /// 变量字段
+        /// 变量的表达式
         /// </summary>
         /// <param name="parentExp"></param>
         /// <param name="fieldName"></param>
