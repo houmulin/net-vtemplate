@@ -30,6 +30,7 @@ namespace VTemplate.Engine
         /// <param name="isMethod"></param>
         internal VariableExpression(string varPrefix, Variable variable, string fieldName, bool isMethod)
         {
+            this.VariablePrefix = varPrefix;
             this.Variable = variable;
             this.FieldName = fieldName;
             this.IsMethod = isMethod;
@@ -145,7 +146,7 @@ namespace VTemplate.Engine
             StringBuilder buffer = new StringBuilder();
             if (this.VariablePrefix != null)
             {
-                buffer.AppendFormat("#{0}", this.VariablePrefix);
+                buffer.AppendFormat("#{0}.", this.VariablePrefix);
             }
             buffer.Append(this.Variable.Name);
 
