@@ -78,6 +78,7 @@
     <Compile Include="Variable.cs" />
     <Compile Include="VariableCollection.cs" />
     <Compile Include="VariableExpression.cs" />
+    <Compile Include="VariableFunction.cs" />
     <Compile Include="VariableTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

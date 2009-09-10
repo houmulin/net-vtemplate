@@ -31,6 +31,7 @@ namespace VTemplate.Engine
             this.Attributes.Adding += OnAddingAttribute;
             this.VarExpression = varExp;
             this.Charset = ownerTemplate.Charset;
+            this.callFunctions = new List<string>();
         }
 
         #region 属性定义
@@ -88,6 +89,21 @@ namespace VTemplate.Engine
         /// 数据输出时的格式化表达式
         /// </summary>
         public string Format { get; protected set; }
+
+        /// <summary>
+        /// 要调用的函数列表
+        /// </summary>
+        private List<string> callFunctions { get; set; }
+        /// <summary>
+        /// 要调用的函数列表
+        /// </summary>
+        public string[] CallFunctions
+        {
+            get
+            {
+                return this.callFunctions.ToArray();
+            }
+        }
         #endregion
 
         #region 添加标签属性时的触发事件函数.用于设置自身的某些属性值
@@ -136,6 +152,17 @@ namespace VTemplate.Engine
                     //进行URL编码时使用的文本编码
                     this.Charset = Utility.GetEncodingFromCharset(e.Item.Value);
                     break;
+                case "call":
+                    //要调用的方法
+                    string method = e.Item.Value.Trim();
+                    if (!string.IsNullOrEmpty(method))
+                    {
+                        if (!this.callFunctions.Exists(x => x.Equals(method, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            this.callFunctions.Add(method);
+                        }
+                    }
+                    break;
             }
         }
         #endregion
@@ -149,6 +176,19 @@ namespace VTemplate.Engine
         {
             VariableTag tag = this;
             object value = this.VarExpression.GetValue();
+
+            //调用自定函数处理此变量的值
+            if (this.callFunctions.Count > 0)
+            {
+                foreach (string method in this.callFunctions)
+                {
+                    VariableFunction func;
+                    if (this.OwnerTemplate.VariableFunctions.TryGetValue(method, out func))
+                    {
+                        value = func(value);
+                    }
+                }
+            }
 
             if (Utility.IsNothing(value)) return;
 
@@ -236,6 +276,7 @@ namespace VTemplate.Engine
             tag.UrlEncode = this.UrlEncode;
             tag.XmlEncode = this.XmlEncode;
             tag.CompressText = this.CompressText;
+            tag.callFunctions = this.callFunctions;
             return tag;
         }
         #endregion

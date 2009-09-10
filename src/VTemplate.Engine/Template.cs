@@ -32,6 +32,7 @@ namespace VTemplate.Engine
             this.Variables = new VariableCollection();
             this.ChildTemplates = new ElementCollection<Template>();
             this.fileDependencies = new List<string>();
+            this.VariableFunctions = new VariableFunctionCollection();
             this.TagContainer = this;
         }
 
@@ -73,6 +74,11 @@ namespace VTemplate.Engine
         /// 返回此模版下的变量集合
         /// </summary>
         public VariableCollection Variables { get; private set; }
+
+        /// <summary>
+        /// 变量函数集合
+        /// </summary>
+        public VariableFunctionCollection VariableFunctions { get; private set; }
 
         /// <summary>
         /// 返回此模版下的子模版元素
@@ -152,6 +158,33 @@ namespace VTemplate.Engine
         }
         #endregion
 
+        #region 注册全局的变量函数
+        /// <summary>
+        /// 注册全局的变量函数
+        /// </summary>
+        /// <param name="function">函数</param>
+        public void RegisterGlobalFunction(VariableFunction function)
+        {
+            this.RegisterGlobalFunction(function.Method.Name, function);
+        }
+        /// <summary>
+        /// 注册全局的变量函数
+        /// </summary>
+        /// <param name="functionName">函数名称</param>
+        /// <param name="function">函数</param>
+        public void RegisterGlobalFunction(string functionName, VariableFunction function)
+        {
+            if (string.IsNullOrEmpty(functionName)) throw new ArgumentNullException("functionName");
+            if (function == null) throw new ArgumentNullException("function");
+
+            TagContainer.VariableFunctions.Add(functionName, function);
+            foreach (Template child in TagContainer.ChildTemplates)
+            {
+                child.RegisterGlobalFunction(functionName, function);
+            }
+        }
+        #endregion
+
         #region 子模版函数
         /// <summary>
         /// 获取某个Id的子模版.
@@ -209,6 +242,19 @@ namespace VTemplate.Engine
             foreach (Template child in TagContainer.ChildTemplates)
             {
                 child.SetValue(varName, varValue);
+            }
+        }
+        /// <summary>
+        /// 设置变量表达式的值,此操作是对所有模版(包括子模版)下的同名称变量有效
+        /// </summary>
+        /// <param name="exp">变量表达式.如"user.age"则表示设置user变量的age属性/字段值</param>
+        /// <param name="value">表达式的值</param>
+        public void SetExpValue(string exp, object value)
+        {
+            TagContainer.Variables.SetExpValue(exp, value);
+            foreach (Template child in TagContainer.ChildTemplates)
+            {
+                child.SetExpValue(exp, value);
             }
         }
         #endregion
@@ -292,6 +338,7 @@ namespace VTemplate.Engine
             tag.Visible = this.Visible;
             tag.RenderInstance = this.RenderInstance;
             tag.RenderMethod = this.RenderMethod;
+            tag.VariableFunctions = this.VariableFunctions;
 
             //优先克隆变量
             foreach (Variable var in this.Variables)
