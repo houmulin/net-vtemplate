@@ -159,7 +159,9 @@ namespace VTemplate.Engine
             else
             {
                 //常量表达式
-                return new ConstantExpression(expressionText);
+                return Utility.IsInteger(expressionText) ? 
+                      new ConstantExpression(Utility.ConverToInt32(expressionText))
+                    : new ConstantExpression(expressionText);
             }
         }
 

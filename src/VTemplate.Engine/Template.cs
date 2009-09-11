@@ -329,16 +329,8 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             Template tag = new Template(ownerTemplate);
-            tag.Id = this.Id;
-            tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
-            tag.Charset = this.Charset;
-            tag.File = this.File;
-            tag.fileDependencies = this.fileDependencies;
-            tag.Visible = this.Visible;
-            tag.RenderInstance = this.RenderInstance;
-            tag.RenderMethod = this.RenderMethod;
-            tag.VariableFunctions = this.VariableFunctions;
+            //加入到宿主模版的子模版列表
+            ownerTemplate.ChildTemplates.Add(tag);
 
             //优先克隆变量
             foreach (Variable var in this.Variables)
@@ -346,16 +338,15 @@ namespace VTemplate.Engine
                 tag.Variables.Add(var.Clone(tag));
             }
             
-            foreach (Element element in this.InnerElements)
-            {
-                Element item = element.Clone(tag);
-                tag.AppendChild(item);
-                if (item is Template)
-                {
-                    //加入子模版列表
-                    tag.ChildTemplates.Add((Template)item);
-                }
-            }
+            //复制其它属性
+            base.CopyTo(tag);
+            tag.Charset = this.Charset;
+            tag.File = this.File;
+            tag.fileDependencies = this.fileDependencies;
+            tag.Visible = this.Visible;
+            tag.RenderInstance = this.RenderInstance;
+            tag.RenderMethod = this.RenderMethod;
+            
             return tag;
         }
         #endregion

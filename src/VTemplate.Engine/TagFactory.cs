@@ -46,6 +46,8 @@ namespace VTemplate.Engine
                         return new IncludeTag(ownerTemplate);
                     case "expression":
                         return new ExpressionTag(ownerTemplate);
+                    case "function":
+                        return new FunctionTag(ownerTemplate);
                     case "serverdata":
                         return new ServerDataTag(ownerTemplate);
                     case "datareader":

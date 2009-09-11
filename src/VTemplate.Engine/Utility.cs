@@ -33,6 +33,7 @@ namespace VTemplate.Engine
         {
             RenderInstanceCache = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
             DbFactoriesCache = new Dictionary<string, DbProviderFactory>(StringComparer.InvariantCultureIgnoreCase);
+            TypeCache = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
         }
 
         #region 数据判断函数块
@@ -53,12 +54,10 @@ namespace VTemplate.Engine
         internal static bool IsInteger(string value)
         {
             if (string.IsNullOrEmpty(value)) return false;
+            if (value[0] != '-' && !char.IsDigit(value[0])) return false;
 
-            foreach (char c in value)
-            {
-                if (!char.IsDigit(c)) return false;
-            }
-            return true;
+            int i;
+            return int.TryParse(value, out i);
         }
         #endregion
 
@@ -636,6 +635,49 @@ namespace VTemplate.Engine
         #endregion
 
         #region 模版数据解析相关辅助函数块
+        /// <summary>
+        /// 类型的缓存
+        /// </summary>
+        private static Dictionary<string, Type> TypeCache;
+        /// <summary>
+        /// 建立某个类型
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        internal static Type CreateType(string typeName)
+        {
+            if (string.IsNullOrEmpty(typeName)) return null;
+
+            Type type;
+            bool flag = false;
+            lock (TypeCache)
+            {
+                flag = TypeCache.TryGetValue(typeName, out type);
+            }
+            if (!flag)
+            {
+                type = Type.GetType(typeName, false, true);
+                if (type == null)
+                {
+                    //搜索当前程序域里的所有程序集
+                    Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    foreach (Assembly assembly in assemblies)
+                    {
+                        type = assembly.GetType(typeName, false, true);
+                        if (type != null) break;
+                    }
+                }
+                //缓存
+                lock (TypeCache)
+                {
+                    if (!TypeCache.ContainsKey(typeName))
+                    {
+                        TypeCache.Add(typeName, type);
+                    }
+                }
+            }
+            return type;
+        }
         /// <summary>
         /// 存储模版解析器实例的缓存
         /// </summary>

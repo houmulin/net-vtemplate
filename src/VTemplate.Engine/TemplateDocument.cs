@@ -337,6 +337,12 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             TemplateDocument tag = new TemplateDocument(this.DocumentConfig);
+            //优先克隆变量
+            foreach (Variable var in this.Variables)
+            {
+                tag.Variables.Add(var.Clone(tag));
+            }
+
             tag.Id = this.Id;
             tag.Name = this.Name;
             tag.Attributes = this.Attributes;
@@ -345,23 +351,12 @@ namespace VTemplate.Engine
             tag.fileDependencies = this.fileDependencies;
             tag.Visible = this.Visible;
 
-            //优先克隆变量
-            foreach (Variable var in this.Variables)
-            {
-                tag.Variables.Add(var.Clone(tag));
-            }
-
             foreach (Element element in this.InnerElements)
             {
                 Element item = element.Clone(tag);
                 tag.AppendChild(item);
-                if (item is Template)
-                {
-                    //加入子模版列表
-                    tag.ChildTemplates.Add((Template)item);
-                }
 
-                if (this.DocumentElement == element) tag.DocumentElement = (Template)item;
+                if (element is Template && this.DocumentElement == element) tag.DocumentElement = (Template)item;
             }
 
             if (tag.DocumentElement == null) tag.DocumentElement = tag;

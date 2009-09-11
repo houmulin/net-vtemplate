@@ -36,16 +36,6 @@ namespace VTemplate.Engine
             get { return "expression"; }
         }
         /// <summary>
-        /// 返回标签的结束标签名称.
-        /// </summary>
-        public override string EndTagName
-        {
-            get
-            {
-                return "expression";
-            }
-        }
-        /// <summary>
         /// 返回此标签是否是单一标签.即是不需要配对的结束标签
         /// </summary>
         internal override bool IsSingleTag
