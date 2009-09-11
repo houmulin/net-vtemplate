@@ -5,9 +5,15 @@
 <link rel="stylesheet" type="text/css" href="http://news.cnblogs.com/common/screen_base.css" />
 </head>
 <body>
+<!--调用静态方法-->
 <vt:function var="max" method="Max" type="System.Math" args="1" args="2"/>1 和 2 比较,最大值是{$:max}<br />
 <vt:function var="days" method="DaysInMonth" type="System.DateTime" args="2009" args="10" />2009年10月份共有{$:days}天<br />
 
+<!--调用变量的方法-->
+<vt:property var="time" field="Now" type="System.DateTime" />
+<vt:function var="UTCTime" method="ToUniversalTime" type="$time" />当前时间是{$:time},转换为UTC时间是:{$:UTCTime}<br />
+
+<!--调用静态方法-->
  <div class="side_block">
     <h3 class="title_blue">相关新闻</h3>
     <ul class="topnews block_list bt">

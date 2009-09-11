@@ -380,36 +380,8 @@ namespace VTemplate.Engine
             else
             {
                 #region 字段/属性/键值
-                PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
-                if (descriptor != null)
-                {
-                    exist = true;
-                    value = descriptor.GetValue(container);
-                }
-                else if (container is IDictionary)
-                {
-                    //是IDictionary集合
-                    IDictionary idic = (IDictionary)container;
-                    if (idic.Contains(propName))
-                    {
-                        exist = true;
-                        value = idic[propName];
-                    }
-                }
-                else if (container is NameObjectCollectionBase)
-                {
-                    //是NameObjectCollectionBase派生对象
-                    NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
-
-                    //调用私有方法
-                    MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
-                    if (method != null)
-                    {
-                        value = method.Invoke(container, new object[] { propName });
-                        exist = value == null;
-                    }
-                }
-                else if (container is Type)
+                //容器是类型.则查找静态属性或字段
+                if (container is Type)
                 {
                     Type type = (Type)container;
                     //查找字段
@@ -428,32 +400,64 @@ namespace VTemplate.Engine
                             exist = true;
                             value = property.GetValue(container, null);
                         }
-                        else
-                        {
-                            //查找方法
-                            MethodInfo method = type.GetMethod(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, new Type[0], new ParameterModifier[0]);
-                            if (method != null)
-                            {
-                                value = method.Invoke(container, null);
-                                exist = value == null;
-                            }
-                        }
+                        //else
+                        //{
+                        //    //查找方法
+                        //    MethodInfo method = type.GetMethod(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, new Type[0], new ParameterModifier[0]);
+                        //    if (method != null)
+                        //    {
+                        //        value = method.Invoke(container, null);
+                        //        exist = value == null;
+                        //    }
+                        //}
                     }
                 }
                 else
                 {
-                    //判断是否含有索引属性
-                    PropertyInfo item = container.GetType().GetProperty("Item", new Type[] { typeof(string) });
-                    if (item != null)
+                    PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
+                    if (descriptor != null)
                     {
-                        try
+                        exist = true;
+                        value = descriptor.GetValue(container);
+                    }
+                    else if (container is IDictionary)
+                    {
+                        //是IDictionary集合
+                        IDictionary idic = (IDictionary)container;
+                        if (idic.Contains(propName))
                         {
-                            value = item.GetValue(container, new object[] { propName });
                             exist = true;
+                            value = idic[propName];
                         }
-                        catch
+                    }
+                    else if (container is NameObjectCollectionBase)
+                    {
+                        //是NameObjectCollectionBase派生对象
+                        NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
+
+                        //调用私有方法
+                        MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
+                        if (method != null)
                         {
-                            exist = false;
+                            value = method.Invoke(container, new object[] { propName });
+                            exist = value == null;
+                        }
+                    }
+                    else
+                    {
+                        //判断是否含有索引属性
+                        PropertyInfo item = container.GetType().GetProperty("Item", new Type[] { typeof(string) });
+                        if (item != null)
+                        {
+                            try
+                            {
+                                value = item.GetValue(container, new object[] { propName });
+                                exist = true;
+                            }
+                            catch
+                            {
+                                exist = false;
+                            }
                         }
                     }
                 }
@@ -480,7 +484,7 @@ namespace VTemplate.Engine
                 throw new ArgumentNullException("methodName");
             }
             Type type = (container is Type ? (Type)container : container.GetType());
-            MethodInfo method = container.GetType().GetMethod(methodName, BindingFlags.Static | BindingFlags.Instance
+            MethodInfo method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Instance
                                                                           | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase,
                                                                           null, new Type[0], new ParameterModifier[0]);
             if (method != null)

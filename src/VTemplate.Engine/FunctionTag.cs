@@ -14,7 +14,7 @@ using System.Reflection;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 函数标签.如: &lt;vt:function var="MaxAge" method="Max" type="System.Math" args="$user1.age" args="$user2.age" /&gt;
+    /// 函数调用标签.如: &lt;vt:function var="MaxAge" method="Max" type="System.Math" args="$user1.age" args="$user2.age" /&gt;
     /// </summary>
     public class FunctionTag : Tag
     {
@@ -52,14 +52,14 @@ namespace VTemplate.Engine
         public virtual ElementCollection<IExpression> FunctionArgs { get; protected set; }
 
         /// <summary>
-        /// 调用的静态方法
+        /// 调用的方法
         /// </summary>
         public string Method { get; protected set; }
 
         /// <summary>
         /// 包含方法的类型
         /// </summary>
-        public string Type { get; protected set; }
+        public IExpression Type { get; protected set; }
 
         /// <summary>
         /// 存储表达式结果的变量
@@ -84,7 +84,7 @@ namespace VTemplate.Engine
                     this.Method = item.Value.Trim();
                     break;
                 case "type":
-                    this.Type = item.Value.Trim();
+                    this.Type = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
                     break;
                 case "var":
                     this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
@@ -120,15 +120,20 @@ namespace VTemplate.Engine
                 funcParams.Add(expValue);
                 funcParamsTypes.Add(expValue == null ? typeof(object) : expValue.GetType());
             }
-            System.Type type = Utility.CreateType(this.Type);
+            //如果类型定义的是变量表达式则获取表达式的值,否则建立类型
+            object container = this.Type is VariableExpression ? this.Type.GetValue() : Utility.CreateType(this.Type.GetValue().ToString());
 
-            if (type != null)
+            if (container != null)
             {
-                MethodInfo method = type.GetMethod(this.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase, null, funcParamsTypes.ToArray(), null);
+                System.Type type = container is System.Type ? (System.Type)container : container.GetType();
+                BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase;
+                if (!(container is System.Type)) flags |= BindingFlags.Instance;
+
+                MethodInfo method = type.GetMethod(this.Method, flags, null, funcParamsTypes.ToArray(), null);
                 if (method == null)
                 {
                     //获取所有同名的方法
-                    MemberInfo[] methods = type.GetMember(this.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.IgnoreCase);
+                    MemberInfo[] methods = type.GetMember(this.Method, flags | BindingFlags.InvokeMethod );
                     foreach (MethodInfo m in methods)
                     {
                         ParameterInfo[] parameters = m.GetParameters();
@@ -155,7 +160,7 @@ namespace VTemplate.Engine
                             {
                                 try
                                 {
-                                    value = m.Invoke(null, paramValues.ToArray());
+                                    value = m.Invoke(container is System.Type ? null : container, paramValues.ToArray());
                                     //不出错.则退出查找
                                     break;
                                 }
@@ -170,7 +175,7 @@ namespace VTemplate.Engine
                     //执行方法
                     try
                     {
-                        value = method.Invoke(null, funcParams.ToArray());
+                        value = method.Invoke(container is System.Type ? null : container, funcParams.ToArray());
                     }
                     catch
                     {
@@ -198,7 +203,7 @@ namespace VTemplate.Engine
         {
             if (this.Variable == null) throw new ParserException(string.Format("{0}标签中缺少var属性", this.TagName));
             if (string.IsNullOrEmpty(this.Method)) throw new ParserException(string.Format("{0}标签中缺少method属性", this.TagName));
-            if (string.IsNullOrEmpty(this.Type)) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
+            if (this.Type == null) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -215,7 +220,7 @@ namespace VTemplate.Engine
             FunctionTag tag = new FunctionTag(ownerTemplate);
             this.CopyTo(tag);
             tag.Method = this.Method;
-            tag.Type = this.Type;
+            tag.Type = (IExpression)this.Type.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
             foreach (IExpression exp in this.FunctionArgs)
             {
