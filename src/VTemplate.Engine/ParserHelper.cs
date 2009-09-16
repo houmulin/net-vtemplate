@@ -18,6 +18,50 @@ namespace VTemplate.Engine
     /// </summary>
     internal static class ParserHelper
     {
+        #region 解析判断函数块
+        /// <summary>
+        /// 读取某个偏移位置的字符.如果超出则返回特殊字符"\0x0"
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        private static char ReadChar(string text, int offset)
+        {
+            if (offset < text.Length) return text[offset];
+            return (char)0;
+        }
+        /// <summary>
+        /// 判断是否是变量标签的开始
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        internal static bool IsVariableTagStart(string text, int offset)
+        {
+            return (ReadChar(text, offset) == '{' && ReadChar(text, offset + 1) == '$' && ReadChar(text, offset + 2) == ':');
+        }
+        /// <summary>
+        /// 判断是否是某种标签的开始
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        internal static bool IsTagStart(string text, int offset)
+        {
+            return (ReadChar(text, offset) == '<' && ReadChar(text, offset + 1) == 'v' && ReadChar(text, offset + 2) == 't' && ReadChar(text, offset + 3) == ':');
+        }
+        /// <summary>
+        /// 判断是否是某种结束标签的开始
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        internal static bool IsCloseTagStart(string text, int offset)
+        {
+            return (ReadChar(text, offset) == '<' && ReadChar(text, offset + 1) == '/' && ReadChar(text, offset + 2) == 'v' && ReadChar(text, offset + 3) == 't' && ReadChar(text, offset + 4) == ':');
+        }
+        #endregion
+
         /// <summary>
         /// 解析元素的属性列表
         /// </summary>

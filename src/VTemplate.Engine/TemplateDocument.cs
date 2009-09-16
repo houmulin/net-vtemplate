@@ -199,14 +199,14 @@ namespace VTemplate.Engine
             {
                 while (offset < text.Length)
                 {
-                    if ((match = ParserRegex.VarTagRegex.Match(text, offset)).Success)  //匹配到模版变量
+                    if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)  //匹配到模版变量
                     {
                         //构建文本节点
                         ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
                         //构建模版变量
                         ParserHelper.CreateVariableTag(ownerTemplate, container, match);
                     }
-                    else if ((match = ParserRegex.TagRegex.Match(text, offset)).Success)  //匹配到某种类型的标签
+                    else if (ParserHelper.IsTagStart(text, offset) && (match = ParserRegex.TagRegex.Match(text, offset)).Success)  //匹配到某种类型的标签
                     {
                         //构建文本节点
                         ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
@@ -230,7 +230,7 @@ namespace VTemplate.Engine
                         //取得容器
                         if (tagStack.Count > 0) container = tagStack.Peek();
                     }
-                    else if ((match = ParserRegex.EndTagRegex.Match(text, offset)).Success)            //匹配到某个结束标签
+                    else if (ParserHelper.IsCloseTagStart(text, offset) && (match = ParserRegex.EndTagRegex.Match(text, offset)).Success)            //匹配到某个结束标签
                     {
                         //取得标签名称
                         string name = match.Groups["tagname"].Value;
@@ -240,7 +240,8 @@ namespace VTemplate.Engine
                     //处理偏移位置
                     if (match != null && match.Success)
                     {
-                        charOffset = offset = match.Index + match.Length;                       
+                        charOffset = offset = match.Index + match.Length;
+                        match = null;
                     }
                     else
                     {

@@ -237,16 +237,17 @@ namespace VTemplate.Engine
             bool isClosedTag;
 
             charOffset = offset = match.Index + match.Length;
+            match = null;
             while (offset < text.Length)
             {
-                if ((match = ParserRegex.VarTagRegex.Match(text, offset)).Success)                //匹配到模版变量
+                if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)                //匹配到模版变量
                 {
                     //构建文本节点
                     ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
                     //构建模版变量
                     ParserHelper.CreateVariableTag(ownerTemplate, container, match);
                 }
-                else if ((match = ParserRegex.TagRegex.Match(text, offset)).Success)                     //匹配到某种类型的标签
+                else if (ParserHelper.IsTagStart(text, offset) && (match = ParserRegex.TagRegex.Match(text, offset)).Success)                     //匹配到某种类型的标签
                 {
                     //构建文本节点
                     ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
@@ -297,7 +298,7 @@ namespace VTemplate.Engine
                         if (tagStack.Count > 0) container = tagStack.Peek();
                     }
                 }
-                else if ((match = ParserRegex.EndTagRegex.Match(text, offset)).Success)            //匹配到某个结束标签
+                else if (ParserHelper.IsCloseTagStart(text, offset) && (match = ParserRegex.EndTagRegex.Match(text, offset)).Success)            //匹配到某个结束标签
                 {
                     //构建文本节点
                     ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
@@ -321,12 +322,15 @@ namespace VTemplate.Engine
                 if (match != null && match.Success)
                 {
                     charOffset = offset = match.Index + match.Length;
+                    match = null;
                 }
                 else
                 {
                     offset++;
                 }
             }
+
+            if (match == null) throw new ParserException(string.Format("{0}标签未闭合", container.TagName));
         }
         #endregion
 

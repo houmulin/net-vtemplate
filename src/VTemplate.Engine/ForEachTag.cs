@@ -170,17 +170,19 @@ namespace VTemplate.Engine
             if (array != null)
             {
                 IEnumerator list = array.GetEnumerator();
-                List<object> data = new List<object>();
-                while (list.MoveNext()) { data.Add(list.Current); }
-
-                foreach (object d in data)
+                if (list.MoveNext())
                 {
-                    li.Value = ++index;
-                    li.IsFirst = (index == 1);
-                    li.IsLast = (index == data.Count);
-                    if (this.Index != null) this.Index.ClearCache();
-                    if (this.Item != null) this.Item.Value = d;
-                    base.Render(writer);
+                    li.IsLast = false;
+                    while (!li.IsLast)
+                    {
+                        object v = list.Current;
+                        li.Value = ++index;
+                        li.IsFirst = (index == 1);
+                        li.IsLast = !list.MoveNext();
+                        if (this.Index != null) this.Index.ClearCache();
+                        if (this.Item != null) this.Item.Value = v;
+                        base.Render(writer);
+                    }
                 }
             }
             if (index == 0 && this.Else != null)
