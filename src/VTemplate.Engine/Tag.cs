@@ -411,7 +411,7 @@ namespace VTemplate.Engine
             buffer.AppendFormat("<vt:{0}", this.TagName);
             foreach (Attribute attribute in this.Attributes)
             {
-                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlDecode(attribute.Value));
+                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Value));
             }
             buffer.AppendFormat(">");
             return buffer.ToString();

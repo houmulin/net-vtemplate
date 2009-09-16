@@ -81,6 +81,11 @@ namespace VTemplate.Engine
         public int Length { get; protected set; }
 
         /// <summary>
+        /// 附加文本(此属性只能配合Length属性使用.即当文本有被裁剪时才附加此文本)
+        /// </summary>
+        public string AppendText { get; protected set; }
+
+        /// <summary>
         /// 数据的编码
         /// </summary>
         public Encoding Charset { get; protected set; }
@@ -152,6 +157,10 @@ namespace VTemplate.Engine
                     //进行URL编码时使用的文本编码
                     this.Charset = Utility.GetEncodingFromCharset(e.Item.Value);
                     break;
+                case "appendtext":
+                    //附加文本
+                    this.AppendText = e.Item.Value;
+                    break;
                 case "call":
                     //要调用的方法
                     string method = e.Item.Value.Trim();
@@ -217,7 +226,7 @@ namespace VTemplate.Engine
 
             if (text.Length > 0)
             {
-                if (this.Length > 0) text = Utility.CutString(text, this.Length, this.Charset);
+                if (this.Length > 0) text = Utility.CutString(text, this.Length, this.Charset, this.AppendText);
                 if (this.TextEncode)
                 {
                     text = Utility.TextEncode(text);
@@ -252,6 +261,10 @@ namespace VTemplate.Engine
             StringBuilder buffer = new StringBuilder();
             buffer.Append("{$:");
             buffer.Append(this.VarExpression.ToString());
+            foreach (Attribute attribute in this.Attributes)
+            {
+                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Value));
+            }
             buffer.Append("}");
             return buffer.ToString();
         }
@@ -276,6 +289,7 @@ namespace VTemplate.Engine
             tag.UrlEncode = this.UrlEncode;
             tag.XmlEncode = this.XmlEncode;
             tag.CompressText = this.CompressText;
+            tag.AppendText = this.AppendText;
             tag.callFunctions = this.callFunctions;
             return tag;
         }

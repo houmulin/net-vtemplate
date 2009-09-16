@@ -189,8 +189,9 @@ namespace VTemplate.Engine
         /// <param name="value">要截取的字符串</param>
         /// <param name="maxLength">最大大小</param>
         /// <param name="charset">采用的编码</param>
+        /// <param name="appendText">附加字符</param>
         /// <returns></returns>
-        internal static string CutString(string value, int maxLength, Encoding charset)
+        internal static string CutString(string value, int maxLength, Encoding charset, string appendText)
         {
             StringBuilder buffer = new StringBuilder(maxLength);
             int length = 0;
@@ -209,6 +210,7 @@ namespace VTemplate.Engine
                 }
                 index++;
             }
+            if (index < value.Length && !string.IsNullOrEmpty(appendText)) buffer.Append(appendText);
             return buffer.ToString();
         }
 
