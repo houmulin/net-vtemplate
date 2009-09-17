@@ -71,11 +71,15 @@ namespace VTemplate.Engine
         {
             if (!string.IsNullOrEmpty(value))
             {
-                StringWriter stringWriter = new StringWriter();
-                XmlTextWriter xmlWriter = new XmlTextWriter(stringWriter);
-                xmlWriter.WriteString(value);
-                xmlWriter.Flush();
-                value = stringWriter.ToString();
+                using (StringWriter stringWriter = new StringWriter())
+                {
+                    using (XmlTextWriter xmlWriter = new XmlTextWriter(stringWriter))
+                    {
+                        xmlWriter.WriteString(value);
+                        xmlWriter.Flush();
+                        value = stringWriter.ToString();
+                    }
+                }
             }
             return value;
         }
@@ -402,16 +406,6 @@ namespace VTemplate.Engine
                             exist = true;
                             value = property.GetValue(container, null);
                         }
-                        //else
-                        //{
-                        //    //查找方法
-                        //    MethodInfo method = type.GetMethod(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, new Type[0], new ParameterModifier[0]);
-                        //    if (method != null)
-                        //    {
-                        //        value = method.Invoke(container, null);
-                        //        exist = value == null;
-                        //    }
-                        //}
                     }
                 }
                 else
@@ -510,9 +504,9 @@ namespace VTemplate.Engine
         {
             if (dataSource != null)
             {
-                IListSource source = dataSource as IListSource;
-                if (source != null)
+                if (dataSource is IListSource)
                 {
+                    IListSource source = (IListSource)dataSource;
                     IList list = source.GetList();
                     if (!source.ContainsListCollection)
                     {
