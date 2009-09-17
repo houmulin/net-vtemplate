@@ -65,6 +65,13 @@ namespace VTemplate.Engine
         /// </summary>
         private Dictionary<string, object> cacheExpItems;
         /// <summary>
+        /// 获取缓存的个数
+        /// </summary>
+        internal int GetCacheCount()
+        {
+            return cacheExpItems.Count;
+        }
+        /// <summary>
         /// 添加变量表达式的值
         /// </summary>
         /// <param name="exp">变量表达式.以"."号开始.如".age"则表示此变量下的age属性/字段值</param>

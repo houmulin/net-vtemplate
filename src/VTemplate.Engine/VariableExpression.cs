@@ -91,7 +91,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         private object GetValue(object data)
         {
-            if (Utility.IsNothing(data)) return data;
+            if (Utility.IsNothing(data) && this.Variable.GetCacheCount() == 0) return data;
 
             object value = data;
             if (!string.IsNullOrEmpty(this.FieldName))
@@ -109,7 +109,7 @@ namespace VTemplate.Engine
                 string expPath = string.Join(".", paths.ToArray());
 
                 value = this.Variable.GetExpValue(expPath, out exist);
-                if (!exist)
+                if (!exist && !Utility.IsNothing(data))
                 {
                     //缓存数据不存在.则从实体取数据
                     if (this.IsMethod)
