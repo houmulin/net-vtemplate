@@ -20,6 +20,14 @@ namespace VTemplate.Engine
     {
         #region 解析判断函数块
         /// <summary>
+        /// 注释标签的起始标记
+        /// </summary>
+        public const string CommentTagStart = "<!--vt[";
+        /// <summary>
+        /// 注释标签的结束标记
+        /// </summary>
+        public const string CommentTagEnd = "]-->";
+        /// <summary>
         /// 读取某个偏移位置的字符.如果超出则返回特殊字符"\0x0"
         /// </summary>
         /// <param name="text"></param>
@@ -29,6 +37,17 @@ namespace VTemplate.Engine
         {
             if (offset < text.Length) return text[offset];
             return (char)0;
+        }
+        /// <summary>
+        /// 判断c是否是c1,c2中的一个
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        /// <returns></returns>
+        private static bool IsChars(char c, char c1, char c2)
+        {
+            return c == c1 || c == c2;
         }
         /// <summary>
         /// 判断是否是变量标签的开始
@@ -48,7 +67,10 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static bool IsTagStart(string text, int offset)
         {
-            return (ReadChar(text, offset) == '<' && ReadChar(text, offset + 1) == 'v' && ReadChar(text, offset + 2) == 't' && ReadChar(text, offset + 3) == ':');
+            return (ReadChar(text, offset) == '<' &&
+                IsChars(ReadChar(text, offset + 1), 'v', 'V') &&
+                IsChars(ReadChar(text, offset + 2), 't', 'T') && 
+                ReadChar(text, offset + 3) == ':');
         }
         /// <summary>
         /// 判断是否是某种结束标签的开始
@@ -58,7 +80,28 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static bool IsCloseTagStart(string text, int offset)
         {
-            return (ReadChar(text, offset) == '<' && ReadChar(text, offset + 1) == '/' && ReadChar(text, offset + 2) == 'v' && ReadChar(text, offset + 3) == 't' && ReadChar(text, offset + 4) == ':');
+            return (ReadChar(text, offset) == '<' && 
+                ReadChar(text, offset + 1) == '/' &&
+                IsChars(ReadChar(text, offset + 2), 'v', 'V') &&
+                IsChars(ReadChar(text, offset + 3), 't', 'T') && 
+                ReadChar(text, offset + 4) == ':');
+        }
+
+        /// <summary>
+        /// 判断是否是注解标签的开始.注解标签的定义: &lt;!--vt[.....]--&gt;
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        internal static bool IsCommentTagStart(string text, int offset)
+        {
+            return (ReadChar(text, offset) == '<' && 
+                ReadChar(text, offset + 1) == '!' && 
+                ReadChar(text, offset + 2) == '-' &&
+                ReadChar(text, offset + 3) == '-' &&
+                IsChars(ReadChar(text, offset + 4), 'v', 'V') &&
+                IsChars(ReadChar(text, offset + 5), 't', 'T') && 
+                ReadChar(text, offset + 6) == '[');
         }
         #endregion
 
