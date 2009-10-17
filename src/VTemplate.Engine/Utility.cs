@@ -387,34 +387,36 @@ namespace VTemplate.Engine
             {
                 #region 字段/属性/键值
                 //容器是类型.则查找静态属性或字段
-                if (container is Type)
+                Type type = container is Type ? (Type)container : container.GetType();
+                BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase;
+                if (!(container is Type)) flags |= BindingFlags.Instance;
+
+                //查找字段
+                FieldInfo field = type.GetField(propName, flags);
+                if (field != null)
                 {
-                    Type type = (Type)container;
-                    //查找字段
-                    FieldInfo field = type.GetField(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
-                    if (field != null)
-                    {
-                        exist = true;
-                        value = field.GetValue(container);
-                    }
-                    else
-                    {
-                        //查找属性
-                        PropertyInfo property = type.GetProperty(propName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase, null, null, new Type[0], new ParameterModifier[0]);
-                        if (property != null)
-                        {
-                            exist = true;
-                            value = property.GetValue(container, null);
-                        }
-                    }
+                    exist = true;
+                    value = field.GetValue(container);
                 }
                 else
                 {
-                    PropertyDescriptor descriptor = TypeDescriptor.GetProperties(container).Find(propName, true);
-                    if (descriptor != null)
+                    //查找属性
+                    PropertyInfo property = type.GetProperty(propName, flags, null, null, Type.EmptyTypes, new ParameterModifier[0]);
+                    if (property != null)
                     {
                         exist = true;
-                        value = descriptor.GetValue(container);
+                        value = property.GetValue(container, null);
+                    }
+                    else if (container is ICustomTypeDescriptor)
+                    {
+                        //已实现ICustomTypeDescriptor接口
+                        ICustomTypeDescriptor ictd = (ICustomTypeDescriptor)container;
+                        PropertyDescriptor descriptor = ictd.GetProperties().Find(propName, true);
+                        if (descriptor != null)
+                        {
+                            exist = true;
+                            value = descriptor.GetValue(container);
+                        }
                     }
                     else if (container is IDictionary)
                     {
@@ -442,7 +444,7 @@ namespace VTemplate.Engine
                     else
                     {
                         //判断是否含有索引属性
-                        PropertyInfo item = container.GetType().GetProperty("Item", new Type[] { typeof(string) });
+                        PropertyInfo item = type.GetProperty("Item", new Type[] { typeof(string) });
                         if (item != null)
                         {
                             try
@@ -470,29 +472,18 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static object GetMethodResult(object container, string methodName, out bool exist)
         {
-            exist = true;
-            if (container == null)
-            {
-                throw new ArgumentNullException("container");
-            }
-            if (string.IsNullOrEmpty(methodName))
-            {
-                throw new ArgumentNullException("methodName");
-            }
+            exist = false;
             Type type = (container is Type ? (Type)container : container.GetType());
-            MethodInfo method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Instance
-                                                                          | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase,
-                                                                          null, new Type[0], new ParameterModifier[0]);
+            MethodInfo method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Instance |
+                                                           BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase,
+                                                                          null, Type.EmptyTypes, new ParameterModifier[0]);
+            object result = null;
             if (method != null)
             {
+                exist = true;
                 return method.Invoke(method.IsStatic ? null : container, null);
             }
-            else
-            {
-                //不存在此值
-                exist = false;
-                return null;
-            }
+            return result;
         }
 
         /// <summary>

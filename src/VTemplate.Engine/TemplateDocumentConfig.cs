@@ -34,15 +34,25 @@ namespace VTemplate.Engine
     public class TemplateDocumentConfig
     {
         /// <summary>
-        /// 默认的配置.标签的开放模式为简单的并且不压缩文本
+        /// 标签的开放模式为简单,不压缩文本
         /// </summary>
-        public static volatile TemplateDocumentConfig Default;
+        public static readonly TemplateDocumentConfig Default;
+        /// <summary>
+        /// 标签的开放模式为完全,不压缩文本
+        /// </summary>
+        public static readonly TemplateDocumentConfig Full;
+        /// <summary>
+        /// 标签的开放模式为简单,压缩文本
+        /// </summary>
+        public static readonly TemplateDocumentConfig Compress;
         /// <summary>
         /// 
         /// </summary>
         static TemplateDocumentConfig()
         {
             TemplateDocumentConfig.Default = new TemplateDocumentConfig();
+            TemplateDocumentConfig.Full = new TemplateDocumentConfig(TagOpenMode.Full, false);
+            TemplateDocumentConfig.Compress = new TemplateDocumentConfig(TagOpenMode.Simple, true);
         }
         /// <summary>
         /// 实例化默认的配置.标签的开放模式为简单的并且不压缩文本
@@ -76,6 +86,7 @@ namespace VTemplate.Engine
         /// 标签的开放模式
         /// </summary>
         public TagOpenMode TagOpenMode { get; private set; }
+
 
         /// <summary>
         /// 是否压缩文本

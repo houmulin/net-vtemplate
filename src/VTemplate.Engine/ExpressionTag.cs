@@ -60,6 +60,11 @@ namespace VTemplate.Engine
         /// 存储表达式结果的变量
         /// </summary>
         public Variable Variable { get; protected set; }
+
+        /// <summary>
+        /// 是否输出此标签的结果值
+        /// </summary>
+        public bool Output { get; protected set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -80,6 +85,9 @@ namespace VTemplate.Engine
                     break;
                 case "var":
                     this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    break;
+                case "output":
+                    this.Output = Utility.ConverToBoolean(item.Value);
                     break;
             }
         }
@@ -107,7 +115,8 @@ namespace VTemplate.Engine
             {
                 value = null;
             }
-            this.Variable.Value = value;
+            if(this.Variable != null) this.Variable.Value = value;
+            if (this.Output && value != null) writer.Write(value);
             base.Render(writer);
         }
         #endregion
@@ -125,7 +134,7 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (this.Variable == null) throw new ParserException(string.Format("{0}标签中缺少var属性", this.TagName));
+            if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
             if (string.IsNullOrEmpty(this.Expression)) throw new ParserException(string.Format("{0}标签中缺少expression属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
@@ -144,6 +153,7 @@ namespace VTemplate.Engine
             this.CopyTo(tag);
             tag.Expression = this.Expression;
             tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
+            tag.Output = this.Output;
             foreach (VariableExpression exp in this.ExpArgs)
             {
                 tag.ExpArgs.Add((VariableExpression)(exp.Clone(ownerTemplate)));

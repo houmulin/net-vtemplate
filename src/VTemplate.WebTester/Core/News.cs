@@ -12,7 +12,7 @@ namespace VTemplate.WebTester.Core
         /// <summary>
         /// 新闻Id
         /// </summary>
-        public int Id { get; set; }
+        public int Id;
         /// <summary>
         /// 新闻标题
         /// </summary>
@@ -20,6 +20,6 @@ namespace VTemplate.WebTester.Core
         /// <summary>
         /// 是否可见
         /// </summary>
-        public bool Visible { get; set; }
+        public bool Visible;
     }
 }

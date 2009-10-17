@@ -4,7 +4,7 @@
 <title> 测试ServerData标签 </title>
 </head>
 <body>
-<vt:serverdata var="now" type="time" />服务器现在是{$:now}<br />
+服务器现在是<vt:serverdata type="time" output="true" /><br />
 <hr />
 <vt:serverdata var="request" type="request">
 访问的地址是:{$:request.url}<br />
@@ -12,8 +12,7 @@
 服务器变量列表：<br />
 <hr />
 <vt:foreach from="request.ServerVariables" item="key" index="i">
-<vt:serverdata var="value" type="ServerVariables" item="$key" />
-{$:i}、{$:key} = {$:value} <br />
+{$:i}、{$:key} = <vt:serverdata type="ServerVariables" item="$#.key" output="true" /> <br />
 <hr />
 </vt:foreach>
 </vt:serverdata>
