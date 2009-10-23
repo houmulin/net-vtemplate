@@ -58,7 +58,8 @@
 <vt:if var="#.i.value" value="$this.pagenumber">
 <font color="red">{$:i}</font>
 <vt:else />
-<a href="{$:#.i call='GetPageNavigation'}">{$:#.i}</a>
+<vt:function var="pageurl" method="GetPageNavigation" type="$this" args="$#.i" />
+<a href="{$:#.pageurl}">{$:#.i}</a>
 </vt:if>
 </vt:for>
 <vt:if var="this.pagenumber" value="$this.pagecount" compare=">=">[下页] [尾页]<vt:else />[<a href="{$:#.nextpageurl}">下页</a>] [<a href="{$:#.lastpageurl}">尾页</a>]</vt:if>

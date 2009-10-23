@@ -105,6 +105,7 @@ namespace VTemplate.WebTester
         protected override void InitPageTemplate()
         {
             //注册一个变量函数.是给样式一中的{$:#.i call='GetPageNavigation'} 调用
+            //样式二是通过<vt:function>标签调用GetPageNavigation函数.这两种方法你可以根据需要灵活使用.VT就是这么灵活:)
             this.Document.VariableFunctions.Add(this.GetPageNavigation);
 
 
@@ -116,7 +117,7 @@ namespace VTemplate.WebTester
             Tag tag = this.Document.GetChildTagById("pagetable");
             if (tag != null)
             {
-                this.PageSize = int.Parse(this.Document.GetChildTagById("pagetable").Attributes.GetValue("pagesize", "10"));
+                this.PageSize = int.Parse(tag.Attributes.GetValue("pagesize", "10"));
             }
 
             if (!string.IsNullOrEmpty(this.Request.QueryString["page"])) this.PageNumber = int.Parse(this.Request.QueryString["page"]);
