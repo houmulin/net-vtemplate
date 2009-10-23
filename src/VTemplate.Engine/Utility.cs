@@ -136,6 +136,48 @@ namespace VTemplate.Engine
 
         #region 数据转换函数块
         /// <summary>
+        /// 将某个集合数据拆分为一组一组数据
+        /// 例如: int[] datas = [1,2,3,4,5,6]; 当SplitToGroup(datas, 2)拆分后,将会拆分为类似以下的集合"[1,2],[3,4],[5,6]"
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="groupSize"></param>
+        /// <returns></returns>
+        public static IEnumerator SplitToGroup(IEnumerator list, int groupSize)
+        {
+            List<ArrayList> groupList = new List<ArrayList>();
+            while (true)
+            {
+                ArrayList groupItems = new ArrayList();
+                for (int i = 0; i < groupSize; i++)
+                {
+                    if (list.MoveNext())
+                    {
+                        groupItems.Add(list.Current);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (groupItems.Count > 0)
+                {
+                    groupList.Add(groupItems);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (groupList.Count > 0)
+            {
+                return groupList.GetEnumerator();
+            }
+            else
+            {
+                return list;
+            }
+        }
+        /// <summary>
         /// 转换字符串为布尔值
         /// </summary>
         /// <param name="value"></param>

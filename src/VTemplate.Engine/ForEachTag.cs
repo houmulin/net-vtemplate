@@ -116,6 +116,11 @@ namespace VTemplate.Engine
         public Variable Index { get; protected set; }
 
         /// <summary>
+        /// 分组大小
+        /// </summary>
+        public int GroupSize { get; protected set; }
+
+        /// <summary>
         /// ForEachElse节点
         /// </summary>
         private ForEachElseTag _Else;
@@ -152,6 +157,9 @@ namespace VTemplate.Engine
                 case "index":
                     this.Index = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
                     break;
+                case "groupsize":
+                    this.GroupSize = Utility.ConverToInt32(item.Value);
+                    break;
             }
         }
         #endregion
@@ -170,6 +178,8 @@ namespace VTemplate.Engine
             if (array != null)
             {
                 IEnumerator list = array.GetEnumerator();
+                if (this.GroupSize > 1) list = Utility.SplitToGroup(list, this.GroupSize);
+
                 if (list.MoveNext())
                 {
                     li.IsLast = false;
@@ -226,6 +236,7 @@ namespace VTemplate.Engine
             tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
             tag.Index = this.Index == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Index.Name);
             tag.Item = this.Item == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Item.Name);
+            tag.GroupSize = this.GroupSize;
 
             return tag;
         }
