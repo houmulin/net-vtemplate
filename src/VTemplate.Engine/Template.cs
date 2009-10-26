@@ -339,13 +339,20 @@ namespace VTemplate.Engine
             }
             
             //复制其它属性
-            base.CopyTo(tag);
+            tag.Id = this.Id;
+            tag.Name = this.Name;
+            tag.Attributes = this.Attributes;
             tag.Charset = this.Charset;
             tag.File = this.File;
             tag.fileDependencies = this.fileDependencies;
             tag.Visible = this.Visible;
             tag.RenderInstance = this.RenderInstance;
             tag.RenderMethod = this.RenderMethod;
+
+            foreach (Element element in this.InnerElements)
+            {
+                tag.AppendChild(element.Clone(tag));
+            }
             
             return tag;
         }
