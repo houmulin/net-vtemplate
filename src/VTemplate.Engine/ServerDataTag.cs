@@ -61,6 +61,10 @@ namespace VTemplate.Engine
         /// </summary>
         ServerVariables,
         /// <summary>
+        /// 服务器当前上下文的Request.Params数据集合.如果模版引擎不在Web程序上使用则无效
+        /// </summary>
+        RequestParams,
+        /// <summary>
         /// 服务器当前上下文的HttpRequest对象.如果模版引擎不在Web程序上使用则无效
         /// </summary>
         Request,
@@ -248,6 +252,8 @@ namespace VTemplate.Engine
                     return GetCookieItem();
                 case ServerDataType.ServerVariables:
                     return GetRequestServerVariablesItem();
+                case ServerDataType.RequestParams:
+                    return GetRequestParamsItem();
                 case ServerDataType.Request:
                     return GetRequestItem();
                 case ServerDataType.Environment:
@@ -415,7 +421,20 @@ namespace VTemplate.Engine
             }
             return value;
         }
-
+        /// <summary>
+        /// 获取Request.Params数据
+        /// </summary>
+        /// <returns></returns>
+        private string GetRequestParamsItem()
+        {
+            string value = null;
+            HttpContext context = HttpContext.Current;
+            if (context != null && context.Request != null)
+            {
+                value = GetNameValueCollectionItem(context.Request.Params);
+            }
+            return value;
+        }
         /// <summary>
         /// 获取Request对象
         /// </summary>
