@@ -470,19 +470,19 @@ namespace VTemplate.Engine
                             value = idic[propName];
                         }
                     }
-                    //else if (container is NameObjectCollectionBase)
-                    //{
-                    //    //是NameObjectCollectionBase派生对象
-                    //    NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
+                    else if (container is NameObjectCollectionBase)
+                    {
+                        //是NameObjectCollectionBase派生对象
+                        NameObjectCollectionBase nob = (NameObjectCollectionBase)container;
 
-                        //    //调用私有方法
-                    //    MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
-                    //    if (method != null)
-                    //    {
-                    //        value = method.Invoke(container, new object[] { propName });
-                    //        exist = value != null;
-                    //    }
-                    //}
+                        //调用私有方法
+                        MethodInfo method = nob.GetType().GetMethod("BaseGet", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, new ParameterModifier[] { new ParameterModifier(1) });
+                        if (method != null)
+                        {
+                            value = method.Invoke(container, new object[] { propName });
+                            exist = value != null;
+                        }
+                    }
                     else
                     {
                         //判断是否含有索引属性

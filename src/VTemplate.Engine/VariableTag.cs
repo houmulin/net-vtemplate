@@ -10,6 +10,7 @@ using System.Text;
 using System.Web;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace VTemplate.Engine
 {
@@ -221,7 +222,34 @@ namespace VTemplate.Engine
                     }
                 }
                 //非IFormattable接口.则直接取字符串处理
-                if (!formated) text = value.ToString();
+                if (!formated)
+                {
+                    //如果数据是IEnumerable,IEnumerator接口则进行数据拼凑
+                    IEnumerator ie = null;
+                    if (value is IEnumerable)
+                    {
+                        ie = ((IEnumerable)value).GetEnumerator();
+                    }
+                    else if (value is IEnumerator)
+                    {
+                        ie = (IEnumerator)value;
+                    }
+                    if (ie != null)
+                    {
+                        StringBuilder buffer = new StringBuilder();
+                        ie.Reset();
+                        while (ie.MoveNext())
+                        {
+                            if (buffer.Length != 0) buffer.Append(",");
+                            buffer.Append(ie.Current);
+                        }
+                        text = buffer.ToString();
+                    }
+                    else
+                    {
+                        text = value.ToString();
+                    }
+                }
             }
 
             if (text.Length > 0)
