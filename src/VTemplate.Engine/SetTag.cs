@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 变量赋值标签, 如:&gt;vt:set var="#.page" value="1" /&lt;
+    /// 变量赋值标签, 如:&gt;vt:set var="page" value="1" /&lt;
     /// </summary>
     public class SetTag : Tag
     {
