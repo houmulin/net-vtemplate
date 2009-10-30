@@ -104,6 +104,9 @@
     <Compile Include="pagedata_test.ashx.cs">
       <DependentUpon>pagedata_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="settag_test.ashx.cs">
+      <DependentUpon>settag_test.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VTemplate.Engine\VTemplate.Engine.csproj">
@@ -187,6 +190,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="pagedata_test.ashx" />
+    <Content Include="template\settag_test.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="settag_test.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />

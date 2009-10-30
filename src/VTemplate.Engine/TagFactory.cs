@@ -52,6 +52,8 @@ namespace VTemplate.Engine
                         return new PropertyTag(ownerTemplate);
                     case "serverdata":
                         return new ServerDataTag(ownerTemplate);
+                    case "set":
+                        return new SetTag(ownerTemplate);
                     case "datareader":
                         if (ownerTemplate.OwnerDocument.DocumentConfig != null
                             && ownerTemplate.OwnerDocument.DocumentConfig.TagOpenMode == TagOpenMode.Full)

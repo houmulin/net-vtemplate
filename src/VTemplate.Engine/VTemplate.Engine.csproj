@@ -70,6 +70,7 @@
     <Compile Include="ParserRegex.cs" />
     <Compile Include="PropertyTag.cs" />
     <Compile Include="ServerDataTag.cs" />
+    <Compile Include="SetTag.cs" />
     <Compile Include="Tag.cs" />
     <Compile Include="TagFactory.cs" />
     <Compile Include="Template.cs" />
