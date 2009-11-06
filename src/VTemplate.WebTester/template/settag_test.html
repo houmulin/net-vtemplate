@@ -12,6 +12,16 @@
     <!--vt[多个变量值的拼凑实现]-->
     年-月-日: <vt:set var="u" value="$#.time.Year" value="$#.time.Month" value="$#.time.Day" format="{0}-{1}-{2}" output="true" />
     <hr />
+    测试对某个template内的变量赋值<br />
+    <vt:for from="1" to="100000"></vt:for>
+    <vt:template id="test">
+    test 模版块里的变量时间 <vt:serverdata var="#.time" type="Time" output="true" /><br />
+    </vt:template>
+    test 模版块里的变量在外部显示时的值:{$:#test.time},根模版块的时间 {$:time}<br />
+    <vt:set var="#test.time" value="2008-01-01" />
+    test 模版块里的变量被赋值后的值:{$:#test.time} ,根模版块的时间 {$:time}
+    <hr />    
+    
     <vt:serverdata var="t" type="QueryString" item="t" />
     显示的新闻类型: 
     <!--vt[根据查询参数t对type赋于不同的值,以便显示不同的数据]-->

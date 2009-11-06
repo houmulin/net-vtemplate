@@ -11,32 +11,29 @@ using System.Text;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 变量的表达式.如:{$:name.age} 变量元素中的变量表达式则是".age"
+    /// 变量表达式,如:{$:name.age} 变量元素中的变量表达式则是".age"
     /// </summary>
     public class VariableExpression : IExpression
     {
         /// <summary>
-        /// 变量的表达式
+        /// 变量表达式
         /// </summary>
-        /// <param name="varPrefix"></param>
-        /// <param name="variable"></param>
-        internal VariableExpression(string varPrefix, Variable variable) : this(varPrefix, variable, null, false) { }
+        /// <param name="variableId"></param>
+        internal VariableExpression(VariableIdentity variableId) : this(variableId, null, false) { }
         /// <summary>
-        /// 变量的表达式
+        /// 变量表达式
         /// </summary>
-        /// <param name="varPrefix"></param>
-        /// <param name="variable"></param>
+        /// <param name="variableId"></param>
         /// <param name="fieldName"></param>
         /// <param name="isMethod"></param>
-        internal VariableExpression(string varPrefix, Variable variable, string fieldName, bool isMethod)
+        internal VariableExpression(VariableIdentity variableId, string fieldName, bool isMethod)
         {
-            this.VariablePrefix = varPrefix;
-            this.Variable = variable;
+            this.VariableId = variableId;
             this.FieldName = fieldName;
             this.IsMethod = isMethod;
         }
         /// <summary>
-        /// 变量的表达式
+        /// 变量表达式
         /// </summary>
         /// <param name="parentExp"></param>
         /// <param name="fieldName"></param>
@@ -45,19 +42,14 @@ namespace VTemplate.Engine
         {
             parentExp.NextExpression = this;
             this.ParentExpression = parentExp;
-            this.VariablePrefix = parentExp.VariablePrefix;
-            this.Variable = parentExp.Variable;
+            this.VariableId = parentExp.VariableId;
             this.FieldName = fieldName;
             this.IsMethod = isMethod;
         }
         /// <summary>
-        /// 变量的前缀
+        /// 变量标识
         /// </summary>
-        public string VariablePrefix { get; private set; }
-        /// <summary>
-        /// 变量
-        /// </summary>
-        public Variable Variable { get; private set; }
+        public VariableIdentity VariableId { get; private set; }
         /// <summary>
         /// 字段名
         /// </summary>
@@ -82,7 +74,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         public object GetValue()
         {
-            return this.GetValue(this.Variable.Value);
+            return this.GetValue(this.VariableId.Value);
         }
         /// <summary>
         /// 获取数据
@@ -91,7 +83,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         private object GetValue(object data)
         {
-            if (Utility.IsNothing(data) && this.Variable.GetCacheCount() == 0) return data;
+            if (Utility.IsNothing(data) && this.VariableId.Variable.GetCacheCount() == 0) return data;
 
             object value = data;
             if (!string.IsNullOrEmpty(this.FieldName))
@@ -108,7 +100,7 @@ namespace VTemplate.Engine
                 paths.Reverse();
                 string expPath = string.Join(".", paths.ToArray());
 
-                value = this.Variable.GetExpValue(expPath, out exist);
+                value = this.VariableId.Variable.GetExpValue(expPath, out exist);
                 if (!exist && !Utility.IsNothing(data))
                 {
                     //缓存数据不存在.则从实体取数据
@@ -122,7 +114,7 @@ namespace VTemplate.Engine
                     }
                     if (!exist) return null;
                     //缓存
-                    this.Variable.AddExpValue(expPath, value);
+                    this.VariableId.Variable.AddExpValue(expPath, value);
                 }
             }
 
@@ -144,11 +136,7 @@ namespace VTemplate.Engine
         public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
-            if (this.VariablePrefix != null)
-            {
-                buffer.AppendFormat("#{0}.", this.VariablePrefix);
-            }
-            buffer.Append(this.Variable.Name);
+            buffer.Append(this.VariableId.ToString());
 
             VariableExpression exp = this;
             while (exp != null)
@@ -173,10 +161,8 @@ namespace VTemplate.Engine
         /// <returns></returns>
         public IExpression Clone(Template ownerTemplate)
         {
-            //获取新的变量
-            Template varTemplate = Utility.GetVariableTemplateByPrefix(ownerTemplate, this.VariablePrefix);
-            Variable variable = Utility.GetVariableOrAddNew(varTemplate, this.Variable.Name);
-            VariableExpression exp = new VariableExpression(this.VariablePrefix, variable, this.FieldName, this.IsMethod);
+            VariableIdentity variableId = this.VariableId.Clone(ownerTemplate);
+            VariableExpression exp = new VariableExpression(variableId, this.FieldName, this.IsMethod);
             if (this.NextExpression != null)
             {
                 exp.NextExpression = (VariableExpression)(this.NextExpression.Clone(ownerTemplate));

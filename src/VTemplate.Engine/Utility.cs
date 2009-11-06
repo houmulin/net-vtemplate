@@ -132,6 +132,19 @@ namespace VTemplate.Engine
             }
             return value;
         }
+        /// <summary>
+        /// 删除HTML代码
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static string RemoveHtmlCode(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return string.Empty;
+
+            value = Regex.Replace(value, "<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<!--.*?-->", "", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            return Regex.Replace(value, @"</?\s*[\w:\-]+(\s*[\w:\-]+\s*(=\s*""[^""]*""|=\s*'[^']*'|=\s*[^\s=>]*))*\s*/?>", "").Trim();
+        }
         #endregion
 
         #region 数据转换函数块
@@ -654,7 +667,7 @@ namespace VTemplate.Engine
         /// <param name="template"></param>
         /// <param name="prefix"></param>
         /// <returns>如果prefix值为null则返回template的根模版.如果为空值.则为template.如果为#则返回template的父模版.否则返回对应Id的模版</returns>
-        internal static Template GetVariableTemplateByPrefix(Template template, string prefix)
+        internal static Template GetOwnerTemplateByPrefix(Template template, string prefix)
         {
             if (prefix == string.Empty) return template;               //前缀为空.则返回当前模版
             if (prefix == "#") return template.OwnerTemplate ?? template;   //前缀为#.则返回父模版(如果父模版不存在则返回当前模版)

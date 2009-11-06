@@ -1,30 +1,31 @@
 ﻿/* ***********************************************
  * Author		:  kingthy
  * Email		:  kingthy@gmail.com
- * Description	:  SetTag
+ * Description	:  RenderTag
  *
  * ***********************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 变量赋值标签, 如:&lt;vt:set var="page" value="1" /&gt;
+    /// 用于呈现某个标签的数据.如: &lt;vt:render tagid="list" /&gt;
     /// </summary>
-    public class SetTag : Tag
+    public class RenderTag : Tag
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ownerTemplate"></param>
-        internal SetTag(Template ownerTemplate)
+        internal RenderTag(Template ownerTemplate)
             : base(ownerTemplate)
-        {
-            this.Values = new ElementCollection<IExpression>();
-        }
+        { }
 
         #region 重写Tag的方法
         /// <summary>
@@ -32,7 +33,7 @@ namespace VTemplate.Engine
         /// </summary>
         public override string TagName
         {
-            get { return "set"; }
+            get { return "render"; }
         }
         /// <summary>
         /// 返回此标签是否是单一标签.即是不需要配对的结束标签
@@ -45,24 +46,27 @@ namespace VTemplate.Engine
 
         #region 属性定义
         /// <summary>
-        /// 变量的值
+        /// 
         /// </summary>
-        public ElementCollection<IExpression> Values { get; protected set; }
-
+        protected Tag renderTarget;
         /// <summary>
-        /// 要对于赋值的变量
+        /// 呈现的目标
         /// </summary>
-        public VariableIdentity Variable { get; protected set; }
-
+        protected Tag RenderTarget
+        {
+            get
+            {
+                if (this.renderTarget == null)
+                {
+                    this.renderTarget = this.OwnerDocument.GetChildTagById(this.TagId);
+                }
+                return this.renderTarget;
+            }
+        }
         /// <summary>
-        /// 格式化
+        /// 需要呈现数据的标签的Id
         /// </summary>
-        public string Format { get; protected set; }
-
-        /// <summary>
-        /// 是否输出此标签的结果值
-        /// </summary>
-        public bool Output { get; protected set; }
+        public string TagId { get; set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -75,17 +79,8 @@ namespace VTemplate.Engine
         {
             switch (name)
             {
-                case "value":
-                    this.Values.Add(ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim()));
-                    break;
-                case "var":
-                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
-                    break;
-                case "format":
-                    this.Format = item.Value;
-                    break;
-                case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                case "tagid":
+                    this.TagId = item.Value;
                     break;
             }
         }
@@ -98,24 +93,14 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         public override void Render(System.IO.TextWriter writer)
         {
-            object value = null;
-            if (string.IsNullOrEmpty(this.Format))
+            CancelEventArgs args = new CancelEventArgs();
+            this.OnBeforeRender(args);
+            if (!args.Cancel)
             {
-                value = this.Values[0].GetValue();
+                if (this.RenderTarget != null)
+                    this.RenderTarget.Render(writer);
             }
-            else
-            {
-                List<object> param = new List<object>();
-                foreach (IExpression ie in this.Values)
-                {
-                    param.Add(ie.GetValue());
-                }
-                value = string.Format(this.Format, param.ToArray());
-            }
-            if (this.Variable != null) this.Variable.Value = value;
-
-            if (this.Output && value != null) writer.Write(value);
-            base.Render(writer);
+            this.OnAfterRender(EventArgs.Empty); 
         }
         #endregion
 
@@ -132,9 +117,7 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
-            if (this.Values.Count < 1) throw new ParserException(string.Format("{0}标签中缺少value属性", this.TagName));
-            if (this.Values.Count > 1 && string.IsNullOrEmpty(this.Format)) throw new ParserException(string.Format("{0}标签如果已定义多个value属性,则也必须定义format属性", this.TagName));
+            if (string.IsNullOrEmpty(this.TagId)) throw new ParserException(string.Format("{0}标签中缺少tagid属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -148,15 +131,9 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            SetTag tag = new SetTag(ownerTemplate);
+            RenderTag tag = new RenderTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Format = this.Format;
-            tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
-            tag.Output = this.Output;
-            foreach (IExpression exp in this.Values)
-            {
-                tag.Values.Add((IExpression)(exp.Clone(ownerTemplate)));
-            }
+            tag.TagId = this.TagId;
             return tag;
         }
         #endregion

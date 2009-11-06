@@ -109,11 +109,11 @@ namespace VTemplate.Engine
         /// <summary>
         /// 当前项变量
         /// </summary>
-        public Variable Item { get; protected set; }
+        public VariableIdentity Item { get; protected set; }
         /// <summary>
         /// 索引变量
         /// </summary>
-        public Variable Index { get; protected set; }
+        public VariableIdentity Index { get; protected set; }
 
         /// <summary>
         /// 分组大小
@@ -152,10 +152,10 @@ namespace VTemplate.Engine
                     this.From = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value);
                     break;
                 case "item":
-                    this.Item = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Item = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "index":
-                    this.Index = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Index = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "groupsize":
                     this.GroupSize = Utility.ConverToInt32(item.Value);
@@ -180,6 +180,7 @@ namespace VTemplate.Engine
                 IEnumerator list = array.GetEnumerator();
                 if (this.GroupSize > 1) list = Utility.SplitToGroup(list, this.GroupSize);
 
+                list.Reset();
                 if (list.MoveNext())
                 {
                     li.IsLast = false;
@@ -234,8 +235,8 @@ namespace VTemplate.Engine
             this.CopyTo(tag);
             tag.Else = this.Else == null ? null : (ForEachElseTag)(this.Else.Clone(ownerTemplate));
             tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
-            tag.Index = this.Index == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Index.Name);
-            tag.Item = this.Item == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Item.Name);
+            tag.Index = this.Index == null ? null : this.Index.Clone(ownerTemplate);
+            tag.Item = this.Item == null ? null : this.Item.Clone(ownerTemplate);
             tag.GroupSize = this.GroupSize;
 
             return tag;

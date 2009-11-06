@@ -121,6 +121,17 @@ namespace VTemplate.WebTester
             }
         }
         /// <summary>
+        /// 是否读取缓存模版
+        /// </summary>
+        protected virtual bool IsLoadCacheTemplate
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
         /// 装载当前页面的模版文档
         /// </summary>
         public virtual void LoadCurrentTemplate()
@@ -135,7 +146,7 @@ namespace VTemplate.WebTester
         protected virtual void LoadTemplateFile(string fileName)
         {
             this.Document = null;
-            if ("cache".Equals(this.TestType, StringComparison.InvariantCultureIgnoreCase))
+            if ("cache".Equals(this.TestType, StringComparison.InvariantCultureIgnoreCase) || this.IsLoadCacheTemplate)
             {
                 //测试缓存模版文档
                 this.Document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8, this.DocumentConfig);

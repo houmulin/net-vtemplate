@@ -350,7 +350,8 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             TemplateDocument tag = new TemplateDocument(this.DocumentConfig);
-            //优先克隆变量
+
+            //优先拷贝变量
             foreach (Variable var in this.Variables)
             {
                 tag.Variables.Add(var.Clone(tag));

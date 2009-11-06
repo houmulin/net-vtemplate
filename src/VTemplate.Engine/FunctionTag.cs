@@ -64,7 +64,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 存储表达式结果的变量
         /// </summary>
-        public Variable Variable { get; protected set; }
+        public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
         /// 是否输出此标签的结果值
@@ -92,7 +92,7 @@ namespace VTemplate.Engine
                     this.Type = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
                     break;
                 case "var":
-                    this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "output":
                     this.Output = Utility.ConverToBoolean(item.Value);
@@ -131,66 +131,91 @@ namespace VTemplate.Engine
                 funcParams.Add(expValue);
                 funcParamsTypes.Add(expValue == null ? typeof(object) : expValue.GetType());
             }
-            //如果类型定义的是变量表达式则获取表达式的值,否则建立类型
-            object container = this.Type is VariableExpression ? this.Type.GetValue() : Utility.CreateType(this.Type.GetValue().ToString());
-
-            if (container != null)
+            if (this.Type == null)
             {
-                System.Type type = container is System.Type ? (System.Type)container : container.GetType();
-                BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase;
-                if (!(container is System.Type)) flags |= BindingFlags.Instance;
-
-                MethodInfo method = type.GetMethod(this.Method, flags, null, funcParamsTypes.ToArray(), null);
-                if (method == null)
+                //调用自定义函数
+                UserDefinedFunction func;
+                if (this.OwnerTemplate.UserDefinedFunctions.TryGetValue(this.Method, out func))
                 {
-                    //获取所有同名的方法
-                    MemberInfo[] methods = type.GetMember(this.Method, flags | BindingFlags.InvokeMethod );
-                    foreach (MethodInfo m in methods)
-                    {
-                        ParameterInfo[] parameters = m.GetParameters();
-                        if (parameters.Length == funcParams.Count)
-                        {
-                            //尝试转换类型
-                            List<object> paramValues = new List<object>();
-                            for (var i = 0; i < parameters.Length; i++)
-                            {
-                                object v = funcParams[i];
-                                if (parameters[i].ParameterType != funcParamsTypes[i] && v != null)
-                                {
-                                    v = Utility.ConvertTo(funcParams[i].ToString(), parameters[i].ParameterType);
-                                    if (v == null) break;   //转换失败则尝试下一个方法
+                    value = func(funcParams.ToArray());
+                }
+            }
+            else
+            {
+                //如果类型定义的是变量表达式则获取表达式的值,否则建立类型
+                object container = this.Type is VariableExpression ? this.Type.GetValue() : Utility.CreateType(this.Type.GetValue().ToString());
 
-                                    paramValues.Add(v);
-                                }
-                                else
-                                {
-                                    paramValues.Add(v);
-                                }
-                            }
-                            if (paramValues.Count == parameters.Length)
+                if (container != null)
+                {
+                    System.Type type = container is System.Type ? (System.Type)container : container.GetType();
+                    BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase;
+                    if (!(container is System.Type)) flags |= BindingFlags.Instance;
+
+                    MethodInfo method = type.GetMethod(this.Method, flags, null, funcParamsTypes.ToArray(), null);
+                    if (method == null)
+                    {
+                        //获取所有同名的方法
+                        MemberInfo[] methods = type.GetMember(this.Method, flags | BindingFlags.InvokeMethod);
+                        foreach (MethodInfo m in methods)
+                        {
+                            ParameterInfo[] parameters = m.GetParameters();
+                            if (parameters.Length == 1
+                                && parameters[0].ParameterType.IsArray
+                                && parameters[0].ParameterType.FullName == "System.Object[]")
                             {
+                                //如果函数只有一个参数,并且是Object数组参数
                                 try
                                 {
-                                    value = m.Invoke(container is System.Type ? null : container, paramValues.ToArray());
+                                    value = m.Invoke(container is System.Type ? null : container, new object[] { funcParams.ToArray() });
                                     //不出错.则退出查找
                                     break;
                                 }
                                 catch { }
                             }
-                            paramValues.Clear();
+                            else if (parameters.Length == funcParams.Count)
+                            {
+                                //尝试转换类型
+                                List<object> paramValues = new List<object>();
+                                for (var i = 0; i < parameters.Length; i++)
+                                {
+                                    object v = funcParams[i];
+                                    if (parameters[i].ParameterType != funcParamsTypes[i] && v != null)
+                                    {
+                                        v = Utility.ConvertTo(funcParams[i].ToString(), parameters[i].ParameterType);
+                                        if (v == null) break;   //转换失败则尝试下一个方法
+
+                                        paramValues.Add(v);
+                                    }
+                                    else
+                                    {
+                                        paramValues.Add(v);
+                                    }
+                                }
+                                if (paramValues.Count == parameters.Length)
+                                {
+                                    try
+                                    {
+                                        value = m.Invoke(container is System.Type ? null : container, paramValues.ToArray());
+                                        //不出错.则退出查找
+                                        break;
+                                    }
+                                    catch { }
+                                }
+                                paramValues.Clear();
+                            }
                         }
                     }
-                }
-                else
-                {
-                    //执行方法
-                    try
+                    else
                     {
-                        value = method.Invoke(container is System.Type ? null : container, funcParams.ToArray());
-                    }
-                    catch
-                    {
-                        value = null;
+                        //执行方法
+                        try
+                        {
+                            value = method.Invoke(container is System.Type ? null : container, funcParams.ToArray());
+                        }
+                        catch
+                        {
+                            value = null;
+                        }
                     }
                 }
             }
@@ -214,7 +239,6 @@ namespace VTemplate.Engine
         {
             if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
             if (string.IsNullOrEmpty(this.Method)) throw new ParserException(string.Format("{0}标签中缺少method属性", this.TagName));
-            if (this.Type == null) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -231,8 +255,8 @@ namespace VTemplate.Engine
             FunctionTag tag = new FunctionTag(ownerTemplate);
             this.CopyTo(tag);
             tag.Method = this.Method;
-            tag.Type = (IExpression)this.Type.Clone(ownerTemplate);
-            tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
+            tag.Type = this.Type == null ? null : (IExpression)this.Type.Clone(ownerTemplate);
+            tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             foreach (IExpression exp in this.FunctionArgs)
             {

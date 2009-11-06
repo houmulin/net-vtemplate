@@ -68,7 +68,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 存储表达式结果的变量
         /// </summary>
-        public Variable Variable { get; protected set; }
+        public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
         /// 查询命令中使用的变量参数列表,各参数在查询命令语句中用"@p0","@p1"之类的代替
@@ -87,7 +87,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "connection":
                     this.Connection = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
@@ -139,7 +139,7 @@ namespace VTemplate.Engine
             tag.Connection = this.Connection == null ? null : this.Connection.Clone(ownerTemplate);
             tag.CommandText = this.CommandText == null ? null : this.CommandText.Clone(ownerTemplate);
             tag.RowIndex = this.RowIndex == null ? null : this.RowIndex.Clone(ownerTemplate);
-            tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
+            tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             foreach (VariableExpression exp in this.Parameters)
             {
                 tag.Parameters.Add((VariableExpression)(exp.Clone(ownerTemplate)));

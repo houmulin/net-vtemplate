@@ -160,30 +160,53 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <param name="match"></param>
+        /// <param name="prefix"></param>
         /// <returns></returns>
-        internal static Variable CreateVariable(Template ownerTemplate, Match match)
+        internal static Variable CreateVariable(Template ownerTemplate, Match match, out string prefix)
         {
-            string prefix = match.Groups["prefix"].Success ? match.Groups["prefix"].Value : null;
+            prefix = match.Groups["prefix"].Success ? match.Groups["prefix"].Value : null;
             string name = match.Groups["name"].Value;
 
-            ownerTemplate = Utility.GetVariableTemplateByPrefix(ownerTemplate, prefix);
+            ownerTemplate = Utility.GetOwnerTemplateByPrefix(ownerTemplate, prefix);
             if (ownerTemplate == null) throw new ParserException(string.Format("变量的宿主模版#{0}不存在", prefix));
 
             Variable variable = Utility.GetVariableOrAddNew(ownerTemplate, name);
             return variable;
         }
+        /// <summary>
+        /// 从文本(如#.name或name)中构建变量标识对象
+        /// </summary>
+        /// <param name="ownerTemplate"></param>
+        /// <param name="varText"></param>
+        /// <returns></returns>
+        internal static VariableIdentity CreateVariableId(Template ownerTemplate, string text)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+
+            Match match = ParserRegex.VarIdRegex.Match(text);
+            if (match.Success)
+            {
+                string prefix;
+                Variable variable = CreateVariable(ownerTemplate, match, out prefix);
+                return new VariableIdentity(ownerTemplate, variable, prefix);
+            }
+            else
+            {
+                //非变量
+                throw new ParserException(string.Format("变量标识\"{0}\"的定义格式错误", text));
+            }
+        }
 
         /// <summary>
         /// 构建变量的字段列表
         /// </summary>
-        /// <param name="variable"></param>
+        /// <param name="variableId"></param>
         /// <param name="match"></param>
         /// <returns></returns>
-        internal static VariableExpression CreateVariableExpression(Variable variable, Match match)
+        internal static VariableExpression CreateVariableExpression(VariableIdentity variableId, Match match)
         {
             //解析变量字段列表
-            string prefix = match.Groups["prefix"].Success ? match.Groups["prefix"].Value : null;
-            VariableExpression field = new VariableExpression(prefix, variable);
+            VariableExpression field = new VariableExpression(variableId);
             CaptureCollection fields = match.Groups["field"].Captures;
             CaptureCollection methods = match.Groups["method"].Captures;
             VariableExpression item = field;
@@ -210,13 +233,15 @@ namespace VTemplate.Engine
             Match match = ParserRegex.VarExpRegex.Match(expressionText);
             if (match.Success)
             {
-                Variable variable = CreateVariable(ownerTemplate, match);
-                return CreateVariableExpression(variable, match);
+                string prefix;
+                Variable variable = CreateVariable(ownerTemplate, match, out prefix);
+                VariableIdentity variableId = new VariableIdentity(ownerTemplate, variable, prefix);
+                return CreateVariableExpression(variableId, match);
             }
             else
             {
                 //非变量表达式
-                return null;
+                throw new ParserException(string.Format("变量表达式\"{0}\"的定义格式错误", expressionText));
             }
         }
         /// <summary>
@@ -260,8 +285,10 @@ namespace VTemplate.Engine
         /// <param name="match"></param>
         internal static VariableTag CreateVariableTag(Template ownerTemplate, Tag container, Match match)
         {
-            Variable variable = CreateVariable(ownerTemplate, match);
-            VariableExpression varExp = CreateVariableExpression(variable, match);
+            string prefix;
+            Variable variable = CreateVariable(ownerTemplate, match, out prefix);
+            VariableIdentity variableId = new VariableIdentity(ownerTemplate, variable, prefix);
+            VariableExpression varExp = CreateVariableExpression(variableId, match);
 
             VariableTag tag = new VariableTag(ownerTemplate, varExp);
             //解析属性列表

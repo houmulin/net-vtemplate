@@ -67,7 +67,7 @@ namespace VTemplate.Engine
         public bool UrlEncode { get; protected set; }
 
         /// <summary>
-        /// 是否需要对输出数据进行文本数据格式化(先HtmlEncode格式安排,再将"空格"转换为"&amp;nbsp;"和"\n"转换为"&lt;br /&gt;")
+        /// 是否需要对输出数据进行文本数据格式化(先HtmlEncode格式化,再将"空格"转换为"&amp;nbsp;", "\n"转换为"&lt;br /&gt;")
         /// </summary>
         public bool TextEncode { get; protected set; }
 
@@ -95,6 +95,11 @@ namespace VTemplate.Engine
         /// 数据输出时的格式化表达式
         /// </summary>
         public string Format { get; protected set; }
+
+        /// <summary>
+        /// 数据输出时是否删除HTML代码
+        /// </summary>
+        public bool RemoveHtml { get; protected set; }
 
         /// <summary>
         /// 要调用的函数列表
@@ -162,6 +167,10 @@ namespace VTemplate.Engine
                     //附加文本
                     this.AppendText = e.Item.Value;
                     break;
+                case "removehtml":
+                    //是否在输出数据时删除其中的HTML代码
+                    this.RemoveHtml = Utility.ConverToBoolean(e.Item.Value);
+                    break;
                 case "call":
                     //要调用的方法
                     string method = e.Item.Value.Trim();
@@ -192,10 +201,10 @@ namespace VTemplate.Engine
             {
                 foreach (string method in this.callFunctions)
                 {
-                    VariableFunction func;
-                    if (this.OwnerTemplate.VariableFunctions.TryGetValue(method, out func))
+                    UserDefinedFunction func;
+                    if (this.OwnerTemplate.UserDefinedFunctions.TryGetValue(method, out func))
                     {
-                        value = func(value);
+                        value = func(new object[] { value });
                     }
                 }
             }
@@ -254,6 +263,7 @@ namespace VTemplate.Engine
 
             if (text.Length > 0)
             {
+                if (this.RemoveHtml) text = Utility.RemoveHtmlCode(text);
                 if (this.Length > 0) text = Utility.CutString(text, this.Length, this.Charset, this.AppendText);
                 if (this.TextEncode)
                 {
@@ -318,6 +328,7 @@ namespace VTemplate.Engine
             tag.XmlEncode = this.XmlEncode;
             tag.CompressText = this.CompressText;
             tag.AppendText = this.AppendText;
+            tag.RemoveHtml = this.RemoveHtml;
             tag.callFunctions = this.callFunctions;
             return tag;
         }

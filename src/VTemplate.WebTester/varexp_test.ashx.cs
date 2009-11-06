@@ -32,9 +32,10 @@ namespace VTemplate.WebTester
         /// </summary>
         /// <param name="age"></param>
         /// <returns></returns>
-        private object GetAgeRemark(object age)
+        private object GetAgeRemark(object[] ages)
         {
             string remark = "未知";
+            object age = ages[0];
             if (age != null && age != DBNull.Value && age is int)
             {
                 int a = (int)age;

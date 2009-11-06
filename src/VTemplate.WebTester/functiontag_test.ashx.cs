@@ -31,7 +31,26 @@ namespace VTemplate.WebTester
         /// </summary>
         protected override void InitPageTemplate()
         {
+            //注册一个自定义函数
+            this.Document.RegisterGlobalFunction(this.GetNewsUrl);
             this.Document.SetValue("newsdata", NewsDbProvider.GetNewsData("relating"));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="news"></param>
+        /// <returns></returns>
+        private object GetNewsUrl(object[] news)
+        {
+            if (news.Length > 0 && news[0] is News)
+            {
+                return NewsDbProvider.GetNewsUrl((News)news[0]);
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }

@@ -57,7 +57,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 存储表达式结果的变量
         /// </summary>
-        public Variable Variable { get; protected set; }
+        public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
         /// 是否输出此标签的结果值
@@ -82,7 +82,7 @@ namespace VTemplate.Engine
                     this.Type = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
                     break;
                 case "var":
-                    this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "output":
                     this.Output = Utility.ConverToBoolean(item.Value);
@@ -142,7 +142,7 @@ namespace VTemplate.Engine
             this.CopyTo(tag);
             tag.Field = this.Field;
             tag.Type = (IExpression)this.Type.Clone(ownerTemplate);
-            tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
+            tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             return tag;
         }

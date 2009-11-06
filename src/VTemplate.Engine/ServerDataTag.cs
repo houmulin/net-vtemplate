@@ -128,7 +128,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 存储表达式结果的变量
         /// </summary>
-        public Variable Variable { get; protected set; }
+        public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
         /// 数据值
@@ -155,7 +155,7 @@ namespace VTemplate.Engine
                     this.Type = (ServerDataType)Utility.ConvertTo(item.Value, typeof(ServerDataType));
                     break;
                 case "var":
-                    this.Variable = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
                 case "item":
                     this.Item = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
@@ -204,7 +204,7 @@ namespace VTemplate.Engine
             this.CopyTo(tag);
             tag.Type = this.Type;
             tag.Item = this.Item == null ? null : this.Item.Clone(ownerTemplate);
-            tag.Variable = this.Variable == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Variable.Name);
+            tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             return tag;
         }

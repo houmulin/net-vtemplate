@@ -18,7 +18,8 @@
     <h3 class="title_blue">相关新闻</h3>
     <ul class="topnews block_list bt">
     <vt:foreach from="#.newsdata" item="news" index="i">
-    <vt:function var="newsurl" method="GetNewsUrl" type="VTemplate.WebTester.Core.NewsDbProvider" args="$#.news" />
+    <!--vt[调用自定义函数取得新闻的访问地址]-->
+    <vt:function var="newsurl" method="GetNewsUrl" args="$#.news" />
     <li>
     <a href="{$:#.newsurl}" title="{$:#.news.title htmlencode='true'}">{$:#.news.title htmlencode='true'}...</a>
     </li>
@@ -29,9 +30,20 @@
     <ul class="topnews block_list bt">
     <vt:function var="hotingnewsdata" method="GetHotingNews" type="VTemplate.WebTester.functiontag_test" />
     <vt:foreach from="#.hotingnewsdata" item="news" index="i">
+    <!--vt[调用静态函数取得新闻的访问地址]-->
     <vt:function var="newsurl" method="GetNewsUrl" type="VTemplate.WebTester.Core.NewsDbProvider" args="$#.news" />
     <li>
     <a href="{$:#.newsurl}" title="{$:#.news.title htmlencode='true'}">{$:#.news.title htmlencode='true'}...</a>
+    </li>
+    </vt:foreach>
+</div>
+ <div class="side_block">
+    <h3 class="title_blue">相关新闻</h3>
+    <ul class="topnews block_list bt">
+    <vt:foreach from="#.newsdata" item="news" index="i">
+    <!--vt[利用变量标签的call属性调用自定义函数取得新闻的访问地址]-->
+    <li>
+    <a href="{$:#.news call='GetNewsUrl'}" title="{$:#.news.title htmlencode='true'}">{$:#.news.title htmlencode='true'}...</a>
     </li>
     </vt:foreach>
 </div>

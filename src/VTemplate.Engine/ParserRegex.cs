@@ -37,9 +37,14 @@ namespace VTemplate.Engine
         internal static readonly Regex VarTagRegex;
 
         /// <summary>
-        /// 变量表达的正则表达式.如变量: member.name 或带前缀的变量: #.member.name
+        /// 变量表达的正则表达式.如变量表达式: member.name 或带前缀的变量表达式: #.member.name
         /// </summary>
         internal static readonly Regex VarExpRegex;
+
+        /// <summary>
+        /// 变量标识的正则表达式.如变量:member 或带前缀 #.member
+        /// </summary>
+        internal static readonly Regex VarIdRegex;
         /// <summary>
         /// 
         /// </summary>
@@ -54,6 +59,8 @@ namespace VTemplate.Engine
             VarTagRegex = new Regex(@"\G{\$\:\s*" + varExp + @"(\s+(?<attrname>[\-\w]+)(\s*=\s*""(?<attrval>[^""]*)""|\s*=\s*'(?<attrval>[^']*)'|\s*=\s*(?<attrval>[^\s=}]*)|(?<attrval>\s*?)))*\s*}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             VarExpRegex = new Regex(@"^\s*" + varExp + @"\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+            VarIdRegex = new Regex(@"^\s*(?:#(?<prefix>#|[\-\w]*)\.)?(?<name>(?!\d)\w+)\s*$", RegexOptions.Compiled);
         }
     }
 }

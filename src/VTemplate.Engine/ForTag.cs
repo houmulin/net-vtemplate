@@ -60,7 +60,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 索引变量
         /// </summary>
-        public Variable Index { get; protected set; }
+        public VariableIdentity Index { get; protected set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -83,7 +83,7 @@ namespace VTemplate.Engine
                     this.Step = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
                     break;
                 case "index":
-                    this.Index = Utility.GetVariableOrAddNew(this.OwnerTemplate, item.Value);
+                    this.Index = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
                     break;
             }
         }
@@ -110,7 +110,7 @@ namespace VTemplate.Engine
                     li.Value = index;
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
-                    if (this.Index != null) this.Index.ClearCache();
+                    if (this.Index != null) this.Index.Variable.ClearCache();
                     base.Render(writer);
                     index += step;
                 }
@@ -122,7 +122,7 @@ namespace VTemplate.Engine
                     li.Value = index;
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
-                    if (this.Index != null) this.Index.ClearCache();
+                    if (this.Index != null) this.Index.Variable.ClearCache();
                     base.Render(writer);
                     index += step;
                 }
@@ -163,7 +163,7 @@ namespace VTemplate.Engine
             tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
             tag.To = this.To == null ? null : this.To.Clone(ownerTemplate);
             tag.Step = this.Step == null ? null : this.Step.Clone(ownerTemplate);
-            tag.Index = this.Index == null ? null : Utility.GetVariableOrAddNew(ownerTemplate, this.Index.Name);
+            tag.Index = this.Index == null ? null : this.Index.Clone(ownerTemplate);
             return tag;
         }
         #endregion

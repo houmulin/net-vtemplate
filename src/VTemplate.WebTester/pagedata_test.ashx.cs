@@ -69,8 +69,9 @@ namespace VTemplate.WebTester
         /// </summary>
         /// <param name="pageNo"></param>
         /// <returns></returns>
-        public string GetPageNavigation(object pageNo)
+        public string GetPageNavigation(object[] data)
         {
+            object pageNo = data[0];
             if (pageNo is LoopIndex)
             {
                 return "?page=" + ((LoopIndex)pageNo).Value.ToString();
@@ -106,7 +107,7 @@ namespace VTemplate.WebTester
         {
             //注册一个变量函数.是给样式一中的{$:#.i call='GetPageNavigation'} 调用
             //样式二是通过<vt:function>标签调用GetPageNavigation函数.这两种方法你可以根据需要灵活使用.VT就是这么灵活:)
-            this.Document.VariableFunctions.Add(this.GetPageNavigation);
+            this.Document.UserDefinedFunctions.Add(this.GetPageNavigation);
 
 
             this.Document.Variables.SetValue("this", this);

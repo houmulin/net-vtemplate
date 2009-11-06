@@ -32,7 +32,7 @@ namespace VTemplate.Engine
             this.Variables = new VariableCollection();
             this.ChildTemplates = new ElementCollection<Template>();
             this.fileDependencies = new List<string>();
-            this.VariableFunctions = new VariableFunctionCollection();
+            this.UserDefinedFunctions = new UserDefinedFunctionCollection();
             this.TagContainer = this;
         }
 
@@ -76,9 +76,9 @@ namespace VTemplate.Engine
         public VariableCollection Variables { get; private set; }
 
         /// <summary>
-        /// 变量函数集合
+        /// 自定义函数集合
         /// </summary>
-        public VariableFunctionCollection VariableFunctions { get; private set; }
+        public UserDefinedFunctionCollection UserDefinedFunctions { get; private set; }
 
         /// <summary>
         /// 返回此模版下的子模版元素
@@ -158,26 +158,26 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 注册全局的变量函数
+        #region 注册全局的自定义函数
         /// <summary>
-        /// 注册全局的变量函数
+        /// 注册全局的自定义函数
         /// </summary>
         /// <param name="function">函数</param>
-        public void RegisterGlobalFunction(VariableFunction function)
+        public void RegisterGlobalFunction(UserDefinedFunction function)
         {
             this.RegisterGlobalFunction(function.Method.Name, function);
         }
         /// <summary>
-        /// 注册全局的变量函数
+        /// 注册全局的自定义函数
         /// </summary>
         /// <param name="functionName">函数名称</param>
         /// <param name="function">函数</param>
-        public void RegisterGlobalFunction(string functionName, VariableFunction function)
+        public void RegisterGlobalFunction(string functionName, UserDefinedFunction function)
         {
             if (string.IsNullOrEmpty(functionName)) throw new ArgumentNullException("functionName");
             if (function == null) throw new ArgumentNullException("function");
 
-            TagContainer.VariableFunctions.Add(functionName, function);
+            TagContainer.UserDefinedFunctions.Add(functionName, function);
             foreach (Template child in TagContainer.ChildTemplates)
             {
                 child.RegisterGlobalFunction(functionName, function);
@@ -332,7 +332,7 @@ namespace VTemplate.Engine
             //加入到宿主模版的子模版列表
             ownerTemplate.ChildTemplates.Add(tag);
 
-            //优先克隆变量
+            //优先拷贝变量
             foreach (Variable var in this.Variables)
             {
                 tag.Variables.Add(var.Clone(tag));

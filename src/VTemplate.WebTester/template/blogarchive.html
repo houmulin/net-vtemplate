@@ -27,7 +27,7 @@
   <hr class="blogsplit"/>  {$:blogarchive.content}  <div style="margin-bottom: 20px" align="right">posted @ {$:blogarchive.time format="yyyy-MM-dd HH:mm"} {$:blogarchive.author htmlencode="true"} 阅读(1) 评论(2)</div>
 
 <strong>评论列表</strong>
-<vt:foreach from="blogarchive.comments" item="comment" index="floor">
+<vt:foreach from="blogarchive.comments" item="#.comment" index="#.floor">
 <hr class="blogsplit"/>
 <vt:if var="#.floor.iseven" value="true">
 <div class="blogcomment evenfloor">#{$:#.floor}楼 {$:#.comment.time format="yyyy-MM-dd HH:mm"} | {$:#.comment.author htmlencode="true"} </div> <div style="padding-left: 20px">{$:#.comment.content htmlencode="true"}</div>

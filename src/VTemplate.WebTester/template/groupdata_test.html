@@ -32,16 +32,16 @@
 <body>
 <h1>采用 groupsize 特性输出一行多列的数据</h1>
 <!--vt[groupsize="2" 的作用是将 datalist 集合的数据,按一行2列进行拆分分组]-->
-<vt:foreach from="datalist" item="data" index="i" groupsize="2">
+<vt:foreach from="datalist" item="#.data" index="#.i" groupsize="2">
 <div class="group">
-   <vt:foreach from="#.data" item="item" index="j">
+   <vt:foreach from="#.data" item="#.item" index="#.j">
    <vt:if var="#.j.iseven" value="false">   
    <div class="left">
        <h2>{$:#.item.title}</h2>
        <!--vt[通过调用GetItemData方法, 获取当前行的数据列表]-->
        <vt:function var="itemdata" method="GetItemData" type="$this" args="$#.item" />
        <ul>
-            <vt:foreach from="#.itemdata" item="row">
+            <vt:foreach from="#.itemdata" item="#.row">
             <li>{$:#.row}</li>
 			</vt:foreach>
        </ul>
@@ -52,7 +52,7 @@
        <!--vt[通过调用GetItemData方法, 获取当前行的数据列表]-->
        <vt:function var="itemdata" method="GetItemData" type="$this" args="$#.item" />
        <ul>
-            <vt:foreach from="#.itemdata" item="row">
+            <vt:foreach from="#.itemdata" item="#.row">
             <li>{$:#.row}</li>
 			</vt:foreach>
        </ul>
@@ -68,7 +68,7 @@
 <br /><br />
 
 <h1>直接在模版里判断行奇偶性输出一行多列的数据</h1>
-<vt:foreach from="datalist" item="item" index="i">
+<vt:foreach from="datalist" item="#.item" index="#.i">
 <vt:if var="#.i.iseven" value="false" remark="因为只有奇数行才显示新的行,如1,3行的数据">
 <div class="group">
 </vt:if>
@@ -78,7 +78,7 @@
        <!--vt[通过调用GetItemData方法, 获取当前行的数据列表]-->
        <vt:function var="itemdata" method="GetItemData" type="$this" args="$#.item" />
        <ul>
-            <vt:foreach from="#.itemdata" item="row">
+            <vt:foreach from="#.itemdata" item="#.row">
             <li>{$:#.row}</li>
 			</vt:foreach>
        </ul>
@@ -89,7 +89,7 @@
        <!--vt[通过调用GetItemData方法, 获取当前行的数据列表]-->
        <vt:function var="itemdata" method="GetItemData" type="$this" args="$#.item" />
        <ul>
-            <vt:foreach from="#.itemdata" item="row">
+            <vt:foreach from="#.itemdata" item="#.row">
             <li>{$:#.row}</li>
 			</vt:foreach>
        </ul>
