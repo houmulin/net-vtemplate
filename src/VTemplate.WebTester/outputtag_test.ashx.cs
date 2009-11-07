@@ -11,9 +11,9 @@ using System.Collections.Generic;
 namespace VTemplate.WebTester
 {
     /// <summary>
-    /// 测试Render标签
+    /// 测试Output标签
     /// </summary>
-    public class rendertag_test : PageBase
+    public class outputtag_test : PageBase
     {
         /// <summary>
         /// 栏目

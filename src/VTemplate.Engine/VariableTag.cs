@@ -161,7 +161,7 @@ namespace VTemplate.Engine
                     break;
                 case "charset":
                     //进行URL编码时使用的文本编码
-                    this.Charset = Utility.GetEncodingFromCharset(e.Item.Value);
+                    this.Charset = Utility.GetEncodingFromCharset(e.Item.Value, this.OwnerTemplate.Charset);
                     break;
                 case "appendtext":
                     //附加文本

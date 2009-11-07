@@ -15,17 +15,19 @@ using System.Diagnostics;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 用于呈现某个标签的数据.如: &lt;vt:render tagid="list" /&gt;
+    /// 数据输出标签,可输出某个标签的数据,或直接输出文件数据.如: &lt;vt:output tagid="list" /&gt; 或 &lt;vt:output file="output.html" charset="utf-8" /&gt;
     /// </summary>
-    public class RenderTag : Tag
+    public class OutputTag : Tag
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ownerTemplate"></param>
-        internal RenderTag(Template ownerTemplate)
+        internal OutputTag(Template ownerTemplate)
             : base(ownerTemplate)
-        { }
+        {
+            this.Charset = ownerTemplate.Charset;
+        }
 
         #region 重写Tag的方法
         /// <summary>
@@ -33,7 +35,7 @@ namespace VTemplate.Engine
         /// </summary>
         public override string TagName
         {
-            get { return "render"; }
+            get { return "output"; }
         }
         /// <summary>
         /// 返回此标签是否是单一标签.即是不需要配对的结束标签
@@ -48,25 +50,35 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
-        protected Tag renderTarget;
+        protected Tag outputTarget;
         /// <summary>
-        /// 呈现的目标
+        /// 需要输出数据的标签id
         /// </summary>
-        protected Tag RenderTarget
+        protected Tag OutputTarget
         {
             get
             {
-                if (this.renderTarget == null)
+                if (this.outputTarget == null
+                    && !string.IsNullOrEmpty(this.TagId))
                 {
-                    this.renderTarget = this.OwnerDocument.GetChildTagById(this.TagId);
+                    this.outputTarget = this.OwnerDocument.GetChildTagById(this.TagId);
                 }
-                return this.renderTarget;
+                return this.outputTarget;
             }
         }
         /// <summary>
-        /// 需要呈现数据的标签的Id
+        /// 需要输出数据的标签的Id
         /// </summary>
         public string TagId { get; set; }
+
+        /// <summary>
+        /// 需要输出数据的文件
+        /// </summary>
+        public string File { get; private set; }
+        /// <summary>
+        /// 文件编码
+        /// </summary>
+        public Encoding Charset { get; private set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -81,6 +93,12 @@ namespace VTemplate.Engine
             {
                 case "tagid":
                     this.TagId = item.Value;
+                    break;
+                case "file":
+                    this.File = Utility.ResolveFilePath(this.OwnerTemplate, item.Value);
+                    break;
+                case "charset":
+                    this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
                     break;
             }
         }
@@ -97,8 +115,24 @@ namespace VTemplate.Engine
             this.OnBeforeRender(args);
             if (!args.Cancel)
             {
-                if (this.RenderTarget != null)
-                    this.RenderTarget.Render(writer);
+                if (this.OutputTarget != null)
+                    this.OutputTarget.Render(writer);
+
+                if (!string.IsNullOrEmpty(this.File))
+                {
+                    try
+                    {
+                        if (System.IO.File.Exists(this.File))
+                        {
+                            writer.Write(System.IO.File.ReadAllText(this.File, this.Charset));
+                        }
+                    }
+                    catch { }
+                }
+                foreach (Element item in this.InnerElements)
+                {
+                    item.Render(writer);
+                }
             }
             this.OnAfterRender(EventArgs.Empty); 
         }
@@ -117,7 +151,7 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (string.IsNullOrEmpty(this.TagId)) throw new ParserException(string.Format("{0}标签中缺少tagid属性", this.TagName));
+            if (string.IsNullOrEmpty(this.TagId) && string.IsNullOrEmpty(this.File)) throw new ParserException(string.Format("{0}标签中必须定义tagid或file属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -131,9 +165,11 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            RenderTag tag = new RenderTag(ownerTemplate);
+            OutputTag tag = new OutputTag(ownerTemplate);
             this.CopyTo(tag);
             tag.TagId = this.TagId;
+            tag.File = this.File;
+            tag.Charset = this.Charset;
             return tag;
         }
         #endregion

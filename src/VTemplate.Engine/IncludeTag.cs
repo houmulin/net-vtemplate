@@ -70,7 +70,7 @@ namespace VTemplate.Engine
                     this.OwnerTemplate.AddFileDependency(this.File);
                     break;
                 case "charset":
-                    this.Charset = Utility.GetEncodingFromCharset(item.Value);
+                    this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
                     break;
             }
         }

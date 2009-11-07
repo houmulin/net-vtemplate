@@ -277,17 +277,18 @@ namespace VTemplate.Engine
         /// 从字符集名称获取编码器
         /// </summary>
         /// <param name="charset"></param>
+        /// <param name="defaultCharset"></param>
         /// <returns></returns>
-        internal static Encoding GetEncodingFromCharset(string charset)
+        internal static Encoding GetEncodingFromCharset(string charset, Encoding defaultCharset)
         {
-            Encoding e = Encoding.Default;
+            Encoding e = defaultCharset;
             try
             {
                 e = Encoding.GetEncoding(charset);
             }
             catch
             {
-                e = Encoding.Default;
+                e = defaultCharset;
             }
             return e;
         }

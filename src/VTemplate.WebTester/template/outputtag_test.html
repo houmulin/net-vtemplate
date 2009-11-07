@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<title> 测试Render标签 </title>
+<title> 测试Output标签 </title>
 </head>
 <body>
-用&lt;vt:render&gt;标签来实现多级栏目的显示
+用&lt;vt:output&gt;标签来实现多级栏目的显示
 <hr />
 <vt:template id="categoriesbox">
 <vt:set var="#.deep" value="0" />
@@ -16,7 +16,7 @@
 <vt:if var="#.child.count" value="0" compare=">"> 
 <vt:set var="#.categories" value="$#.child" />
 <vt:expression var="#.deep" expression="{0}+1" args="#.deep" />
-<vt:render tagid="looplist" />
+<vt:output tagid="looplist" />
 <vt:expression var="#.deep" expression="{0}-1" args="#.deep" />
 </vt:if>
 </vt:foreach>
@@ -26,6 +26,10 @@
 <hr />
 <!--vt[重设置id="categoriesbox"的模版块里的变量categories为根模版块里的categories变量值]-->
 <vt:set var="#categoriesbox.categories" value="$categories" />
-<vt:render tagid="categoriesbox" />
+<vt:output tagid="categoriesbox" />
+<hr />
+用&lt;vt:output&gt;标签输出某个文件的内容
+<hr />
+<textarea style="width:100%;height:200px;"><vt:output file="outputtag_test.html" /></textarea>
 </body>
 </html>
