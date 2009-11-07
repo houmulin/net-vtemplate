@@ -177,7 +177,7 @@ namespace VTemplate.Engine
         /// 从文本(如#.name或name)中构建变量标识对象
         /// </summary>
         /// <param name="ownerTemplate"></param>
-        /// <param name="varText"></param>
+        /// <param name="text"></param>
         /// <returns></returns>
         internal static VariableIdentity CreateVariableId(Template ownerTemplate, string text)
         {

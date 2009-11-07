@@ -22,7 +22,7 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <param name="variable"></param>
-        /// <param name="varPrefix"></param>
+        /// <param name="prefix"></param>
         public VariableIdentity(Template ownerTemplate, Variable variable, string prefix)
         {
             this.OwnerTemplate = ownerTemplate;
