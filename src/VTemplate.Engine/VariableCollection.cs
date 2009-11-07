@@ -136,33 +136,29 @@ namespace VTemplate.Engine
 
         #region 设置某个变量的值
         /// <summary>
-        /// 如果变量存在则设置变量的值
+        /// 设置某个变量或变量表达式的值
         /// </summary>
-        /// <param name="name">变量名称</param>
+        /// <param name="varExp">变量名(如:"user")或变量表达式(如"user.age"则表示设置user变量的age属性/字段值)</param>
         /// <param name="value">变量值</param>
-        public void SetValue(string name, object value)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("varExp");
-            Variable var = this[name];
-            if (var != null) var.Value = value;
-        }
-        /// <summary>
-        /// 如果变量存在则设置变量某种表达式的值.
-        /// </summary>
-        /// <param name="varExp">变量表达式.如"user.age"则表示设置user变量的age属性/字段值</param>
-        /// <param name="value">变量表达的值</param>
-        public void SetExpValue(string varExp, object value)
+        /// <remarks>
+        /// 不管变量表达式中的定义的"属性"或"字段"是否存在于变量实例.都可以设置值.
+        /// </remarks>
+        public void SetValue(string varExp, object value)
         {
             if (string.IsNullOrEmpty(varExp)) throw new ArgumentNullException("varExp");
             string[] exps = varExp.Split(".".ToCharArray(), 2);
-            if (exps.Length == 1)
+
+            Variable var = this[exps[0]];
+            if (var != null)
             {
-                this.SetValue(exps[0], value);
-            }
-            else if(exps.Length == 2)
-            {
-                Variable var = this[exps[0]];
-                if (var != null) var.SetExpValue(exps[1], value);
+                if (exps.Length == 1)
+                {
+                    var.Value = value;
+                }
+                else if (exps.Length == 2)
+                {
+                    var.SetExpValue(exps[1], value);
+                }
             }
         }
         #endregion

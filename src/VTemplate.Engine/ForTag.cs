@@ -110,7 +110,7 @@ namespace VTemplate.Engine
                     li.Value = index;
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
-                    if (this.Index != null) this.Index.Variable.ClearCache();
+                    if (this.Index != null) this.Index.Variable.Reset();
                     base.Render(writer);
                     index += step;
                 }
@@ -122,7 +122,7 @@ namespace VTemplate.Engine
                     li.Value = index;
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
-                    if (this.Index != null) this.Index.Variable.ClearCache();
+                    if (this.Index != null) this.Index.Variable.Reset();
                     base.Render(writer);
                     index += step;
                 }

@@ -232,29 +232,16 @@ namespace VTemplate.Engine
 
         #region 设置变量的值
         /// <summary>
-        /// 设置变量的值,此操作是对所有模版(包括子模版)下的同名称变量有效
+        /// 设置当前模版块和其下所有子模版块下某个同名称的变量或变量表达式的值
         /// </summary>
-        /// <param name="varName"></param>
-        /// <param name="varValue"></param>
-        public void SetValue(string varName, object varValue)
+        /// <param name="varExp"></param>
+        /// <param name="value"></param>
+        public void SetValue(string varExp, object value)
         {
-            TagContainer.Variables.SetValue(varName, varValue);
+            TagContainer.Variables.SetValue(varExp, value);
             foreach (Template child in TagContainer.ChildTemplates)
             {
-                child.SetValue(varName, varValue);
-            }
-        }
-        /// <summary>
-        /// 设置变量表达式的值,此操作是对所有模版(包括子模版)下的同名称变量有效
-        /// </summary>
-        /// <param name="exp">变量表达式.如"user.age"则表示设置user变量的age属性/字段值</param>
-        /// <param name="value">表达式的值</param>
-        public void SetExpValue(string exp, object value)
-        {
-            TagContainer.Variables.SetExpValue(exp, value);
-            foreach (Template child in TagContainer.ChildTemplates)
-            {
-                child.SetExpValue(exp, value);
+                child.SetValue(varExp, value);
             }
         }
         #endregion

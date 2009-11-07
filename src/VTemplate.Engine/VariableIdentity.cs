@@ -73,11 +73,11 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 清空缓存数据
+        /// 重设(清空)当前变量中已缓存的表达式值
         /// </summary>
-        public void ClearCache()
+        public void Reset()
         {
-            this.Variable.ClearCache();
+            this.Variable.Reset();
         }
         #endregion
 

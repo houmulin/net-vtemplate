@@ -54,7 +54,7 @@ namespace VTemplate.Engine
             {
                 _Value = value;
                 //清空缓存数据
-                this.ClearCache();
+                this.Reset();
             }
         }
 
@@ -118,9 +118,9 @@ namespace VTemplate.Engine
             this.AddExpValue("." + exp, value);
         }
         /// <summary>
-        /// 清空缓存数据
+        /// 重设(清空)当前变量中已缓存的表达式值
         /// </summary>
-        public void ClearCache()
+        public void Reset()
         {
             this.cacheExpItems.Clear();
         }

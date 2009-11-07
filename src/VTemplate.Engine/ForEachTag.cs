@@ -190,7 +190,7 @@ namespace VTemplate.Engine
                         li.Value = ++index;
                         li.IsFirst = (index == 1);
                         li.IsLast = !list.MoveNext();
-                        if (this.Index != null) this.Index.ClearCache();
+                        if (this.Index != null) this.Index.Reset();
                         if (this.Item != null) this.Item.Value = v;
                         base.Render(writer);
                     }
