@@ -179,7 +179,7 @@ namespace VTemplate.Engine
         /// <param name="ownerTemplate"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        internal static VariableIdentity CreateVariableId(Template ownerTemplate, string text)
+        internal static VariableIdentity CreateVariableIdentity(Template ownerTemplate, string text)
         {
             if (string.IsNullOrEmpty(text)) return null;
 

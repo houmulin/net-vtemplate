@@ -87,7 +87,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "connection":
                     this.Connection = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);

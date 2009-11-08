@@ -79,7 +79,7 @@ namespace VTemplate.Engine
                     this.Values.Add(ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim()));
                     break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "format":
                     this.Format = item.Value;

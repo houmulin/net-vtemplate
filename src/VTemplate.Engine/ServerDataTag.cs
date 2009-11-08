@@ -155,7 +155,7 @@ namespace VTemplate.Engine
                     this.Type = (ServerDataType)Utility.ConvertTo(item.Value, typeof(ServerDataType));
                     break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "item":
                     this.Item = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());

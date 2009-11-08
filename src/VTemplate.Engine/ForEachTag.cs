@@ -152,10 +152,10 @@ namespace VTemplate.Engine
                     this.From = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value);
                     break;
                 case "item":
-                    this.Item = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Item = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "index":
-                    this.Index = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "groupsize":
                     this.GroupSize = Utility.ConverToInt32(item.Value);

@@ -83,7 +83,7 @@ namespace VTemplate.Engine
                     this.Step = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
                     break;
                 case "index":
-                    this.Index = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
             }
         }

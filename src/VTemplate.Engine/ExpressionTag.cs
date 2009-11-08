@@ -84,7 +84,7 @@ namespace VTemplate.Engine
                     this.Expression = item.Value;
                     break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableId(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
                 case "output":
                     this.Output = Utility.ConverToBoolean(item.Value);
