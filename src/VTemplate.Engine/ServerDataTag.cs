@@ -265,7 +265,6 @@ namespace VTemplate.Engine
                     return typeof(System.Environment);
                 case ServerDataType.AppSetting:
                     return ConfigurationManager.AppSettings[this.Item.ToString()];
-                    break;
                 default:
                     return null;
             }
