@@ -54,6 +54,8 @@ namespace VTemplate.Engine
                         return new ServerDataTag(ownerTemplate);
                     case "set":
                         return new SetTag(ownerTemplate);
+                    case "import":
+                        return new ImportTag(ownerTemplate);
                     case "output":
                         return new OutputTag(ownerTemplate);
                     case "datareader":

@@ -28,6 +28,8 @@ namespace VTemplate.Engine
             : base(ownerTemplate)
         {
             this.Parameters = new ElementCollection<VariableExpression>();
+            this.CommandType = CommandType.Text;
+            this.ParameterFormat = "@p{0}";
         }
 
         #region 重写Tag的方法
@@ -61,6 +63,16 @@ namespace VTemplate.Engine
         public IExpression CommandText { get; protected set; }
 
         /// <summary>
+        /// 数据查询命令语句类型
+        /// </summary>
+        public CommandType CommandType { get; protected set; }
+
+        /// <summary>
+        /// 数据查询参数的格式.默认为"@p{0}",其中"{0}"是占位符,表示各参数的索引数字.
+        /// </summary>
+        public string ParameterFormat { get; protected set; }
+
+        /// <summary>
         /// 要获取的行号.从0开始计算
         /// </summary>
         public IExpression RowIndex { get; protected set; }
@@ -71,7 +83,7 @@ namespace VTemplate.Engine
         public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
-        /// 查询命令中使用的变量参数列表,各参数在查询命令语句中用"@p0","@p1"之类的代替
+        /// 查询命令中使用的变量参数列表,各参数在查询命令语句中则用参数名代替.如"@p0","@p1"之类的参数名
         /// </summary>
         public virtual ElementCollection<VariableExpression> Parameters { get; protected set; }
         #endregion
@@ -95,11 +107,17 @@ namespace VTemplate.Engine
                 case "commandtext":
                     this.CommandText = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
                     break;
+                case "commandtype":
+                    this.CommandType = (CommandType)Utility.ConvertTo(item.Value, typeof(CommandType));
+                    break;
                 case "rowindex":
                     this.RowIndex = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
                     break;
                 case "parameters":
                     this.Parameters.Add(ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value));
+                    break;
+                case "parameterformat":
+                    this.ParameterFormat = item.Value.Trim();
                     break;
             }
         }
@@ -140,6 +158,8 @@ namespace VTemplate.Engine
             tag.CommandText = this.CommandText == null ? null : this.CommandText.Clone(ownerTemplate);
             tag.RowIndex = this.RowIndex == null ? null : this.RowIndex.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
+            tag.CommandType = this.CommandType;
+            tag.ParameterFormat = this.ParameterFormat;
             foreach (VariableExpression exp in this.Parameters)
             {
                 tag.Parameters.Add((VariableExpression)(exp.Clone(ownerTemplate)));
@@ -179,6 +199,7 @@ namespace VTemplate.Engine
                 dbConnection.ConnectionString = setting.ConnectionString;
                 using (DbCommand dbCommand = dbConnection.CreateCommand())
                 {
+                    dbCommand.CommandType = this.CommandType;
                     dbCommand.CommandText = this.CommandText.GetValue().ToString();
 
                     if (this.Parameters.Count > 0)
@@ -189,7 +210,7 @@ namespace VTemplate.Engine
                             VariableExpression exp = this.Parameters[i];
                             DbParameter dbParameter = dbFactory.CreateParameter();
                             object value = exp.GetValue();
-                            dbParameter.ParameterName = "@p" + i.ToString();
+                            dbParameter.ParameterName = string.IsNullOrEmpty(this.ParameterFormat) ? "?" : string.Format(this.ParameterFormat, i);
                             dbParameter.DbType = Utility.GetObjectDbType(value);
                             dbParameter.Value = value;
                             dbCommand.Parameters.Add(dbParameter);

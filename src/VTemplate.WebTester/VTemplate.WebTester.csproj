@@ -110,6 +110,9 @@
     <Compile Include="outputtag_test.ashx.cs">
       <DependentUpon>outputtag_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="importtag_test.ashx.cs">
+      <DependentUpon>importtag_test.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VTemplate.Engine\VTemplate.Engine.csproj">
@@ -201,6 +204,10 @@
   <ItemGroup>
     <Content Include="outputtag_test.ashx" />
     <Content Include="template\outputtag_test.html" />
+    <Content Include="template\importtag_test.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="importtag_test.ashx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />

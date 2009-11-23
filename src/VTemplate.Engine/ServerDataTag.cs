@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using System.Collections.Specialized;
+using System.Configuration;
 
 namespace VTemplate.Engine
 {
@@ -71,7 +72,11 @@ namespace VTemplate.Engine
         /// <summary>
         /// 服务器系统平台
         /// </summary>
-        Environment
+        Environment,
+        /// <summary>
+        /// 获取当前应用程序的AppSettings配置节点参数
+        /// </summary>
+        AppSetting
     }
     /// <summary>
     /// 服务器数据标签,.如: &lt;vt:serverdata var="request" type="request" /&gt;
@@ -258,6 +263,9 @@ namespace VTemplate.Engine
                     return GetRequestItem();
                 case ServerDataType.Environment:
                     return typeof(System.Environment);
+                case ServerDataType.AppSetting:
+                    return ConfigurationManager.AppSettings[this.Item.ToString()];
+                    break;
                 default:
                     return null;
             }

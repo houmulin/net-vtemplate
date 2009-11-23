@@ -693,33 +693,66 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static Type CreateType(string typeName)
         {
+            return CreateType(typeName, null);
+        }
+        /// <summary>
+        /// 建立某个类型
+        /// </summary>
+        /// <param name="typeName">类型名称</param>
+        /// <param name="assembly">程序集.如果为空.则表示当前程序域里的所有程序集</param>
+        /// <returns></returns>
+        internal static Type CreateType(string typeName, string assembly)
+        {
             if (string.IsNullOrEmpty(typeName)) return null;
 
-            Type type;
+            Type type = null;
             bool flag = false;
+            string cacheKey = string.Concat(typeName, ",", assembly);
+
             lock (TypeCache)
             {
-                flag = TypeCache.TryGetValue(typeName, out type);
+                flag = TypeCache.TryGetValue(cacheKey, out type);
             }
             if (!flag)
             {
-                type = Type.GetType(typeName, false, true);
-                if (type == null)
+                if (string.IsNullOrEmpty(assembly))
                 {
-                    //搜索当前程序域里的所有程序集
-                    Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (Assembly assembly in assemblies)
+                    //从当前程序域里建立类型
+                    type = Type.GetType(typeName, false, true);
+                    if (type == null)
                     {
-                        type = assembly.GetType(typeName, false, true);
-                        if (type != null) break;
+                        //搜索当前程序域里的所有程序集
+                        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                        foreach (Assembly asm in assemblies)
+                        {
+                            type = asm.GetType(typeName, false, true);
+                            if (type != null) break;
+                        }
+                    }
+                }
+                else
+                {
+                    //从某个程序集里建立类型
+                    Assembly asm;
+                    if (assembly.IndexOf(":") != -1)
+                    {
+                        asm = Assembly.LoadFrom(assembly);
+                    }
+                    else
+                    {
+                        asm = Assembly.Load(assembly);
+                    }
+                    if (asm != null)
+                    {
+                        type = asm.GetType(typeName, false, true);
                     }
                 }
                 //缓存
                 lock (TypeCache)
                 {
-                    if (!TypeCache.ContainsKey(typeName))
+                    if (!TypeCache.ContainsKey(cacheKey))
                     {
-                        TypeCache.Add(typeName, type);
+                        TypeCache.Add(cacheKey, type);
                     }
                 }
             }

@@ -1,7 +1,8 @@
 ﻿/* ***********************************************
  * Author		:  kingthy
  * Email		:  kingthy@gmail.com
- * Description	:  SetTag
+ * DateTime		:  2009-11-23 16:46:13
+ * Description	:  ImportTag
  *
  * ***********************************************/
 using System;
@@ -12,19 +13,17 @@ using System.Text.RegularExpressions;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 变量赋值标签, 如:&lt;vt:set var="page" value="1" /&gt;
+    /// 类型导入标签, 如:&lt;vt:import var="math" type="System.Math" /&gt;
     /// </summary>
-    public class SetTag : Tag
+    public class ImportTag : Tag
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ownerTemplate"></param>
-        internal SetTag(Template ownerTemplate)
+        internal ImportTag(Template ownerTemplate)
             : base(ownerTemplate)
-        {
-            this.Values = new ElementCollection<IExpression>();
-        }
+        {}
 
         #region 重写Tag的方法
         /// <summary>
@@ -32,7 +31,7 @@ namespace VTemplate.Engine
         /// </summary>
         public override string TagName
         {
-            get { return "set"; }
+            get { return "import"; }
         }
         /// <summary>
         /// 返回此标签是否是单一标签.即是不需要配对的结束标签
@@ -45,24 +44,19 @@ namespace VTemplate.Engine
 
         #region 属性定义
         /// <summary>
-        /// 变量的值
-        /// </summary>
-        public ElementCollection<IExpression> Values { get; protected set; }
-
-        /// <summary>
         /// 要对其赋值的变量
         /// </summary>
         public VariableIdentity Variable { get; protected set; }
 
         /// <summary>
-        /// 格式化
+        /// 要导入的类型名称
         /// </summary>
-        public string Format { get; protected set; }
+        public string Type { get; protected set; }
 
         /// <summary>
-        /// 是否输出此标签的结果值
+        /// 类型所在的程序集
         /// </summary>
-        public bool Output { get; protected set; }
+        public string Assembly { get; protected set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -75,17 +69,14 @@ namespace VTemplate.Engine
         {
             switch (name)
             {
-                case "value":
-                    this.Values.Add(ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim()));
-                    break;
                 case "var":
                     this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
                     break;
-                case "format":
-                    this.Format = item.Value;
+                case "type":
+                    this.Type = item.Value;
                     break;
-                case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                case "assembly":
+                    this.Assembly = item.Value;
                     break;
             }
         }
@@ -98,23 +89,9 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         public override void Render(System.IO.TextWriter writer)
         {
-            object value = null;
-            if (string.IsNullOrEmpty(this.Format))
-            {
-                value = this.Values[0].GetValue();
-            }
-            else
-            {
-                List<object> param = new List<object>();
-                foreach (IExpression ie in this.Values)
-                {
-                    param.Add(ie.GetValue());
-                }
-                value = string.Format(this.Format, param.ToArray());
-            }
-            if (this.Variable != null) this.Variable.Value = value;
+            Type type = Utility.CreateType(this.Type, this.Assembly);
+            if (this.Variable != null) this.Variable.Value = type;
 
-            if (this.Output && value != null) writer.Write(value);
             base.Render(writer);
         }
         #endregion
@@ -132,9 +109,8 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
-            if (this.Values.Count < 1) throw new ParserException(string.Format("{0}标签中缺少value属性", this.TagName));
-            if (this.Values.Count > 1 && string.IsNullOrEmpty(this.Format)) throw new ParserException(string.Format("{0}标签如果已定义多个value属性,则也必须定义format属性", this.TagName));
+            if (this.Variable == null) throw new ParserException(string.Format("{0}标签中缺少var属性", this.TagName));
+            if (string.IsNullOrEmpty(this.Type)) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -148,15 +124,11 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
-            SetTag tag = new SetTag(ownerTemplate);
+            ImportTag tag = new ImportTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Format = this.Format;
+            tag.Type = this.Type;
+            tag.Assembly = this.Assembly;
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
-            tag.Output = this.Output;
-            foreach (IExpression exp in this.Values)
-            {
-                tag.Values.Add((IExpression)(exp.Clone(ownerTemplate)));
-            }
             return tag;
         }
         #endregion
