@@ -142,8 +142,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "file":
-                    this.File = Utility.ResolveFilePath(this.OwnerTemplate, item.Value);
-                    this.AddFileDependency(this.File);                    
+                    this.File = item.Value;                
                     break;
                 case "charset":
                     this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
@@ -291,12 +290,22 @@ namespace VTemplate.Engine
             ownerTemplate.ChildTemplates.Add(this);
             //加入到标签容器的元素列表中
             container.AppendChild(this);
-            
-            if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
+
+            if (!string.IsNullOrEmpty(this.File))
             {
-                //读取文件数据进行解析
-                new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
+                //修正文件地址
+                this.File = Utility.ResolveFilePath(this.Parent, this.File);
+
+                if (System.IO.File.Exists(this.File))
+                {
+                    //增加到依赖文件列表
+                    this.OwnerTemplate.AddFileDependency(this.File);
+
+                    //读取文件数据进行解析
+                    new TemplateDocument(this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
+                }
             }
+
             //非闭合标签则查找结束标签
             if (!isClosedTag)
             {

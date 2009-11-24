@@ -592,18 +592,25 @@ namespace VTemplate.Engine
         /// <summary>
         /// 修正文件地址
         /// </summary>
-        /// <param name="template"></param>
+        /// <param name="tag"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        internal static string ResolveFilePath(Template template, string fileName)
+        internal static string ResolveFilePath(Tag tag, string fileName)
         {
             if (!string.IsNullOrEmpty(fileName) && fileName.IndexOf(":") == -1 && !fileName.StartsWith("\\\\"))
             {
                 string referPath = string.Empty;
-                while (string.IsNullOrEmpty(referPath) && template != null)
+                while (string.IsNullOrEmpty(referPath) && tag != null)
                 {
-                    referPath = template.File;
-                    template = template.OwnerTemplate;
+                    if (tag is Template)
+                    {
+                        referPath = ((Template)tag).File;
+                    }
+                    else if (tag is IncludeTag)
+                    {
+                        referPath = ((IncludeTag)tag).File;
+                    }
+                    tag = tag.Parent;
                 }
                 if (!string.IsNullOrEmpty(referPath))
                 {

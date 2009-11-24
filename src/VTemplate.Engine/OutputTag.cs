@@ -95,7 +95,7 @@ namespace VTemplate.Engine
                     this.TagId = item.Value;
                     break;
                 case "file":
-                    this.File = Utility.ResolveFilePath(this.OwnerTemplate, item.Value);
+                    this.File = item.Value;
                     break;
                 case "charset":
                     this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
@@ -153,7 +153,13 @@ namespace VTemplate.Engine
         {
             if (string.IsNullOrEmpty(this.TagId) && string.IsNullOrEmpty(this.File)) throw new ParserException(string.Format("{0}标签中必须定义tagid或file属性", this.TagName));
 
-            return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
+            bool flag = base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
+
+            //修正文件地址
+            if(!string.IsNullOrEmpty(this.File))
+                this.File = Utility.ResolveFilePath(this.Parent, this.File);
+
+            return flag;
         }
         #endregion
 

@@ -66,8 +66,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "file":
-                    this.File = Utility.ResolveFilePath(this.OwnerTemplate, item.Value);
-                    this.OwnerTemplate.AddFileDependency(this.File);
+                    this.File = item.Value;                    
                     break;
                 case "charset":
                     this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
@@ -90,10 +89,20 @@ namespace VTemplate.Engine
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
             container.AppendChild(this);
-            if (!string.IsNullOrEmpty(this.File) && System.IO.File.Exists(this.File))
+
+            if (!string.IsNullOrEmpty(this.File))
             {
-                //解析数据
-                new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
+                //修正文件地址
+                this.File = Utility.ResolveFilePath(this.Parent, this.File);                
+
+                if (System.IO.File.Exists(this.File))
+                {
+                    //增加到依赖文件列表
+                    this.OwnerTemplate.AddFileDependency(this.File);
+
+                    //解析数据
+                    new TemplateDocument(ownerTemplate, this, System.IO.File.ReadAllText(this.File, this.Charset), ownerTemplate.OwnerDocument.DocumentConfig);
+                }
             }
             return !isClosedTag;
         }
