@@ -395,12 +395,12 @@ namespace VTemplate.Engine
 
         #region 保存本标签的呈现数据
         /// <summary>
-        /// 将本标签的呈现数据保存到文件,采用系统默认编码
+        /// 将本标签的呈现数据保存到文件,采用宿主模版的编码
         /// </summary>
         /// <param name="fileName">文件地址</param>
         public virtual void RenderTo(string fileName)
         {
-            this.RenderTo(fileName, Encoding.Default);
+            this.RenderTo(fileName, this.OwnerDocument == null ? Encoding.Default : this.OwnerDocument.Charset);
         }
         /// <summary>
         /// 将本标签的呈现数据保存到文件
