@@ -93,7 +93,7 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(this.File))
             {
                 //修正文件地址
-                this.File = Utility.ResolveFilePath(this.Parent, this.File);                
+                this.File = Utility.ResolveFilePath(this.Parent, this.File);
 
                 if (System.IO.File.Exists(this.File))
                 {

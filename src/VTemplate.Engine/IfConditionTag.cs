@@ -211,9 +211,17 @@ namespace VTemplate.Engine
                 }
 
                 //取IComparable接口
-                IComparable comparer = testValue as IComparable;
-                //如果值未实现IComparable接口.则默认取其字符串形式的IComparable接口
-                if (comparer == null) comparer = (testValue.ToString() as IComparable);
+                IComparable comparer;
+                bool isComparer = testValue is IComparable;
+                if (isComparer)
+                {
+                    comparer = (IComparable)testValue;
+                }
+                else
+                {
+                    //如果值未实现IComparable接口.则默认取其字符串形式的IComparable接口
+                    comparer = (testValue.ToString() as IComparable);
+                }
 
                 switch (this.Compare)
                 {
@@ -262,6 +270,7 @@ namespace VTemplate.Engine
                         }
                         return false;
                     case IfConditionCompareType.UnEqual:
+                        //不等于比较
                         foreach (IExpression exp in this.Values)
                         {
                             object obj = exp.GetValue();
@@ -271,6 +280,23 @@ namespace VTemplate.Engine
                                 {
                                     //字符串比较.则不区分大小写
                                     if(!string.Equals(obj.ToString(), (string)testValue, StringComparison.InvariantCultureIgnoreCase))return true;
+                                }
+                                else if (!isComparer)
+                                {
+                                    //优先进行类型比较
+                                    if (obj is Type)
+                                    {
+                                        if(testValue.GetType() != (Type)obj)return true;
+                                    }
+                                    else if (testValue.GetType() == obj.GetType())
+                                    {
+                                        if (testValue != obj) return true;
+                                    }
+                                    else
+                                    {
+                                        object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
+                                        if (compareValue == null || comparer.CompareTo(compareValue) != 0) return true;
+                                    }
                                 }
                                 else
                                 {
@@ -295,6 +321,23 @@ namespace VTemplate.Engine
                                 {
                                     //字符串比较.则不区分大小写
                                     if (string.Equals(obj.ToString(), (string)testValue, StringComparison.InvariantCultureIgnoreCase)) return true;
+                                }
+                                else if (!isComparer)
+                                {
+                                    //优先进行类型比较
+                                    if (obj is Type)
+                                    {
+                                        if (testValue.GetType() == (Type)obj) return true;
+                                    }
+                                    else if (testValue.GetType() == obj.GetType())
+                                    {
+                                        if (testValue == obj) return true;
+                                    }
+                                    else
+                                    {
+                                        object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
+                                        if (compareValue != null && comparer.CompareTo(compareValue) == 0) return true;
+                                    }
                                 }
                                 else
                                 {
