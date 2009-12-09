@@ -54,8 +54,8 @@ Dictionary 数据<br />
 <vt:foreach from="userDict" item="user" index="i">
 <tr>
 <td>{$:i}<vt:if var="i.isfirst" value="true">首<vt:elseif var="i.islast" value="true" />尾<vt:else />中</vt:if></td>
-<td>{$:user.key htmlencode='true'}</td>
-<td>{$:user.value}</td>
+<td><!--键存储的是姓名-->{$:user.key htmlencode='true'}</td>
+<td><!--值存储的是年龄-->{$:user.value}</td>
 </tr>
 <vt:foreachelse />
 <tr>

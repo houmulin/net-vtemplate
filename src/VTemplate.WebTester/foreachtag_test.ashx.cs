@@ -41,13 +41,14 @@ namespace VTemplate.WebTester
             this.Document.Variables.SetValue("usertable", userTable);
 
 
-            //字典            
+            //字典
+            //注: 进入foreach循环后的数据是KeyValuePair<T,T>对象.所以模板里是通过Key与Value属性取得键与值.
             Dictionary<string, int> userDict = new Dictionary<string, int>();
             userDict.Add("张三", 20);
             userDict.Add("李四", 24);
             userDict.Add("王五", 30);
             this.Document.Variables.SetValue("userdict", userDict);
-
+            
 
             //数组
             object[] userArray = new object[]{
