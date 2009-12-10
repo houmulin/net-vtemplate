@@ -113,6 +113,9 @@
     <Compile Include="importtag_test.ashx.cs">
       <DependentUpon>importtag_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="masterpage_test.ashx.cs">
+      <DependentUpon>masterpage_test.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VTemplate.Engine\VTemplate.Engine.csproj">
@@ -208,6 +211,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="importtag_test.ashx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="masterpage_test.ashx" />
+    <Content Include="template\masterpage_test.html" />
+    <Content Include="template\masterpage_content.html" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
