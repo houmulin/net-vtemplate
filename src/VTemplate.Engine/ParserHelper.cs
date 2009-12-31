@@ -145,12 +145,12 @@ namespace VTemplate.Engine
                 {
                     //压缩文本
                     content = Utility.CompressText(content);
-                }
-                //不建立空行文本节点
-                if (content.Length > 0 && 
-                    !((length == 1 && (content[0] == '\r' || content[0] == '\n')) || (length == 2 && content == "\r\n")))
+                }                
+                if (content.Length > 0)
                 {
-                    container.AppendChild(new TextNode(ownerTemplate, content));
+                    //不建立空行文本节点
+                    if(content.TrimStart('\r','\n','\t').Length != 0)
+                        container.AppendChild(new TextNode(ownerTemplate, content));
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace VTemplate.Engine
     /// <summary>
     /// 实用类
     /// </summary>
-    public static class Utility
+    internal static class Utility
     {
         /// <summary>
         /// 
@@ -155,7 +155,7 @@ namespace VTemplate.Engine
         /// <param name="list"></param>
         /// <param name="groupSize"></param>
         /// <returns></returns>
-        public static IEnumerator SplitToGroup(IEnumerator list, int groupSize)
+        internal static IEnumerator SplitToGroup(IEnumerator list, int groupSize)
         {
             List<ArrayList> groupList = new List<ArrayList>();
             while (true)
