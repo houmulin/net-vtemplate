@@ -59,6 +59,9 @@
     <Compile Include="foreachtag_test.ashx.cs">
       <DependentUpon>foreachtag_test.ashx</DependentUpon>
     </Compile>
+    <Compile Include="TemplatePageBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="templatetag_test.ashx.cs">
       <DependentUpon>templatetag_test.ashx</DependentUpon>
     </Compile>
