@@ -36,7 +36,7 @@ namespace VTemplate.WebTester
             string type = "relating"; //默认的
             if (tag != null)
             {
-                //标签不为null.也就是此函数是通过此标签来调用的
+                //标签不为null.也就是此函数是通过标签调用的
                 type = tag.Attributes.GetValue("dbtype");
             }
             return NewsDbProvider.GetNewsData(type);
@@ -55,7 +55,7 @@ namespace VTemplate.WebTester
             {
                 if (document.CurrentRenderingTag != null)
                 {
-                    //正在呈现的标签不为null.也就是此函数是通过此标签来调用的
+                    //正在呈现的标签不为null.也就是此函数是通过标签调用的
                     type = document.CurrentRenderingTag.Attributes.GetValue("dbtype");
                 }
             }
