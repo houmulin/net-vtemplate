@@ -26,7 +26,7 @@
   <Class Name="VTemplate.Engine.Element" Collapsed="true">
     <Position X="12.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAQAAAAAAAAAAAABAAAAAAABA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAQAAAAAAAAAAAABAAAAACABA=</HashCode>
       <FileName>Element.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -48,7 +48,7 @@
   <Class Name="VTemplate.Engine.ExpressionTag" Collapsed="true">
     <Position X="19.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAQCAAAAAQABQEAAAACRA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAAIAAAIAAAAACAAAAAQAAQEAAAACRA=</HashCode>
       <FileName>ExpressionTag.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -62,28 +62,28 @@
   <Class Name="VTemplate.Engine.ForEachTag" Collapsed="true">
     <Position X="10.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgQAAABAAAAAAAAAAgAAAAAEAAAAAAAABBEEAAAASRQ=</HashCode>
+      <HashCode>AgQAAABAAAAAAAAIAgACAAAEAAAAAAAABAEEAAAASRQ=</HashCode>
       <FileName>ForEachTag.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.ForTag" Collapsed="true">
     <Position X="12.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgQAAAAAAAAAAAAAAAAAAAAAAAAIAAAAIBEEAAAACRA=</HashCode>
+      <HashCode>AgQAAAAAAAAAAAAIAAAAAAAAAAAIAAAAIAEEAAAACRA=</HashCode>
       <FileName>ForTag.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.IfConditionTag" Collapsed="true">
     <Position X="6.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAgAAAAAAAAAQAAAAAAQAADkAAAACRA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAAgAAAAAAAAAQAAAAAAQAADkAAAAKRA=</HashCode>
       <FileName>IfConditionTag.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.IfTag" Collapsed="true">
     <Position X="5" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAJAAAAAAAAAAgAAAAAEAAAAAAAABBAEAAAASBQ=</HashCode>
+      <HashCode>AAQAAAJAAAAAAAAIAgAAAAAEAAAAAAAABAAEAAAASBQ=</HashCode>
       <FileName>IfTag.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -119,28 +119,28 @@
   <Class Name="VTemplate.Engine.ParserHelper" Collapsed="true">
     <Position X="26.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAACAAABAAAAAAAAFABAACA=</HashCode>
+      <HashCode>AAACAAAABAAIAIQCAAQAAAICAAABAAQIAAAAFABAACA=</HashCode>
       <FileName>ParserHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.ParserRegex" Collapsed="true">
     <Position X="28.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAABAAAAAAAAAAAAkAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAQAEAAAAkAAAAAAAAAAA=</HashCode>
       <FileName>ParserRegex.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.ServerDataTag" Collapsed="true">
     <Position X="17.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAIQAIgAAgAAACAAAAQAFAAAAAAgAARQEIAAACRA=</HashCode>
+      <HashCode>AAQAAIQAIgAAgAAICAAIAQAFAAAAAAgABQQEIAAACRA=</HashCode>
       <FileName>ServerDataTag.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.Tag" Collapsed="true">
     <Position X="12.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQCAIAAAgAEAACEAgAAAQQQSAAACAAAABAEAAIASQQ=</HashCode>
+      <HashCode>AAQCAIAAAgAEAACMAgAAAQQQSAAACAAAABAEAAIAaQQ=</HashCode>
       <FileName>Tag.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -155,35 +155,40 @@
   <Class Name="VTemplate.Engine.Template" Collapsed="true">
     <Position X="21.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACUAAAAAEAIAAgCAAAAAAAAACACEAAAIABQEAMAACRA=</HashCode>
+      <HashCode>ACUAAAAAFAIAAgCIAAAAAAAACACEAAAIAAQEAOAACRA=</HashCode>
       <FileName>Template.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VTemplate.Engine.TemplateDocument">
+  <Class Name="VTemplate.Engine.TemplateDocument" Collapsed="true">
     <Position X="21.75" Y="4.5" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAACAAAQAAAAAAABI=</HashCode>
+      <HashCode>AEAIAAQAAAAAAAAAAAAAAAAAAABAACAAAQAAAEACABI=</HashCode>
       <FileName>TemplateDocument.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.TextNode" Collapsed="true">
     <Position X="7.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAACAAAABA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAABAACAAAABA=</HashCode>
       <FileName>TextNode.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.Utility" Collapsed="true">
     <Position X="33.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAAACABAAJAQAhAAAAAQoAAMAAAACCAIQAACEARAAAA=</HashCode>
+      <HashCode>QAAACABEAJAQAxAAABAQoAUMAAAGCDAAQAACEQRAEAA=</HashCode>
       <FileName>Utility.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="VTemplate.Engine.Variable" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="26.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAYAAABAAAAAAAAQAAAAQAAAAAAAgCAAgABA=</HashCode>
+      <HashCode>AAAAAAAIAYAABBAAAAAAAAQAAAAQAAACAAAgAAAgABA=</HashCode>
       <FileName>Variable.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -191,7 +196,7 @@
   <Class Name="VTemplate.Engine.VariableCollection" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="28.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAAAAAAAhAACAAEAAQAAAAQAAAEAAAAAABQAAA=</HashCode>
+      <HashCode>AAIAAAAAAAAAAhAACAAEAAQAAAAAAAAEAAAAAABQAAA=</HashCode>
       <FileName>VariableCollection.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -199,7 +204,7 @@
   <Class Name="VTemplate.Engine.VariableExpression" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="30" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAEAAAEAAAAAAAAAACAAAEAAAQAADAAABA=</HashCode>
+      <HashCode>AAAAAABAIAAAAAAEAAAAAAAAAACAAAEAAAAAADAAABA=</HashCode>
       <FileName>VariableExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -207,7 +212,7 @@
   <Class Name="VTemplate.Engine.VariableTag" Collapsed="true">
     <Position X="18" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAIAAAAAAQEAAAAgABYAAgACAAAABCAAAAAARA=</HashCode>
+      <HashCode>AAQAAAAIgAAAAAQEEAAAgBBYAAwCCAAAABCAAAAAARA=</HashCode>
       <FileName>VariableTag.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -278,7 +283,7 @@
   <Enum Name="VTemplate.Engine.ServerDataType" Collapsed="true">
     <Position X="30" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABAiABAAAQAAAAAIAAABAAAAhAAAAAAAAAEAARA=</HashCode>
+      <HashCode>AAAAABAiABAAAQAAAAAICAABAIAAhAAAAAAAAAEAARA=</HashCode>
       <FileName>ServerDataTag.cs</FileName>
     </TypeIdentifier>
   </Enum>

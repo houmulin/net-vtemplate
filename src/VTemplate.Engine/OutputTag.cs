@@ -109,7 +109,7 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             CancelEventArgs args = new CancelEventArgs();
             this.OnBeforeRender(args);

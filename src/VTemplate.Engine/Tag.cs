@@ -380,6 +380,21 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         public override void Render(System.IO.TextWriter writer)
         {
+            //注册当前正在呈现数据的标签
+            Tag currentRenderTag = this.OwnerDocument.CurrentRenderingTag;
+            this.OwnerDocument.RegisterCurrentRenderingTag(this);
+            //呈现本标签的数据
+            this.RenderTagData(writer);
+            //恢复当前正在呈现数据的标签
+            this.OwnerDocument.RegisterCurrentRenderingTag(currentRenderTag);
+        }
+
+        /// <summary>
+        /// 呈现本标签元素的数据
+        /// </summary>
+        /// <param name="writer"></param>
+        protected virtual void RenderTagData(System.IO.TextWriter writer)
+        {
             CancelEventArgs args = new CancelEventArgs();
             this.OnBeforeRender(args);
             if (!args.Cancel)

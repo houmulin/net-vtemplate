@@ -87,12 +87,12 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             Type type = Utility.CreateType(this.Type, this.Assembly);
             if (this.Variable != null) this.Variable.Value = type;
 
-            base.Render(writer);
+            base.RenderTagData(writer);
         }
         #endregion
 

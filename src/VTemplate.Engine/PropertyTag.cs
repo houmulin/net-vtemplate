@@ -96,7 +96,7 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             //如果类型定义的是变量表达式则获取表达式的值,否则建立类型
             object container = this.Type is VariableExpression ? this.Type.GetValue() : Utility.CreateType(this.Type.GetValue().ToString());
@@ -105,7 +105,7 @@ namespace VTemplate.Engine
             if (this.Variable != null) this.Variable.Value = value;
 
             if (this.Output && value != null) writer.Write(value);
-            base.Render(writer);
+            base.RenderTagData(writer);
         }
         #endregion
 

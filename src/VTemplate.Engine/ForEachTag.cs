@@ -169,7 +169,7 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             IEnumerable array = Utility.GetResolvedDataSource(this.From.GetValue());
             int index = 0;
@@ -192,7 +192,7 @@ namespace VTemplate.Engine
                         li.IsLast = !list.MoveNext();
                         if (this.Index != null) this.Index.Reset();
                         if (this.Item != null) this.Item.Value = v;
-                        base.Render(writer);
+                        base.RenderTagData(writer);
                     }
                 }
             }

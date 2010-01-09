@@ -173,12 +173,12 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             if (this.IsTestSuccess())
             {
                 //优先测试自身条件
-                base.Render(writer);
+                base.RenderTagData(writer);
             }
             else
             {

@@ -139,6 +139,15 @@ namespace VTemplate.Engine
         /// 模版文档的配置参数
         /// </summary>
         public TemplateDocumentConfig DocumentConfig { get; private set; }
+
+        /// <summary>
+        /// 返回当前正在呈现数据的标签
+        /// </summary>
+        public Tag CurrentRenderingTag { get; private set; }
+        /// <summary>
+        /// 当前正在呈现数据的文档
+        /// </summary>
+        public static TemplateDocument CurrentRenderingDocument { get; private set; }
         #endregion
 
         #region 方法定义
@@ -153,7 +162,18 @@ namespace VTemplate.Engine
                 return writer.ToString();
             }
         }
+
+        /// <summary>
+        /// 注册当前呈现的标签
+        /// </summary>
+        /// <param name="tag"></param>
+        internal void RegisterCurrentRenderingTag(Tag tag)
+        {            
+            TemplateDocument.CurrentRenderingDocument = tag == null ? null : tag.OwnerDocument;
+            this.CurrentRenderingTag = tag;
+        }
         #endregion
+
 
         #region 解析字符串
         /// <summary>

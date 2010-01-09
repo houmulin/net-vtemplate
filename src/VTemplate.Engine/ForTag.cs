@@ -94,7 +94,7 @@ namespace VTemplate.Engine
         /// 呈现本元素的数据
         /// </summary>
         /// <param name="writer"></param>
-        public override void Render(System.IO.TextWriter writer)
+        protected override void RenderTagData(System.IO.TextWriter writer)
         {
             decimal from = Utility.ConverToDecimal(this.From.GetValue());
             decimal step = Utility.ConverToDecimal(this.Step.GetValue());
@@ -111,7 +111,7 @@ namespace VTemplate.Engine
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
                     if (this.Index != null) this.Index.Variable.Reset();
-                    base.Render(writer);
+                    base.RenderTagData(writer);
                     index += step;
                 }
             }
@@ -123,7 +123,7 @@ namespace VTemplate.Engine
                     li.IsFirst = (index == from);
                     li.IsLast = (index == to);
                     if (this.Index != null) this.Index.Variable.Reset();
-                    base.Render(writer);
+                    base.RenderTagData(writer);
                     index += step;
                 }
             }
