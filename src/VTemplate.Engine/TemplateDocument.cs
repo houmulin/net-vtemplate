@@ -293,31 +293,20 @@ namespace VTemplate.Engine
                 //如果错误中不包含行号与列号.则计算行号与列号
                 if (!ex.HaveLineAndColumnNumber && match != null && match.Success)
                 {
+                    //获取当前出错时正在解析的模板文件
                     string file = string.Empty;
-                    if (container is IncludeTag)
+                    Tag tag = container;
+                    while (string.IsNullOrEmpty(file) && tag != null)
                     {
-                        file = ((IncludeTag)container).File;
-                    }
-                    else if (container is Template)
-                    {
-                        file = ((Template)container).File;
-                    }
-                    else
-                    {
-                        while (tagStack.Count > 0)
+                        if (tag is Template)
                         {
-                            Tag tag = tagStack.Pop();
-                            if (container is IncludeTag)
-                            {
-                                file = ((IncludeTag)container).File;
-                                break;
-                            }
-                            else if (container is Template)
-                            {
-                                file = ((Template)container).File;
-                                break;
-                            }
+                            file = ((Template)tag).File;
                         }
+                        else if (tag is IncludeTag)
+                        {
+                            file = ((IncludeTag)tag).File;
+                        }
+                        tag = tag.Parent;
                     }
                     if (string.IsNullOrEmpty(file))
                     {
