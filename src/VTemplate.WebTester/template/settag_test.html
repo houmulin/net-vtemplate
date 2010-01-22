@@ -15,11 +15,11 @@
     测试对某个template内的变量赋值<br />
     <vt:for from="1" to="100000"></vt:for>
     <vt:template id="test">
-    test 模版块里的变量时间 <vt:serverdata var="#.time" type="Time" output="true" /><br />
+    test 模板块里的变量时间 <vt:serverdata var="#.time" type="Time" output="true" /><br />
     </vt:template>
-    test 模版块里的变量在外部显示时的值:{$:#test.time},根模版块的时间 {$:time}<br />
+    test 模板块里的变量在外部显示时的值:{$:#test.time},根模板块的时间 {$:time}<br />
     <vt:set var="#test.time" value="2008-01-01" />
-    test 模版块里的变量被赋值后的值:{$:#test.time} ,根模版块的时间 {$:time}
+    test 模板块里的变量被赋值后的值:{$:#test.time} ,根模板块的时间 {$:time}
     <hr />    
     
     <vt:serverdata var="t" type="QueryString" item="t" />

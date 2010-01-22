@@ -29,7 +29,7 @@ namespace VTemplate.Engine
     #endregion
 
     /// <summary>
-    /// 模版文档的配置参数
+    /// 模板文档的配置参数
     /// </summary>
     public class TemplateDocumentConfig
     {

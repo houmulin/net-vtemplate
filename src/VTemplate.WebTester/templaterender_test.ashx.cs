@@ -17,13 +17,13 @@ namespace VTemplate.WebTester
     public class templaterender_test : PageBase
     {
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
             /**
              * 
-             * 模版块的解析权已交给Core.CnblogsNewsRender.cs文件.所以页面程序里就不需要再对模版块进行解析了
+             * 模板块的解析权已交给Core.CnblogsNewsRender.cs文件.所以页面程序里就不需要再对模板块进行解析了
              * 
              **/            
         }

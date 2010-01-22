@@ -25,7 +25,7 @@ namespace VTemplate.WebTester
             return new
             {
                 title = "这只是一篇测试的博客日记",
-                content = "你好,这只是用于测试VTemplate模版引擎所用的博客日记",
+                content = "你好,这只是用于测试VTemplate模板引擎所用的博客日记",
                 author = "kingthy",
                 time = DateTime.Now,
                 comments = new object[]{
@@ -36,11 +36,11 @@ namespace VTemplate.WebTester
             };
         }
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
-            //对VT模版里的blogarchive变量赋值
+            //对VT模板里的blogarchive变量赋值
             this.Document.Variables.SetValue("blogarchive", this.GetBlogArchive());
         }
     }

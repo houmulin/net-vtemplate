@@ -11,18 +11,18 @@ namespace VTemplate.WebTester.Core
     public class CnblogsNewsRenderMethod
     {
         /// <summary>
-        /// 解析某个模版块的数据
+        /// 解析某个模板块的数据
         /// </summary>
         /// <param name="template"></param>
         [TemplateRenderMethod(Description="解析新闻列表数据")]
         public void RenderNews(Template template)
         {
-            //根据模版块里定义的type属性条件取得新闻数据
+            //根据模板块里定义的type属性条件取得新闻数据
             List<News> newsData = NewsDbProvider.GetNewsData(template.Attributes.GetValue("type"));
             //设置变量newsdata的值
             template.Variables.SetValue("newsdata", newsData);
 
-            //取得模版块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
+            //取得模板块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
             Tag tag = template.GetChildTagById("newslist");
             if (tag is ForEachTag)
             {

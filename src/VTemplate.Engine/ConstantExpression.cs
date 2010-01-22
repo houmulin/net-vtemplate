@@ -49,7 +49,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         public IExpression Clone(Template ownerTemplate)
         {
-            //常量表达式不会被模版外部修改.所以不进行数据克隆
+            //常量表达式不会被模板外部修改.所以不进行数据克隆
             return this;
         }
 

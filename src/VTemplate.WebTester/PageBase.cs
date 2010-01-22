@@ -89,9 +89,9 @@ namespace VTemplate.WebTester
             watcher.Start();
             for (int i = 0; i < count; i++)
             {
-                //装载当前页面的模版
+                //装载当前页面的模板
                 this.LoadCurrentTemplate();
-                //初始化页面模版的数据
+                //初始化页面模板的数据
                 this.InitPageTemplate();
                 //不输出.只呈现
                 string text = this.Document.GetRenderText();
@@ -103,7 +103,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 当前页面的模版文档对象
+        /// 当前页面的模板文档对象
         /// </summary>
         protected TemplateDocument Document
         {
@@ -111,7 +111,7 @@ namespace VTemplate.WebTester
             private set;
         }
         /// <summary>
-        /// 当前页面的模版文档的配置参数
+        /// 当前页面的模板文档的配置参数
         /// </summary>
         protected virtual TemplateDocumentConfig DocumentConfig
         {
@@ -121,7 +121,7 @@ namespace VTemplate.WebTester
             }
         }
         /// <summary>
-        /// 是否读取缓存模版
+        /// 是否读取缓存模板
         /// </summary>
         protected virtual bool IsLoadCacheTemplate
         {
@@ -132,7 +132,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 装载当前页面的模版文档
+        /// 装载当前页面的模板文档
         /// </summary>
         public virtual void LoadCurrentTemplate()
         {
@@ -140,7 +140,7 @@ namespace VTemplate.WebTester
             this.LoadTemplateFile(this.Server.MapPath("/template/" + fileName + ".html"));
         }
         /// <summary>
-        /// 装载模版文件
+        /// 装载模板文件
         /// </summary>
         /// <param name="fileName"></param>
         protected virtual void LoadTemplateFile(string fileName)
@@ -148,18 +148,18 @@ namespace VTemplate.WebTester
             this.Document = null;
             if ("cache".Equals(this.TestType, StringComparison.InvariantCultureIgnoreCase) || this.IsLoadCacheTemplate)
             {
-                //测试缓存模版文档
+                //测试缓存模板文档
                 this.Document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8, this.DocumentConfig);
             }
             else
             {
-                //测试实例模版文档
+                //测试实例模板文档
                 this.Document = new TemplateDocument(fileName, Encoding.UTF8, this.DocumentConfig);
             }
         }
 
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected abstract void InitPageTemplate();
     }

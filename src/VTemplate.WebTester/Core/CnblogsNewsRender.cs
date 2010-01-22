@@ -6,23 +6,23 @@ using VTemplate.Engine;
 namespace VTemplate.WebTester.Core
 {
     /// <summary>
-    /// 模版块解析器
+    /// 模板块解析器
     /// </summary>
     public class CnblogsNewsRender : ITemplateRender
     {
         #region ITemplateRender 成员
         /// <summary>
-        /// 解析某个模版块的数据
+        /// 解析某个模板块的数据
         /// </summary>
         /// <param name="template"></param>
         public void PreRender(Template template)
         {
-            //根据模版块里定义的type属性条件取得新闻数据
+            //根据模板块里定义的type属性条件取得新闻数据
             List<News> newsData = NewsDbProvider.GetNewsData(template.Attributes.GetValue("type"));
             //设置变量newsdata的值
             template.Variables.SetValue("newsdata", newsData);
 
-            //取得模版块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
+            //取得模板块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
             Tag tag = template.GetChildTagById("newslist");
             if (tag is ForEachTag)
             {

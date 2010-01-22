@@ -588,7 +588,7 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 模版引擎相关辅助函数块
+        #region 模板引擎相关辅助函数块
         /// <summary>
         /// 修正文件地址
         /// </summary>
@@ -653,7 +653,7 @@ namespace VTemplate.Engine
             return new Point(column, line);
         }
         /// <summary>
-        /// 从模版中获取某个变量.如果不存在此变量则添加新的变量
+        /// 从模板中获取某个变量.如果不存在此变量则添加新的变量
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <param name="varName"></param>
@@ -670,25 +670,25 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 根据前缀获取变量的模版所有者
+        /// 根据前缀获取变量的模板所有者
         /// </summary>
         /// <param name="template"></param>
         /// <param name="prefix"></param>
-        /// <returns>如果prefix值为null则返回template的根模版.如果为空值.则为template.如果为#则返回template的父模版.否则返回对应Id的模版</returns>
+        /// <returns>如果prefix值为null则返回template的根模板.如果为空值.则为template.如果为#则返回template的父模板.否则返回对应Id的模板</returns>
         internal static Template GetOwnerTemplateByPrefix(Template template, string prefix)
         {
-            if (prefix == string.Empty) return template;               //前缀为空.则返回当前模版
-            if (prefix == "#") return template.OwnerTemplate ?? template;   //前缀为#.则返回父模版(如果父模版不存在则返回当前模版)
+            if (prefix == string.Empty) return template;               //前缀为空.则返回当前模板
+            if (prefix == "#") return template.OwnerTemplate ?? template;   //前缀为#.则返回父模板(如果父模板不存在则返回当前模板)
 
-            //取得根模版
+            //取得根模板
             while (template.OwnerTemplate != null) template = template.OwnerTemplate;
 
-            //如果没有前缀.则返回根模版.否则返回对应Id的模版
+            //如果没有前缀.则返回根模板.否则返回对应Id的模板
             return prefix == null ? template : template.GetChildTemplateById(prefix);
         }
         #endregion
 
-        #region 模版数据解析相关辅助函数块
+        #region 模板数据解析相关辅助函数块
         /// <summary>
         /// 类型的缓存
         /// </summary>
@@ -766,7 +766,7 @@ namespace VTemplate.Engine
             return type;
         }
         /// <summary>
-        /// 存储模版解析器实例的缓存
+        /// 存储模板解析器实例的缓存
         /// </summary>
         private static Dictionary<string, object> RenderInstanceCache;
         /// <summary>
@@ -830,17 +830,17 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 预解析模版数据
+        /// 预解析模板数据
         /// </summary>
-        /// <param name="renderInstance">模版解析器实例的配置</param>
-        /// <param name="template">要解析处理的模版</param>
+        /// <param name="renderInstance">模板解析器实例的配置</param>
+        /// <param name="template">要解析处理的模板</param>
         internal static void PreRenderTemplate(string renderInstance, Template template)
         {
             ITemplateRender render = GetRenderInstance(renderInstance) as ITemplateRender;
             if (render != null) render.PreRender(template);
         }
         /// <summary>
-        /// 使用特性方法预解析模版数据
+        /// 使用特性方法预解析模板数据
         /// </summary>
         /// <param name="renderInstance"></param>
         /// <param name="renderMethod"></param>

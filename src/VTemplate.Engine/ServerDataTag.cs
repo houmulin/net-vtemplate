@@ -34,11 +34,11 @@ namespace VTemplate.Engine
         /// </summary>
         Random,
         /// <summary>
-        /// 服务器当前上下文的HttpApplicationState对象.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的HttpApplicationState对象.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         Application,
         /// <summary>
-        /// 服务器当前上下文的HttpSessionState对象.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的HttpSessionState对象.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         Session,
         /// <summary>
@@ -46,27 +46,27 @@ namespace VTemplate.Engine
         /// </summary>
         Cache,
         /// <summary>
-        /// 服务器当前上下文的Request.QueryString数据集合.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的Request.QueryString数据集合.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         QueryString,
         /// <summary>
-        /// 服务器当前上下文的Request.Form数据集合.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的Request.Form数据集合.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         Form,
         /// <summary>
-        /// 服务器当前上下文的Request.Cookie数据集合.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的Request.Cookie数据集合.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         Cookie,
         /// <summary>
-        /// 服务器当前上下文的Request.ServerVariables数据集合.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的Request.ServerVariables数据集合.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         ServerVariables,
         /// <summary>
-        /// 服务器当前上下文的Request.Params数据集合.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的Request.Params数据集合.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         RequestParams,
         /// <summary>
-        /// 服务器当前上下文的HttpRequest对象.如果模版引擎不在Web程序上使用则无效
+        /// 服务器当前上下文的HttpRequest对象.如果模板引擎不在Web程序上使用则无效
         /// </summary>
         Request,
         /// <summary>
@@ -176,7 +176,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 开始解析标签数据
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="tagStack">标签堆栈</param>
         /// <param name="text"></param>
@@ -197,9 +197,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆当前元素到新的宿主模版
+        #region 克隆当前元素到新的宿主模板
         /// <summary>
-        /// 克隆当前元素到新的宿主模版
+        /// 克隆当前元素到新的宿主模板
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <returns></returns>

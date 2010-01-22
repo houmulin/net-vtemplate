@@ -14,7 +14,7 @@ using System.Drawing;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 解析模版时的错误
+    /// 解析模板时的错误
     /// </summary>
     public class ParserException : Exception
     {
@@ -31,7 +31,7 @@ namespace VTemplate.Engine
         /// 
         /// </summary>
         /// <param name="p">行号列号(x = 列号, y = 行号)</param>
-        /// <param name="text">模版文本数据</param>
+        /// <param name="text">模板文本数据</param>
         /// <param name="message">描述信息</param>
         public ParserException(Point p, string text, string message)
             : this(p.Y, p.X, text, message)
@@ -43,12 +43,36 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="line">所在行号</param>
         /// <param name="column">所在列</param>
-        /// <param name="text">模版文本数据</param>
+        /// <param name="text">模板文本数据</param>
         /// <param name="message">描述信息</param>
         public ParserException(int line, int column, string text, string message)
-            : base(string.Format("在解析(行{0}:列{1})的模版文本字符\"{2}\"时,发生错误:{3}", line, column, text, message))
+            : base(string.Format("在解析(行{0}:列{1})的模板文本字符\"{2}\"时,发生错误:{3}", line, column, text, message))
         {
             this.HaveLineAndColumnNumber = true;   
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName">模板文件</param>
+        /// <param name="p">行号列号(x = 列号, y = 行号)</param>
+        /// <param name="text">模板文本数据</param>
+        /// <param name="message">描述信息</param>
+        public ParserException(string fileName, Point p, string text, string message)
+            : this(fileName, p.Y, p.X, text, message)
+        { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName">模板文件</param>
+        /// <param name="line">所在行号</param>
+        /// <param name="column">所在列</param>
+        /// <param name="text">模板文本数据</param>
+        /// <param name="message">描述信息</param>
+        public ParserException(string fileName, int line, int column, string text, string message)
+            : base(string.Format("在解析文件\"{0}\"(行{1}:列{2})的模板文本字符\"{3}\"时,发生错误:{4}", fileName, line, column, text, message))
+        {
+            this.HaveLineAndColumnNumber = true;
         }
 
         /// <summary>

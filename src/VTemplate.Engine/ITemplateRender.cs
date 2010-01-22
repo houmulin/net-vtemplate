@@ -11,19 +11,19 @@ using System.Text;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 模版块数据的解析处理接口
+    /// 模板块数据的解析处理接口
     /// </summary>
     public interface ITemplateRender
     {
         /// <summary>
-        /// 预处理解析模版数据
+        /// 预处理解析模板数据
         /// </summary>
         /// <param name="template"></param>
         void PreRender(Template template);
     }
 
     /// <summary>
-    /// 预处理模版数据的方法属性
+    /// 预处理模板数据的方法属性
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited=false)]
     public class TemplateRenderMethodAttribute : System.Attribute

@@ -356,7 +356,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 开始解析标签数据
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="tagStack">标签堆栈</param>
         /// <param name="text"></param>
@@ -381,7 +381,7 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆当前元素到新的宿主模版
+        #region 克隆当前元素到新的宿主模板
         /// <summary>
         /// 
         /// </summary>
@@ -401,7 +401,7 @@ namespace VTemplate.Engine
             }
         }
         /// <summary>
-        /// 克隆当前元素到新的宿主模版
+        /// 克隆当前元素到新的宿主模板
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <returns></returns>

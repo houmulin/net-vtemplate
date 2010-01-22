@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 模版块标签.如: &lt;vt:template id="member"&gt;.......&lt;/vt:template&gt; 或自闭合的模版:&lt;vt:template id="member" file="member.html" /&gt;
+    /// 模板块标签.如: &lt;vt:template id="member"&gt;.......&lt;/vt:template&gt; 或自闭合的模板:&lt;vt:template id="member" file="member.html" /&gt;
     /// </summary>
     public class Template : Tag
     {
@@ -56,22 +56,22 @@ namespace VTemplate.Engine
 
         #region 属性定义
         /// <summary>
-        /// 模版的关联文件
+        /// 模板的关联文件
         /// </summary>
         public string File { get; internal set; }
 
         /// <summary>
-        /// 模版数据采用的编码
+        /// 模板数据采用的编码
         /// </summary>
         public Encoding Charset { get; internal set; }
 
         /// <summary>
-        /// 设置或返回此模版是否可见
+        /// 设置或返回此模板是否可见
         /// </summary>
         public bool Visible { get; set; }
 
         /// <summary>
-        /// 返回此模版下的变量集合
+        /// 返回此模板下的变量集合
         /// </summary>
         public VariableCollection Variables { get; private set; }
 
@@ -81,7 +81,7 @@ namespace VTemplate.Engine
         public UserDefinedFunctionCollection UserDefinedFunctions { get; private set; }
 
         /// <summary>
-        /// 返回此模版下的子模版元素
+        /// 返回此模板下的子模板元素
         /// </summary>
         public ElementCollection<Template> ChildTemplates { get; set; }
 
@@ -91,23 +91,23 @@ namespace VTemplate.Engine
         protected Template TagContainer { get; set; }
 
         /// <summary>
-        /// 返回处理模版数据的实例
+        /// 返回处理模板数据的实例
         /// </summary>
         public string RenderInstance { get; protected set; }
 
         /// <summary>
-        /// 返回处理模版数据的特性方法
+        /// 返回处理模板数据的特性方法
         /// </summary>
         public string RenderMethod { get; protected set; }
         #endregion
 
-        #region 模版的依赖文件
+        #region 模板的依赖文件
         /// <summary>
-        /// 模版的依赖文件列表
+        /// 模板的依赖文件列表
         /// </summary>
         protected List<string> fileDependencies;
         /// <summary>
-        /// 返回模版的依赖文件
+        /// 返回模板的依赖文件
         /// </summary>
         public string[] FileDependencies
         {
@@ -117,7 +117,7 @@ namespace VTemplate.Engine
             }
         }
         /// <summary>
-        /// 添加模版的依赖文件
+        /// 添加模板的依赖文件
         /// </summary>
         /// <param name="fileName"></param>
         internal void AddFileDependency(string fileName)
@@ -184,9 +184,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 子模版函数
+        #region 子模板函数
         /// <summary>
-        /// 获取某个Id的子模版.
+        /// 获取某个Id的子模板.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -208,7 +208,7 @@ namespace VTemplate.Engine
             return null;
         }
         /// <summary>
-        /// 获取所有具有同名称的模版列表.
+        /// 获取所有具有同名称的模板列表.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -231,7 +231,7 @@ namespace VTemplate.Engine
 
         #region 设置变量的值
         /// <summary>
-        /// 设置当前模版块和其下所有子模版块下某个同名称的变量或变量表达式的值
+        /// 设置当前模板块和其下所有子模板块下某个同名称的变量或变量表达式的值
         /// </summary>
         /// <param name="varExp"></param>
         /// <param name="value"></param>
@@ -277,7 +277,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 开始解析标签数据
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="tagStack">标签堆栈</param>
         /// <param name="text"></param>
@@ -286,7 +286,7 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            //将自身加入到宿主的子模版列表中
+            //将自身加入到宿主的子模板列表中
             ownerTemplate.ChildTemplates.Add(this);
             //加入到标签容器的元素列表中
             container.AppendChild(this);
@@ -316,16 +316,16 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆当前元素到新的宿主模版
+        #region 克隆当前元素到新的宿主模板
         /// <summary>
-        /// 克隆当前元素到新的宿主模版
+        /// 克隆当前元素到新的宿主模板
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <returns></returns>
         internal override Element Clone(Template ownerTemplate)
         {
             Template tag = new Template(ownerTemplate);
-            //加入到宿主模版的子模版列表
+            //加入到宿主模板的子模板列表
             ownerTemplate.ChildTemplates.Add(tag);
 
             //优先拷贝变量

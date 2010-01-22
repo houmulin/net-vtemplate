@@ -180,7 +180,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 初始化当前访问页面的模版数据
+        /// 初始化当前访问页面的模板数据
         /// </summary>
         public abstract void InitPageTemplate();
 
@@ -193,10 +193,10 @@ namespace VTemplate.WebTester
         }
         #endregion
 
-        #region 模版处理
+        #region 模板处理
         private TemplateDocument _Document = null;
         /// <summary>
-        /// 当前页面的模版文档对象
+        /// 当前页面的模板文档对象
         /// </summary>
         public TemplateDocument Document
         {
@@ -211,7 +211,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 当前页面的模版文档的配置参数
+        /// 当前页面的模板文档的配置参数
         /// </summary>
         protected virtual TemplateDocumentConfig DocumentConfig
         {
@@ -221,7 +221,7 @@ namespace VTemplate.WebTester
             }
         }
         /// <summary>
-        /// 是否读取缓存模版
+        /// 是否读取缓存模板
         /// </summary>
         protected virtual bool IsLoadCacheTemplate
         {
@@ -231,17 +231,17 @@ namespace VTemplate.WebTester
             }
         }
         /// <summary>
-        /// 装载当前页面的模版文档
+        /// 装载当前页面的模板文档
         /// </summary>
         public virtual void LoadCurrentTemplate()
         {
-            //注: 以下模版路径只是参考!请根据你的现实情况进行修改.
+            //注: 以下模板路径只是参考!请根据你的现实情况进行修改.
             //    建议是配合配置文件一起使用.
             string fileName = Path.GetFileNameWithoutExtension(this.Request.FilePath);
             this.LoadTemplateFile(this.Server.MapPath("/template/" + fileName + ".html"));
         }
         /// <summary>
-        /// 装载模版文件
+        /// 装载模板文件
         /// </summary>
         /// <param name="fileName"></param>
         protected virtual void LoadTemplateFile(string fileName)
@@ -249,12 +249,12 @@ namespace VTemplate.WebTester
             this.Document = null;
             if (this.IsLoadCacheTemplate)
             {
-                //缓存模版文档
+                //缓存模板文档
                 this.Document = TemplateDocument.FromFileCache(fileName, Encoding.UTF8, this.DocumentConfig);
             }
             else
             {
-                //实例模版文档
+                //实例模板文档
                 this.Document = new TemplateDocument(fileName, Encoding.UTF8, this.DocumentConfig);
             }
 
@@ -265,7 +265,7 @@ namespace VTemplate.WebTester
 
         #region 常用属性
         /// <summary>
-        /// 返回判断当前页面是否有效(模版是否已初始化)
+        /// 返回判断当前页面是否有效(模板是否已初始化)
         /// </summary>
         public bool IsValid
         {
@@ -349,7 +349,7 @@ namespace VTemplate.WebTester
         {
             if (this.PageCacheExpireTime > 0 && !string.IsNullOrEmpty(this.PageCacheFileName))
             {
-                //获取模版文档的数据
+                //获取模板文档的数据
                 if (this.IsValid)
                 {
                     try

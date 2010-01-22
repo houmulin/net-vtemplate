@@ -17,20 +17,20 @@ namespace VTemplate.WebTester
     public class cnblogs_newslist : PageBase
     {
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
-            //获取所有名称为topnews的模版块
+            //获取所有名称为topnews的模板块
             ElementCollection<Template> templates = this.Document.GetChildTemplatesByName("topnews");
             foreach (Template template in templates)
             {
-                //根据模版块里定义的type属性条件取得新闻数据
+                //根据模板块里定义的type属性条件取得新闻数据
                 List<News> newsData = NewsDbProvider.GetNewsData(template.Attributes.GetValue("type"));
                 //设置变量newsdata的值
                 template.Variables.SetValue("newsdata", newsData);
 
-                //取得模版块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
+                //取得模板块下Id为newslist的标签(也即是在cnblogs_newsdata.html文件中定义的foreach标签)
                 Tag tag = template.GetChildTagById("newslist");
                 if (tag is ForEachTag)
                 {

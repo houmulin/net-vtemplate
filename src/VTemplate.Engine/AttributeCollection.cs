@@ -18,7 +18,7 @@ namespace VTemplate.Engine
         : IEnumerable<Attribute>
     {
         /// <summary>
-        /// 构造默认模版属性
+        /// 构造默认模板属性
         /// </summary>
         internal AttributeCollection()
         {
@@ -26,7 +26,7 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 构造一定容量的默认模版属性
+        /// 构造一定容量的默认模板属性
         /// </summary>
         /// <param name="capacity"></param>
         internal AttributeCollection(int capacity)

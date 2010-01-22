@@ -4,14 +4,14 @@
 <title> 测试变量表达式 </title>
 </head>
 <body>
-我是文档（根）模版块的用户，我叫{$:user.name htmlencode="true"}，今年{$:user.age}岁，属于{$:user.age call="GetAgeRemark"}。<br />
+我是文档（根）模板块的用户，我叫{$:user.name htmlencode="true"}，今年{$:user.age}岁，属于{$:user.age call="GetAgeRemark"}。<br />
 <vt:template id="t1">
-我是t1模版块的用户，我叫{$:#.user.name htmlencode="true"}，今年{$:#.user.age}岁，属于{$:#.user.age call="GetAgeRemark"}。<br />
+我是t1模板块的用户，我叫{$:#.user.name htmlencode="true"}，今年{$:#.user.age}岁，属于{$:#.user.age call="GetAgeRemark"}。<br />
 <vt:template id="t2">
-我是t2模版块的用户，我叫{$:#.user.name htmlencode="true"}，今年{$:#.user.age}岁，属于{$:#.user.age call="GetAgeRemark"}。<br />
-在t1模版块的用户叫{$:#t1.user.name htmlencode="true"}，今年{$:#t1.user.age}岁，属于{$:#t1.user.age call="GetAgeRemark"}。<br />
-在父级模版块的用户叫{$:##.user.name htmlencode="true"}，今年{$:##.user.age}岁，属于{$:##.user.age call="GetAgeRemark"}。<br />
-在文档模版块的用户叫{$:user.name htmlencode="true"}，今年{$:user.age}岁，属于{$:user.age call="GetAgeRemark"}。<br />
+我是t2模板块的用户，我叫{$:#.user.name htmlencode="true"}，今年{$:#.user.age}岁，属于{$:#.user.age call="GetAgeRemark"}。<br />
+在t1模板块的用户叫{$:#t1.user.name htmlencode="true"}，今年{$:#t1.user.age}岁，属于{$:#t1.user.age call="GetAgeRemark"}。<br />
+在父级模板块的用户叫{$:##.user.name htmlencode="true"}，今年{$:##.user.age}岁，属于{$:##.user.age call="GetAgeRemark"}。<br />
+在文档模板块的用户叫{$:user.name htmlencode="true"}，今年{$:user.age}岁，属于{$:user.age call="GetAgeRemark"}。<br />
 </vt:template>
 </vt:template>
 </body>

@@ -31,7 +31,7 @@ namespace VTemplate.Engine
         }
         #region 属性定义
         /// <summary>
-        /// 宿主模版
+        /// 宿主模板
         /// </summary>
         public Template OwnerTemplate { get; private set; }
 
@@ -81,9 +81,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆当前变量对象到新的宿主模版
+        #region 克隆当前变量对象到新的宿主模板
         /// <summary>
-        /// 克隆当前变量对象到新的宿主模版
+        /// 克隆当前变量对象到新的宿主模板
         /// </summary>
         /// <param name="template"></param>
         /// <returns></returns>

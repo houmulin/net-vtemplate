@@ -22,7 +22,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 标签元素
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         protected Tag(Template ownerTemplate) : base(ownerTemplate)
         {            
             this.InnerElements = new ElementCollection<Element>();
@@ -208,7 +208,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 开始解析标签数据
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="tagStack">标签堆栈</param>
         /// <param name="text"></param>
@@ -226,7 +226,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 结束标签的解析
         /// </summary>
-        /// <param name="ownerTemplate">模版宿主</param>
+        /// <param name="ownerTemplate">模板宿主</param>
         /// <param name="container">元素容器</param>
         /// <param name="tagStack">标签堆栈</param>
         /// <param name="text"></param>
@@ -240,11 +240,11 @@ namespace VTemplate.Engine
             match = null;
             while (offset < text.Length)
             {
-                if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)                //匹配到模版变量
+                if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)                //匹配到模板变量
                 {
                     //构建文本节点
                     ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
-                    //构建模版变量
+                    //构建模板变量
                     ParserHelper.CreateVariableTag(ownerTemplate, container, match);
                 }
                 else if (ParserHelper.IsTagStart(text, offset) && (match = ParserRegex.TagRegex.Match(text, offset)).Success)                     //匹配到某种类型的标签
@@ -312,7 +312,7 @@ namespace VTemplate.Engine
                         if (name.Equals(popTag.TagName, StringComparison.InvariantCultureIgnoreCase)) break;
                         if (!name.Equals(popTag.EndTagName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            //非匹配的结束标签.则模版有错
+                            //非匹配的结束标签.则模板有错
                             throw new ParserException(string.Format("无效的结束标签,原期望的是{0}结束标签", popTag.EndTagName));
                         }
                     }
@@ -410,7 +410,7 @@ namespace VTemplate.Engine
 
         #region 保存本标签的呈现数据
         /// <summary>
-        /// 将本标签的呈现数据保存到文件,采用宿主模版的编码
+        /// 将本标签的呈现数据保存到文件,采用宿主模板的编码
         /// </summary>
         /// <param name="fileName">文件地址</param>
         public virtual void RenderTo(string fileName)

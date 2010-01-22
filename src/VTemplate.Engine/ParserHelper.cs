@@ -130,7 +130,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 构建文本节点元素
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="text"></param>
         /// <param name="offset"></param>
@@ -168,7 +168,7 @@ namespace VTemplate.Engine
             string name = match.Groups["name"].Value;
 
             ownerTemplate = Utility.GetOwnerTemplateByPrefix(ownerTemplate, prefix);
-            if (ownerTemplate == null) throw new ParserException(string.Format("变量的宿主模版#{0}不存在", prefix));
+            if (ownerTemplate == null) throw new ParserException(string.Format("变量的宿主模板#{0}不存在", prefix));
 
             Variable variable = Utility.GetVariableOrAddNew(ownerTemplate, name);
             return variable;
@@ -280,7 +280,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 构建变量元素
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
         /// <param name="match"></param>
         internal static VariableTag CreateVariableTag(Template ownerTemplate, Tag container, Match match)
@@ -301,7 +301,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 构建标签元素
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="match"></param>
         /// <param name="isClosedTag">是否是自闭合标签</param>
         /// <returns></returns>

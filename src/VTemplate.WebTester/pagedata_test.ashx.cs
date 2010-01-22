@@ -101,7 +101,7 @@ namespace VTemplate.WebTester
 
 
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
@@ -114,7 +114,7 @@ namespace VTemplate.WebTester
 
             this.PageNumber = 1;            
             this.PageSize = 10;
-            //在实际项目中.PageSize的值最好也定制在模版中, 比如下面的代码
+            //在实际项目中.PageSize的值最好也定制在模板中, 比如下面的代码
             Tag tag = this.Document.GetChildTagById("pagetable");
             if (tag != null)
             {

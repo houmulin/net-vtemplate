@@ -11,14 +11,14 @@ using System.Collections.Generic;
 namespace VTemplate.WebTester
 {
     /// <summary>
-    /// 共同模版块测试例子
+    /// 共同模板块测试例子
     /// </summary>
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     public class commontemplate_test : PageBase
     {
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
@@ -43,15 +43,15 @@ namespace VTemplate.WebTester
             userTables.Add("女", users2);
 
 
-            //获取名称为usertable的模版块
+            //获取名称为usertable的模板块
             ElementCollection<Template> userTemplates = this.Document.GetChildTemplatesByName("usertable");
             foreach (Template template in userTemplates)
             {
-                //获取模版里定义的usertype属性条件
+                //获取模板里定义的usertype属性条件
                 string userType = template.Attributes.GetValue("usertype");
                 if (!string.IsNullOrEmpty(userType) && userTables.ContainsKey(userType))
                 {
-                    //设置当前模版块的users变量值
+                    //设置当前模板块的users变量值
                     template.Variables.SetValue("users", userTables[userType]);
                 }
             }

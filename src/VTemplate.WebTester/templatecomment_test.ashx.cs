@@ -15,7 +15,7 @@ namespace VTemplate.WebTester
     public class templatecomment_test : PageBase
     {
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {

@@ -16,7 +16,7 @@ using System.Web.Caching;
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 模版文档
+    /// 模板文档
     /// </summary>
     public class TemplateDocument : Template
     {
@@ -105,12 +105,12 @@ namespace VTemplate.Engine
 
         #region 属性定义
         ///// <summary>
-        ///// 模版文本数据
+        ///// 模板文本数据
         ///// </summary>
         /////public string Text { get; private set; }
 
         /// <summary>
-        /// 根文档模版
+        /// 根文档模板
         /// </summary>
         public Template DocumentElement
         {
@@ -125,7 +125,7 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 返回此模版块的宿主模版文档
+        /// 返回此模板块的宿主模板文档
         /// </summary>
         public override TemplateDocument OwnerDocument
         {
@@ -136,7 +136,7 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 模版文档的配置参数
+        /// 模板文档的配置参数
         /// </summary>
         public TemplateDocumentConfig DocumentConfig { get; private set; }
 
@@ -152,7 +152,7 @@ namespace VTemplate.Engine
 
         #region 方法定义
         /// <summary>
-        /// 获取此模版文档的呈现数据
+        /// 获取此模板文档的呈现数据
         /// </summary>
         public string GetRenderText()
         {
@@ -196,12 +196,12 @@ namespace VTemplate.Engine
         /// <summary>
         /// 解析字符串
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
-        /// <param name="text">模版文本数据</param>
+        /// <param name="text">模板文本数据</param>
         private void ParseString(Template ownerTemplate, Tag container, string text)
         {
-            //设置根文档模版
+            //设置根文档模板
             this.DocumentElement = ownerTemplate;
             //this.Text = text;
 
@@ -219,11 +219,11 @@ namespace VTemplate.Engine
             {
                 while (offset < text.Length)
                 {
-                    if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)  //匹配到模版变量
+                    if (ParserHelper.IsVariableTagStart(text, offset) && (match = ParserRegex.VarTagRegex.Match(text, offset)).Success)  //匹配到模板变量
                     {
                         //构建文本节点
                         ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, match.Index - charOffset);
-                        //构建模版变量
+                        //构建模板变量
                         ParserHelper.CreateVariableTag(ownerTemplate, container, match);
                     }
                     else if (ParserHelper.IsTagStart(text, offset) && (match = ParserRegex.TagRegex.Match(text, offset)).Success)  //匹配到某种类型的标签
@@ -254,7 +254,7 @@ namespace VTemplate.Engine
                     {
                         //取得标签名称
                         string name = match.Groups["tagname"].Value;
-                        //非匹配的结束标签.则模版有错
+                        //非匹配的结束标签.则模板有错
                         throw new ParserException("无效的结束标签");
                     }
                     else if (ParserHelper.IsCommentTagStart(text, offset))
@@ -293,7 +293,40 @@ namespace VTemplate.Engine
                 //如果错误中不包含行号与列号.则计算行号与列号
                 if (!ex.HaveLineAndColumnNumber && match != null && match.Success)
                 {
-                    throw new ParserException(Utility.GetLineAndColumnNumber(text, match.Index), match.ToString(), ex.Message);
+                    string file = string.Empty;
+                    if (container is IncludeTag)
+                    {
+                        file = ((IncludeTag)container).File;
+                    }
+                    else if (container is Template)
+                    {
+                        file = ((Template)container).File;
+                    }
+                    else
+                    {
+                        while (tagStack.Count > 0)
+                        {
+                            Tag tag = tagStack.Pop();
+                            if (container is IncludeTag)
+                            {
+                                file = ((IncludeTag)container).File;
+                                break;
+                            }
+                            else if (container is Template)
+                            {
+                                file = ((Template)container).File;
+                                break;
+                            }
+                        }
+                    }
+                    if (string.IsNullOrEmpty(file))
+                    {
+                        throw new ParserException(Utility.GetLineAndColumnNumber(text, match.Index), match.ToString(), ex.Message);
+                    }
+                    else
+                    {
+                        throw new ParserException(file, Utility.GetLineAndColumnNumber(text, match.Index), match.ToString(), ex.Message);
+                    }
                 }
                 else
                 {
@@ -310,9 +343,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 从文件缓存中构建模版文档对象
+        #region 从文件缓存中构建模板文档对象
                 /// <summary>
-        /// 从文件缓存中构建模版文档对象
+        /// 从文件缓存中构建模板文档对象
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="charset"></param>
@@ -322,7 +355,7 @@ namespace VTemplate.Engine
             return FromFileCache(fileName, charset, TemplateDocumentConfig.Default);
         }
         /// <summary>
-        /// 从文件缓存中构建模版文档对象
+        /// 从文件缓存中构建模板文档对象
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="charset"></param>
@@ -349,9 +382,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆模版文档对象
+        #region 克隆模板文档对象
         /// <summary>
-        /// 克隆模版文档对象
+        /// 克隆模板文档对象
         /// </summary>
         /// <returns></returns>
         private TemplateDocument Clone()
@@ -361,9 +394,9 @@ namespace VTemplate.Engine
 
         #endregion
 
-        #region 克隆当前元素到新的宿主模版
+        #region 克隆当前元素到新的宿主模板
         /// <summary>
-        /// 克隆当前元素到新的宿主模版
+        /// 克隆当前元素到新的宿主模板
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <returns></returns>

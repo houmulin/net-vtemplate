@@ -19,19 +19,19 @@ namespace VTemplate.Engine
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ownerTemplate">宿主模版</param>
+        /// <param name="ownerTemplate">宿主模板</param>
         protected Element(Template ownerTemplate)
         {
             this.OwnerTemplate = ownerTemplate;
         }
 
         /// <summary>
-        /// 此元素的宿主模版
+        /// 此元素的宿主模板
         /// </summary>
         public Template OwnerTemplate { get; protected set; }
 
         /// <summary>
-        /// 此元素的宿主模版文档
+        /// 此元素的宿主模板文档
         /// </summary>
         public virtual TemplateDocument OwnerDocument
         {

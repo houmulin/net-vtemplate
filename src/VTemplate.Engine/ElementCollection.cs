@@ -90,7 +90,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 添加元素
         /// </summary>
-        /// <param name="element">模版元素</param>
+        /// <param name="element">模板元素</param>
         internal virtual void Add(T element)
         {
             _List.Add(element);

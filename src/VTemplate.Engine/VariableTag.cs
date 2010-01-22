@@ -308,9 +308,9 @@ namespace VTemplate.Engine
         }
         #endregion
 
-        #region 克隆当前元素到新的宿主模版
+        #region 克隆当前元素到新的宿主模板
         /// <summary>
-        /// 克隆当前元素到新的宿主模版
+        /// 克隆当前元素到新的宿主模板
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <returns></returns>

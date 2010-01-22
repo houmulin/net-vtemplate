@@ -18,7 +18,7 @@ namespace VTemplate.WebTester
     public class currentrendertag_test : PageBase
     {
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
@@ -26,7 +26,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 用于给模版调用的方法
+        /// 用于给模板调用的方法
         /// </summary>
         /// <returns></returns>
         public List<News> GetNewsData()
@@ -43,7 +43,7 @@ namespace VTemplate.WebTester
         }
 
         /// <summary>
-        /// 用于给模版调用的方法(静态方法)
+        /// 用于给模板调用的方法(静态方法)
         /// </summary>
         /// <returns></returns>
         public static List<News> GetStaticNewsData()

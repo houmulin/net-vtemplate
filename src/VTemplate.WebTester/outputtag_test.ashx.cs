@@ -41,7 +41,7 @@ namespace VTemplate.WebTester
             return this.Categories.FindAll(x => x.Path == path);
         }
         /// <summary>
-        /// 初始化当前页面模版数据
+        /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
