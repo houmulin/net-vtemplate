@@ -72,6 +72,8 @@ namespace VTemplate.Engine
             if (!(container is ForEachTag)) throw new ParserException(string.Format("未找到和{0}标签对应的{1}标签", this.TagName, this.EndTagName));
 
             ForEachTag foreachTag = (ForEachTag)container;
+            if (foreachTag.Else != null) throw new ParserException(string.Format("{0}标签不能定义多个{1}标签", this.EndTagName, this.TagName));
+
             foreachTag.Else = this;
 
             return true;

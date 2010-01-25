@@ -91,6 +91,8 @@ namespace VTemplate.Engine
             if (!(container is IfTag)) throw new ParserException(string.Format("未找到和{0}标签对应的{1}标签", this.TagName, this.EndTagName));
 
             IfTag ifTag = (IfTag)container;
+            if (ifTag.Else != null) throw new ParserException(string.Format("{0}标签不能定义多个{1}标签", this.EndTagName, this.TagName));
+
             //加入到If标签的Else节点
             ifTag.Else = this;
 

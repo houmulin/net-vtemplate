@@ -270,11 +270,9 @@ namespace VTemplate.Engine
                             }
                         }
                     }
-                    else
-                    {
-                        //否则则将当前标签加入堆栈
-                        tagStack.Push(tag);
-                    }
+                    //将当前标签加入堆栈
+                    tagStack.Push(tag);
+
                     //将解析权交给标签
                     bool flag = tag.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
                     //非已闭合标签或者是单标签则处理标签的结束标签
