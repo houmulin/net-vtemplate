@@ -40,7 +40,7 @@
   <vt:serverdata var="id" type="QueryString" item="id" />
   <vt:serverdata var="sex" type="QueryString" item="sex" />
   <vt:if var="id" value="" compare="!=">
-  <vt:datareader var="user" connection="MemberDb" commandtext="select * from [member] where id=@p0 and sex=@p1" parameters="id" parameters="sex" rowindex="0" />
+  <vt:datareader var="user" connection="MemberDb" commandtext="select * from [member] where id=@p0 and sex=@p1" parameters="$id" parameters="$sex" rowindex="0" />
   <vt:if var="#.user" value="">
 未找到 Id = {$:id} 且 sex = {$:sex} 的用户记录
   <vt:else />

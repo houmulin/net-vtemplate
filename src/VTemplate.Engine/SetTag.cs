@@ -57,7 +57,13 @@ namespace VTemplate.Engine
         /// <summary>
         /// 格式化
         /// </summary>
-        public string Format { get; protected set; }
+        public Attribute Format
+        {
+            get
+            {
+                return this.Attributes["Format"];
+            }
+        }
 
         /// <summary>
         /// 是否输出此标签的结果值
@@ -76,16 +82,13 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "value":
-                    this.Values.Add(ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim()));
+                    this.Values.Add(item.Value);
                     break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
-                    break;
-                case "format":
-                    this.Format = item.Value;
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                    this.Output = Utility.ConverToBoolean(item.Text);
                     break;
             }
         }
@@ -99,7 +102,8 @@ namespace VTemplate.Engine
         protected override void RenderTagData(System.IO.TextWriter writer)
         {
             object value = null;
-            if (string.IsNullOrEmpty(this.Format))
+            string format = this.Format == null ? string.Empty : this.Format.GetTextValue();
+            if (string.IsNullOrEmpty(format))
             {
                 value = this.Values[0].GetValue();
             }
@@ -110,7 +114,7 @@ namespace VTemplate.Engine
                 {
                     param.Add(ie.GetValue());
                 }
-                value = string.Format(this.Format, param.ToArray());
+                value = string.Format(format, param.ToArray());
             }
             if (this.Variable != null) this.Variable.Value = value;
 
@@ -134,7 +138,7 @@ namespace VTemplate.Engine
         {
             if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
             if (this.Values.Count < 1) throw new ParserException(string.Format("{0}标签中缺少value属性", this.TagName));
-            if (this.Values.Count > 1 && string.IsNullOrEmpty(this.Format)) throw new ParserException(string.Format("{0}标签如果已定义多个value属性,则也必须定义format属性", this.TagName));
+            if (this.Values.Count > 1 && this.Format == null) throw new ParserException(string.Format("{0}标签如果已定义多个value属性,则也必须定义format属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -150,7 +154,6 @@ namespace VTemplate.Engine
         {
             SetTag tag = new SetTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Format = this.Format;
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             foreach (IExpression exp in this.Values)

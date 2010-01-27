@@ -66,10 +66,10 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "file":
-                    this.File = item.Value;                    
+                    this.File = item.Text;                    
                     break;
                 case "charset":
-                    this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
+                    this.Charset = Utility.GetEncodingFromCharset(item.Text, this.OwnerTemplate.Charset);
                     break;
             }
         }

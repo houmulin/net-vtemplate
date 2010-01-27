@@ -105,7 +105,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 来源数据的变量
         /// </summary>
-        public IExpression From { get; protected set; }
+        public VariableExpression From { get; protected set; }
         /// <summary>
         /// 当前项变量
         /// </summary>
@@ -118,7 +118,13 @@ namespace VTemplate.Engine
         /// <summary>
         /// 分组大小
         /// </summary>
-        public int GroupSize { get; protected set; }
+        public Attribute GroupSize
+        {
+            get
+            {
+                return this.Attributes["GroupSize"];
+            }
+        }
 
         /// <summary>
         /// ForEachElse节点
@@ -149,16 +155,13 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "from":
-                    this.From = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value);
+                    this.From = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
                     break;
                 case "item":
-                    this.Item = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
+                    this.Item = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "index":
-                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
-                    break;
-                case "groupsize":
-                    this.GroupSize = Utility.ConverToInt32(item.Value);
+                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
             }
         }
@@ -178,7 +181,8 @@ namespace VTemplate.Engine
             if (array != null)
             {
                 IEnumerator list = array.GetEnumerator();
-                if (this.GroupSize > 1) list = Utility.SplitToGroup(list, this.GroupSize);
+                int groupSize = this.GroupSize == null ? 0 : Utility.ConverToInt32(this.GroupSize.GetTextValue());
+                if (groupSize > 1) list = Utility.SplitToGroup(list, groupSize);
 
                 list.Reset();
                 if (list.MoveNext())
@@ -234,10 +238,9 @@ namespace VTemplate.Engine
             ForEachTag tag = new ForEachTag(ownerTemplate);
             this.CopyTo(tag);
             tag.Else = this.Else == null ? null : (ForEachElseTag)(this.Else.Clone(ownerTemplate));
-            tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
+            tag.From = this.From == null ? null : (VariableExpression)this.From.Clone(ownerTemplate);
             tag.Index = this.Index == null ? null : this.Index.Clone(ownerTemplate);
             tag.Item = this.Item == null ? null : this.Item.Clone(ownerTemplate);
-            tag.GroupSize = this.GroupSize;
 
             return tag;
         }

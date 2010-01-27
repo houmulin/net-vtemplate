@@ -401,7 +401,11 @@ namespace VTemplate.Engine
 
             tag.Id = this.Id;
             tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            foreach (var att in this.Attributes)
+            {
+                tag.Attributes.Add(att.Clone(tag));
+            }
+
             tag.Charset = this.Charset;
             tag.File = this.File;
             tag.fileDependencies = this.fileDependencies;

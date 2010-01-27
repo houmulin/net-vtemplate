@@ -27,9 +27,7 @@ namespace VTemplate.Engine
         internal DataReaderTag(Template ownerTemplate)
             : base(ownerTemplate)
         {
-            this.Parameters = new ElementCollection<VariableExpression>();
-            this.CommandType = CommandType.Text;
-            this.ParameterFormat = "@p{0}";
+            this.Parameters = new ElementCollection<IExpression>();
         }
 
         #region 重写Tag的方法
@@ -55,27 +53,57 @@ namespace VTemplate.Engine
         /// 数据源名称.此名称必须已在项目配置文件(如:web.config)里的connectionStrings节点里定义.
         /// </summary>
         /// <remarks></remarks>
-        public IExpression Connection { get; protected set; }
+        public Attribute Connection
+        {
+            get
+            {
+                return this.Attributes["Connection"];
+            }
+        }
 
         /// <summary>
         /// 数据查询命令语句.
         /// </summary>
-        public IExpression CommandText { get; protected set; }
+        public Attribute CommandText
+        {
+            get
+            {
+                return this.Attributes["CommandText"];
+            }
+        }
 
         /// <summary>
         /// 数据查询命令语句类型
         /// </summary>
-        public CommandType CommandType { get; protected set; }
+        public Attribute CommandType
+        {
+            get
+            {
+                return this.Attributes["CommandType"];
+            }
+        }
 
         /// <summary>
         /// 数据查询参数的格式.默认为"@p{0}",其中"{0}"是占位符,表示各参数的索引数字.
         /// </summary>
-        public string ParameterFormat { get; protected set; }
+        public Attribute ParameterFormat
+        {
+            get
+            {
+                return this.Attributes["ParameterFormat"];
+            }
+        }
 
         /// <summary>
         /// 要获取的行号.从0开始计算
         /// </summary>
-        public IExpression RowIndex { get; protected set; }
+        public Attribute RowIndex
+        {
+            get
+            {
+                return this.Attributes["RowIndex"];
+            }
+        }
 
         /// <summary>
         /// 存储表达式结果的变量
@@ -85,7 +113,7 @@ namespace VTemplate.Engine
         /// <summary>
         /// 查询命令中使用的变量参数列表,各参数在查询命令语句中则用参数名代替.如"@p0","@p1"之类的参数名
         /// </summary>
-        public virtual ElementCollection<VariableExpression> Parameters { get; protected set; }
+        public virtual ElementCollection<IExpression> Parameters { get; protected set; }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -99,25 +127,10 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
-                    break;
-                case "connection":
-                    this.Connection = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
-                    break;
-                case "commandtext":
-                    this.CommandText = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
-                    break;
-                case "commandtype":
-                    this.CommandType = (CommandType)Utility.ConvertTo(item.Value, typeof(CommandType));
-                    break;
-                case "rowindex":
-                    this.RowIndex = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "parameters":
-                    this.Parameters.Add(ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value));
-                    break;
-                case "parameterformat":
-                    this.ParameterFormat = item.Value.Trim();
+                    this.Parameters.Add(item.Value);
                     break;
             }
         }
@@ -154,15 +167,10 @@ namespace VTemplate.Engine
         {
             DataReaderTag tag = new DataReaderTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Connection = this.Connection == null ? null : this.Connection.Clone(ownerTemplate);
-            tag.CommandText = this.CommandText == null ? null : this.CommandText.Clone(ownerTemplate);
-            tag.RowIndex = this.RowIndex == null ? null : this.RowIndex.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
-            tag.CommandType = this.CommandType;
-            tag.ParameterFormat = this.ParameterFormat;
-            foreach (VariableExpression exp in this.Parameters)
+            foreach (IExpression exp in this.Parameters)
             {
-                tag.Parameters.Add((VariableExpression)(exp.Clone(ownerTemplate)));
+                tag.Parameters.Add(exp.Clone(ownerTemplate));
             }
             return tag;
         }
@@ -187,7 +195,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         protected virtual object GetDataSource()
         {
-            ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[this.Connection.GetValue().ToString()];
+            ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[this.Connection.GetTextValue()];
             if (setting == null) return null;
 
             DbProviderFactory dbFactory = Utility.CreateDbProviderFactory(setting.ProviderName);
@@ -199,18 +207,19 @@ namespace VTemplate.Engine
                 dbConnection.ConnectionString = setting.ConnectionString;
                 using (DbCommand dbCommand = dbConnection.CreateCommand())
                 {
-                    dbCommand.CommandType = this.CommandType;
-                    dbCommand.CommandText = this.CommandText.GetValue().ToString();
+                    dbCommand.CommandType = this.CommandType == null ? System.Data.CommandType.Text : (System.Data.CommandType)Utility.ConvertTo(this.CommandType.GetTextValue(), typeof(System.Data.CommandType));
+                    dbCommand.CommandText = this.CommandText.GetTextValue();
 
                     if (this.Parameters.Count > 0)
                     {
+                        string format = this.ParameterFormat == null ? "@p{0}" : this.ParameterFormat.GetTextValue();
                         List<object> expParams = new List<object>();
                         for (int i = 0; i < this.Parameters.Count; i++)
                         {
-                            VariableExpression exp = this.Parameters[i];
+                            IExpression exp = this.Parameters[i];
                             DbParameter dbParameter = dbFactory.CreateParameter();
                             object value = exp.GetValue();
-                            dbParameter.ParameterName = string.IsNullOrEmpty(this.ParameterFormat) ? "?" : string.Format(this.ParameterFormat, i);
+                            dbParameter.ParameterName = string.IsNullOrEmpty(format) ? "?" : string.Format(format, i);
                             dbParameter.DbType = Utility.GetObjectDbType(value);
                             dbParameter.Value = value;
                             dbCommand.Parameters.Add(dbParameter);
@@ -226,7 +235,7 @@ namespace VTemplate.Engine
                         if (this.RowIndex != null)
                         {
                             //只获取其中的某行数据
-                            int row = Utility.ConverToInt32(this.RowIndex.GetValue().ToString());
+                            int row = Utility.ConverToInt32(this.RowIndex.GetTextValue());
                             if (table.Rows.Count > row)
                             {
                                 result = table.Rows[row];

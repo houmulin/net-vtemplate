@@ -128,7 +128,13 @@ namespace VTemplate.Engine
         /// 数据类型.
         /// </summary>
         /// <remarks></remarks>
-        public ServerDataType Type { get; protected set; }
+        public Attribute Type
+        {
+            get
+            {
+                return this.Attributes["Type"];
+            }
+        }
 
         /// <summary>
         /// 存储表达式结果的变量
@@ -138,7 +144,13 @@ namespace VTemplate.Engine
         /// <summary>
         /// 数据值
         /// </summary>
-        public IExpression Item { get; protected set; }
+        public Attribute Item
+        {
+            get
+            {
+                return this.Attributes["Item"];
+            }
+        }
 
         /// <summary>
         /// 是否输出此标签的结果值
@@ -156,17 +168,11 @@ namespace VTemplate.Engine
         {
             switch (name)
             {
-                case "type":
-                    this.Type = (ServerDataType)Utility.ConvertTo(item.Value, typeof(ServerDataType));
-                    break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
-                    break;
-                case "item":
-                    this.Item = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                    this.Output = Utility.ConverToBoolean(item.Text);
                     break;
             }
         }
@@ -186,12 +192,12 @@ namespace VTemplate.Engine
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
             if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
-            if (this.Type == ServerDataType.Unknown) throw new ParserException(string.Format("{0}标签中缺少type属性或type属性值未知", this.TagName));
-            if (this.Type != ServerDataType.Random 
-                && this.Type != ServerDataType.Time
-                && this.Type != ServerDataType.Request
-                && this.Type != ServerDataType.Environment
-                && this.Item == null) throw new ParserException(string.Format("当{0}标签type=\"{1}\"时必须设置item属性值", this.TagName, this.Type));
+            if (this.Type == null) throw new ParserException(string.Format("{0}标签中缺少type属性或type属性值未知", this.TagName));
+            //if (this.Type != ServerDataType.Random 
+            //    && this.Type != ServerDataType.Time
+            //    && this.Type != ServerDataType.Request
+            //    && this.Type != ServerDataType.Environment
+            //    && this.Item == null) throw new ParserException(string.Format("当{0}标签type=\"{1}\"时必须设置item属性值", this.TagName, this.Type));
             
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -207,8 +213,6 @@ namespace VTemplate.Engine
         {
             ServerDataTag tag = new ServerDataTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Type = this.Type;
-            tag.Item = this.Item == null ? null : this.Item.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             return tag;
@@ -237,7 +241,8 @@ namespace VTemplate.Engine
         /// <returns></returns>
         private object GetServerData()
         {
-            switch (this.Type)
+            ServerDataType type = (ServerDataType)Utility.ConvertTo(this.Type.GetTextValue(), typeof(ServerDataType));
+            switch (type)
             {
                 case ServerDataType.Time:
                     return GetServerTime();
@@ -276,7 +281,7 @@ namespace VTemplate.Engine
         private DateTime GetServerTime()
         {
             DateTime time = DateTime.Now;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item))
             {
                 switch (item.ToLower())
@@ -303,7 +308,7 @@ namespace VTemplate.Engine
         {
             object value = null;
             HttpContext context = HttpContext.Current;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item) && context != null && context.Application != null)
             {
                 value = context.Application[item];
@@ -319,7 +324,7 @@ namespace VTemplate.Engine
         {
             object value = null;
             HttpContext context = HttpContext.Current;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item) && context != null && context.Session != null)
             {
                 value = context.Session[item];
@@ -335,7 +340,7 @@ namespace VTemplate.Engine
         {
             object value = null;
             Cache cache = HttpRuntime.Cache;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item) && cache != null)
             {
                 value = cache[item];
@@ -349,7 +354,7 @@ namespace VTemplate.Engine
         private string GetNameValueCollectionItem(NameValueCollection items)
         {
             string value = null;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item))
             {
                 value = items[item];
@@ -408,7 +413,7 @@ namespace VTemplate.Engine
         {
             string value = null;
             HttpContext context = HttpContext.Current;
-            string item = this.Item == null ? null : this.Item.GetValue().ToString();
+            string item = this.Item == null ? null : this.Item.GetTextValue();
             if (!string.IsNullOrEmpty(item) && context != null && context.Request != null)
             {
                 string[] keys = item.Split(".".ToCharArray(), 2, StringSplitOptions.RemoveEmptyEntries);

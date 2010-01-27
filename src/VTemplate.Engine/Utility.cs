@@ -59,6 +59,57 @@ namespace VTemplate.Engine
             int i;
             return int.TryParse(value, out i);
         }
+        /// <summary>
+        /// 比较两个值
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <param name="success"></param>
+        /// <returns></returns>
+        internal static int CompareTo(object value1, object value2, out bool success)
+        {
+            bool isSystemType1 = Type.GetTypeCode(value1.GetType()) != TypeCode.Object;
+            bool isSystemType2 = Type.GetTypeCode(value2.GetType()) != TypeCode.Object;
+
+            success = false;
+            if (isSystemType1)
+            {
+                //如果value1是基础类型.value2不是基础类型.但已实现IConvertible接口.则将value2转为value1类型
+                if (!isSystemType2 && value2 is IConvertible)
+                {
+                    value2 = ((IConvertible)value2).ToType(value1.GetType(), null);
+                }
+                else if (value1.GetType() != value2.GetType() && value2 is IConvertible)
+                {
+                    value2 = ((IConvertible)value2).ToType(value1.GetType(), null);
+                }
+            }
+            else if (isSystemType2)
+            {
+                //如果value2是基础类型.value1不是基础类型.但已实现IConvertible接口.则将value1转为value2类型
+                if (!isSystemType1 && value1 is IConvertible)
+                {
+                    value1 = ((IConvertible)value1).ToType(value2.GetType(), null);
+                }
+                else if (value1.GetType() != value2.GetType() && value1 is IConvertible)
+                {
+                    value1 = ((IConvertible)value1).ToType(value2.GetType(), null);
+                }
+            }
+
+            if (value1 is IComparable)
+            {
+                success = true;
+                return ((IComparable)value1).CompareTo(value2);
+            }
+            else if (value2 is IComparable)
+            {
+                success = true;
+                //value2 与 value1相比较.所以结果为相反
+                return 0 - ((IComparable)value2).CompareTo(value1);
+            }
+            return 1;
+        }
         #endregion
 
         #region 数据格式化函数块
@@ -328,6 +379,42 @@ namespace VTemplate.Engine
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// 获取条件的比较类型
+        /// </summary>
+        /// <param name="compareType"></param>
+        /// <returns></returns>
+        internal static IfConditionCompareType GetIfConditionCompareType(string compareType)
+        {
+            IfConditionCompareType icct = IfConditionCompareType.Equal;
+            if (!string.IsNullOrEmpty(compareType))
+            {
+                switch (compareType.Trim())
+                {
+                    case ">":
+                        icct = IfConditionCompareType.GT;
+                        break;
+                    case ">=":
+                        icct = IfConditionCompareType.GTAndEqual;
+                        break;
+                    case "<":
+                        icct = IfConditionCompareType.LT;
+                        break;
+                    case "<=":
+                        icct = IfConditionCompareType.LTAndEqual;
+                        break;
+                    case "<>":
+                    case "!=":
+                        icct = IfConditionCompareType.UnEqual;
+                        break;
+                    default:
+                        icct = IfConditionCompareType.Equal;
+                        break;
+                }
+            }
+            return icct;
         }
         #endregion
 

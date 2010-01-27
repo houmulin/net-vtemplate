@@ -15,9 +15,9 @@
 <vt:function var="#.child" method="GetCategories" type="$this" args="$#.category" />
 <vt:if var="#.child.count" value="0" compare=">"> 
 <vt:set var="#.categories" value="$#.child" />
-<vt:expression var="#.deep" expression="{0}+1" args="#.deep" />
+<vt:expression var="#.deep" expression="{0}+1" args="$#.deep" />
 <vt:output tagid="looplist" />
-<vt:expression var="#.deep" expression="{0}-1" args="#.deep" />
+<vt:expression var="#.deep" expression="{0}-1" args="$#.deep" />
 </vt:if>
 </vt:foreach>
 </vt:include>

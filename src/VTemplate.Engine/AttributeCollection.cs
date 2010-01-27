@@ -20,19 +20,28 @@ namespace VTemplate.Engine
         /// <summary>
         /// 构造默认模板属性
         /// </summary>
-        internal AttributeCollection()
+        /// <param name="ownerElement"></param>
+        internal AttributeCollection(Element ownerElement)
         {
+            this.OwnerElement = ownerElement;
             _Dictionary = new Dictionary<string, Attribute>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
         /// 构造一定容量的默认模板属性
         /// </summary>
+        /// <param name="ownerElement"></param>
         /// <param name="capacity"></param>
-        internal AttributeCollection(int capacity)
+        internal AttributeCollection(Element ownerElement, int capacity)
         {
+            this.OwnerElement = ownerElement;
             _Dictionary = new Dictionary<string, Attribute>(capacity, StringComparer.OrdinalIgnoreCase);
         }
+
+        /// <summary>
+        /// 宿主标签
+        /// </summary>
+        internal Element OwnerElement { get; private set; }
 
         /// <summary>
         /// 存放容器
@@ -105,21 +114,18 @@ namespace VTemplate.Engine
         public string GetValue(string name, string defaultValue)
         {
             Attribute attribute = this[name];
-            if (attribute == null) return defaultValue;
-            return attribute.Value;
+            if (attribute == null || attribute.Value == null) return defaultValue;
+            object value = attribute.Value.GetValue();
+            if (value == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return value.ToString();
+            }
         }
 
-        /// <summary>
-        /// 添加某个属性值
-        /// </summary>
-        /// <param name="name">属性名称</param>
-        /// <param name="value">属性值,可以为null或空</param>
-        internal void Add(string name, string value)
-        {
-            if (string.IsNullOrEmpty(name)) return;
-
-            Add(new Attribute(name, value));
-        }
         /// <summary>
         /// 添加某个属性值
         /// </summary>
@@ -127,6 +133,8 @@ namespace VTemplate.Engine
         internal void Add(Attribute item)
         {
             if (item == null) return;
+
+            item.OwnerElement = this.OwnerElement;
 
             //判断是否存在某个值,如果存在则更新
             if (Contains(item.Name))
@@ -136,8 +144,19 @@ namespace VTemplate.Engine
             else
             {
                 _Dictionary.Add(item.Name, item);
-            }
-            this.OnAdding(item);
+            }            
+        }
+
+        /// <summary>
+        /// 添加某个属性
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="text"></param>
+        internal void Add(string name, string text)
+        {
+            Attribute attribute = new Attribute(this.OwnerElement, name, text);
+            this.Add(attribute);
+            this.OnAdding(attribute);
         }
 
         /// <summary>

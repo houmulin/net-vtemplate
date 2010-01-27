@@ -51,12 +51,24 @@ namespace VTemplate.Engine
         /// <summary>
         /// 要导入的类型名称
         /// </summary>
-        public string Type { get; protected set; }
+        public Attribute Type
+        {
+            get
+            {
+                return this.Attributes["Type"];
+            }
+        }
 
         /// <summary>
         /// 类型所在的程序集
         /// </summary>
-        public string Assembly { get; protected set; }
+        public Attribute Assembly
+        {
+            get
+            {
+                return this.Attributes["Assembly"];
+            }
+        }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -70,13 +82,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
-                    break;
-                case "type":
-                    this.Type = item.Value;
-                    break;
-                case "assembly":
-                    this.Assembly = item.Value;
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
             }
         }
@@ -89,7 +95,20 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         protected override void RenderTagData(System.IO.TextWriter writer)
         {
-            Type type = Utility.CreateType(this.Type, this.Assembly);
+            Type type = null;
+            if (this.Type.Value is VariableExpression)
+            {
+                object v = this.Type.Value.GetValue();
+                if (v != null)
+                {
+                    type = (v is Type ? (Type)v : v.GetType());
+                }
+            }
+            else
+            {
+                string assembly = this.Assembly == null ? string.Empty : this.Assembly.GetTextValue();
+                type = Utility.CreateType(this.Type.GetTextValue(), assembly);
+            }
             if (this.Variable != null) this.Variable.Value = type;
 
             base.RenderTagData(writer);
@@ -110,7 +129,7 @@ namespace VTemplate.Engine
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
             if (this.Variable == null) throw new ParserException(string.Format("{0}标签中缺少var属性", this.TagName));
-            if (string.IsNullOrEmpty(this.Type)) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
+            if (this.Type == null || string.IsNullOrEmpty(this.Type.Text)) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -126,8 +145,6 @@ namespace VTemplate.Engine
         {
             ImportTag tag = new ImportTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Type = this.Type;
-            tag.Assembly = this.Assembly;
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             return tag;
         }

@@ -13,7 +13,8 @@ List集合数据<br />
 </tr>
 <vt:foreach from="users" item="user" index="i">
 <tr>
-<td>{$:i}<vt:if var="i.isfirst" value="true">首<vt:elseif var="i.islast" value="true" />尾<vt:else />中</vt:if></td>
+<td>{$:i}
+<vt:if var="i.isfirst" value="true">首<vt:elseif var="i.islast" value="true" />尾<vt:else />中</vt:if></td>
 <td>{$:user.name htmlencode='true'}</td>
 <td>{$:user.age}</td>
 </tr>

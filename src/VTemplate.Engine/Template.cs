@@ -93,12 +93,24 @@ namespace VTemplate.Engine
         /// <summary>
         /// 返回处理模板数据的实例
         /// </summary>
-        public string RenderInstance { get; protected set; }
+        public Attribute RenderInstance
+        {
+            get
+            {
+                return this.Attributes["render"];
+            }
+        }
 
         /// <summary>
         /// 返回处理模板数据的特性方法
         /// </summary>
-        public string RenderMethod { get; protected set; }
+        public Attribute RenderMethod
+        {
+            get
+            {
+                return this.Attributes["rendermethod"];
+            }
+        }
         #endregion
 
         #region 模板的依赖文件
@@ -142,16 +154,10 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "file":
-                    this.File = item.Value;                
+                    this.File = item.Text;                
                     break;
                 case "charset":
-                    this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
-                    break;
-                case "render":
-                    this.RenderInstance = item.Value.Trim();
-                    break;
-                case "rendermethod":
-                    this.RenderMethod = item.Value.Trim();
+                    this.Charset = Utility.GetEncodingFromCharset(item.Text, this.OwnerTemplate.Charset);
                     break;
             }
         }
@@ -252,18 +258,21 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         protected override void RenderTagData(System.IO.TextWriter writer)
         {
+            string renderInstance = this.RenderInstance == null ? null : this.RenderInstance.GetTextValue();
+            string renderMethod = this.RenderMethod == null ? null : this.RenderMethod.GetTextValue();
+
             //优先将处理权交给RenderInstance
-            if (!string.IsNullOrEmpty(this.RenderInstance))
+            if (!string.IsNullOrEmpty(renderInstance))
             {
-                if (!string.IsNullOrEmpty(this.RenderMethod))
+                if (!string.IsNullOrEmpty(renderMethod))
                 {
                     //采用特性方法处理
-                    Utility.PreRenderTemplateByAttributeMethod(this.RenderInstance, this.RenderMethod, this);
+                    Utility.PreRenderTemplateByAttributeMethod(renderInstance, renderMethod, this);
                 }
                 else
                 {
                     //采用接口处理
-                    Utility.PreRenderTemplate(this.RenderInstance, this);
+                    Utility.PreRenderTemplate(renderInstance, this);
                 }
             }
             if (this.Visible)
@@ -337,13 +346,14 @@ namespace VTemplate.Engine
             //复制其它属性
             tag.Id = this.Id;
             tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            foreach (var att in this.Attributes)
+            {
+                tag.Attributes.Add(att.Clone(tag));
+            }
             tag.Charset = this.Charset;
             tag.File = this.File;
             tag.fileDependencies = this.fileDependencies;
             tag.Visible = this.Visible;
-            tag.RenderInstance = this.RenderInstance;
-            tag.RenderMethod = this.RenderMethod;
 
             foreach (Element element in this.InnerElements)
             {

@@ -57,7 +57,6 @@ namespace VTemplate.Engine
         internal IfConditionTag(Template ownerTemplate)
             : base(ownerTemplate)
         {
-            this.Compare = IfConditionCompareType.Equal;
             this.Values = new ElementCollection<IExpression>();
         }
         #region 重写Tag的方法
@@ -99,12 +98,24 @@ namespace VTemplate.Engine
         /// <summary>
         /// 比较类型
         /// </summary>
-        public IfConditionCompareType Compare { get; protected set; }
+        public Attribute Compare
+        {
+            get
+            {
+                return this.Attributes["Compare"];
+            }
+        }
         /// <summary>
         /// 表达式.
         /// </summary>
         /// <remarks>表达式中可用"{0}"标记符表示条件变量的值</remarks>
-        public string Expression { get; protected set; }
+        public Attribute Expression
+        {
+            get
+            {
+                return this.Attributes["Expression"];
+            }
+        }
         #endregion
 
         #region 添加标签属性时的触发函数.用于设置自身的某些属性值
@@ -118,37 +129,10 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.VarExpression = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value);
+                    this.VarExpression = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
                     break;
                 case "value":
-                    this.Values.Add(ParserHelper.CreateExpression(this.OwnerTemplate, item.Value));
-                    break;
-                case "expression":
-                    this.Expression = item.Value.Trim();
-                    break;
-                case "compare":
-                    switch (item.Value.Trim())
-                    {
-                        case ">":
-                            this.Compare = IfConditionCompareType.GT;
-                            break;
-                        case ">=":
-                            this.Compare = IfConditionCompareType.GTAndEqual;
-                            break;
-                        case "<":
-                            this.Compare = IfConditionCompareType.LT;
-                            break;
-                        case "<=":
-                            this.Compare = IfConditionCompareType.LTAndEqual;
-                            break;
-                        case "<>":
-                        case "!=":
-                            this.Compare = IfConditionCompareType.UnEqual;
-                            break;
-                        default:
-                            this.Compare = IfConditionCompareType.Equal;
-                            break;
-                    }
+                    this.Values.Add(item.Value);
                     break;
             }
         }
@@ -166,10 +150,14 @@ namespace VTemplate.Engine
 
             //取得条件变量的值
             object testValue = this.VarExpression.GetValue();
+
+            IfConditionCompareType compare = this.Compare == null ? IfConditionCompareType.Equal : Utility.GetIfConditionCompareType(this.Compare.GetTextValue());
+
+
             if (Utility.IsNothing(testValue))
             {
                 //条件变量的值为null或DBNull.Value.
-                switch (this.Compare)
+                switch (compare)
                 {
                     case IfConditionCompareType.Equal:
                         //如果相等比较.则比较值列表中是否有空值比较,如果有则认为成立.否则不成立
@@ -197,12 +185,13 @@ namespace VTemplate.Engine
             else
             {
                 //处理表达式
-                if (!string.IsNullOrEmpty(this.Expression))
+                string expression = this.Expression == null ? string.Empty : this.Expression.GetTextValue();
+                if (!string.IsNullOrEmpty(expression))
                 {
                     object v = testValue;
                     try
                     {
-                        testValue = Evaluator.ExpressionEvaluator.Eval(string.Format(this.Expression, testValue));
+                        testValue = Evaluator.ExpressionEvaluator.Eval(string.Format(expression, testValue));
                     }
                     catch
                     {
@@ -210,20 +199,8 @@ namespace VTemplate.Engine
                     }
                 }
 
-                //取IComparable接口
-                IComparable comparer;
-                bool isComparer = testValue is IComparable;
-                if (isComparer)
-                {
-                    comparer = (IComparable)testValue;
-                }
-                else
-                {
-                    //如果值未实现IComparable接口.则默认取其字符串形式的IComparable接口
-                    comparer = (testValue.ToString() as IComparable);
-                }
-
-                switch (this.Compare)
+                bool success;
+                switch (compare)
                 {
                     case IfConditionCompareType.GT:
                         foreach (IExpression exp in this.Values)
@@ -231,8 +208,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                if (compareValue != null && comparer.CompareTo(compareValue) > 0) return true;
+                                if (Utility.CompareTo(testValue, obj, out success) > 0 && success) return true;
                             }
                         }
                         return false;
@@ -242,8 +218,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                if (compareValue != null && comparer.CompareTo(compareValue) >= 0) return true;
+                                if (Utility.CompareTo(testValue, obj, out success) >= 0 && success) return true;
                             }
                         }
                         return false;
@@ -253,8 +228,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                if (compareValue != null && comparer.CompareTo(compareValue) < 0) return true;
+                                if (Utility.CompareTo(testValue, obj, out success) < 0 && success) return true;
                             }
                         }
                         return false;
@@ -264,8 +238,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                if (compareValue != null && comparer.CompareTo(compareValue) <= 0) return true;
+                                if (Utility.CompareTo(testValue, obj, out success) <= 0 && success) return true;
                             }
                         }
                         return false;
@@ -276,12 +249,12 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string)
+                                if (testValue is string || obj is string)
                                 {
                                     //字符串比较.则不区分大小写
-                                    if(!string.Equals(obj.ToString(), (string)testValue, StringComparison.InvariantCultureIgnoreCase))return true;
+                                    if(!string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase))return true;
                                 }
-                                else if (!isComparer)
+                                else if (!(testValue is IComparable))
                                 {
                                     //优先进行类型比较
                                     if (obj is Type)
@@ -294,14 +267,12 @@ namespace VTemplate.Engine
                                     }
                                     else
                                     {
-                                        object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                        if (compareValue == null || comparer.CompareTo(compareValue) != 0) return true;
+                                        if (Utility.CompareTo(testValue, obj, out success) != 0 && success) return true;
                                     }
                                 }
                                 else
                                 {
-                                    object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                    if (compareValue == null || comparer.CompareTo(compareValue) != 0) return true;
+                                    if (Utility.CompareTo(testValue, obj, out success) != 0 && success) return true;
                                 }
                             }
                             else
@@ -317,12 +288,12 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string)
+                                if (testValue is string || obj is string)
                                 {
                                     //字符串比较.则不区分大小写
-                                    if (string.Equals(obj.ToString(), (string)testValue, StringComparison.InvariantCultureIgnoreCase)) return true;
+                                    if (string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase)) return true;
                                 }
-                                else if (!isComparer)
+                                else if (!(testValue is IComparable))
                                 {
                                     //优先进行类型比较
                                     if (obj is Type)
@@ -335,14 +306,12 @@ namespace VTemplate.Engine
                                     }
                                     else
                                     {
-                                        object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                        if (compareValue != null && comparer.CompareTo(compareValue) == 0) return true;
+                                        if (Utility.CompareTo(testValue, obj, out success) == 0 && success) return true;
                                     }
                                 }
                                 else
                                 {
-                                    object compareValue = Utility.ConvertTo(obj.ToString(), testValue.GetType());
-                                    if (compareValue != null && comparer.CompareTo(compareValue) == 0) return true;
+                                    if (Utility.CompareTo(testValue, obj, out success) == 0 && success) return true;
                                 }
                             }
                         }
@@ -389,8 +358,6 @@ namespace VTemplate.Engine
         protected void CopyTo(IfConditionTag tag)
         {
             base.CopyTo(tag);
-            tag.Compare = this.Compare;
-            tag.Expression = this.Expression;
             tag.VarExpression = this.VarExpression == null ? null : (VariableExpression)(this.VarExpression.Clone(tag.OwnerTemplate));
             if (this.Values != null)
             {

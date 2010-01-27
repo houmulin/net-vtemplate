@@ -22,9 +22,7 @@ namespace VTemplate.Engine
         /// <param name="ownerTemplate"></param>
         internal ForTag(Template ownerTemplate)
             : base(ownerTemplate)
-        {
-            this.Step = new ConstantExpression(1);
-        }
+        {}
 
         #region 重写Tag的方法
         /// <summary>
@@ -48,15 +46,33 @@ namespace VTemplate.Engine
         /// <summary>
         /// 起始值
         /// </summary>
-        public IExpression From { get; protected set; }
+        public Attribute From
+        {
+            get
+            {
+                return this.Attributes["From"];
+            }
+        }
         /// <summary>
         /// 结束值
         /// </summary>
-        public IExpression To { get; protected set; }
+        public Attribute To
+        {
+            get
+            {
+                return this.Attributes["To"];
+            }
+        }
         /// <summary>
         /// 步长
         /// </summary>
-        public IExpression Step { get; protected set; }
+        public Attribute Step
+        {
+            get
+            {
+                return this.Attributes["Step"];
+            }
+        }
         /// <summary>
         /// 索引变量
         /// </summary>
@@ -73,17 +89,8 @@ namespace VTemplate.Engine
         {
             switch (name)
             {
-                case "from":
-                    this.From = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
-                    break;
-                case "to":
-                    this.To = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
-                    break;
-                case "step":
-                    this.Step = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value);
-                    break;
                 case "index":
-                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
+                    this.Index = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
             }
         }
@@ -96,9 +103,9 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         protected override void RenderTagData(System.IO.TextWriter writer)
         {
-            decimal from = Utility.ConverToDecimal(this.From.GetValue());
-            decimal step = Utility.ConverToDecimal(this.Step.GetValue());
-            decimal to = Utility.ConverToDecimal(this.To.GetValue());
+            decimal from = Utility.ConverToDecimal(this.From.Value.GetValue());
+            decimal step = this.Step == null ? 1 : Utility.ConverToDecimal(this.Step.Value.GetValue());
+            decimal to = Utility.ConverToDecimal(this.To.Value.GetValue());
             decimal index = from;
 
             LoopIndex li = new LoopIndex(index);
@@ -160,9 +167,6 @@ namespace VTemplate.Engine
         {
             ForTag tag = new ForTag(ownerTemplate);
             base.CopyTo(tag);
-            tag.From = this.From == null ? null : this.From.Clone(ownerTemplate);
-            tag.To = this.To == null ? null : this.To.Clone(ownerTemplate);
-            tag.Step = this.Step == null ? null : this.Step.Clone(ownerTemplate);
             tag.Index = this.Index == null ? null : this.Index.Clone(ownerTemplate);
             return tag;
         }

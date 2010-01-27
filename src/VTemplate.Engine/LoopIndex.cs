@@ -13,7 +13,7 @@ namespace VTemplate.Engine
     /// <summary>
     /// 循环索引
     /// </summary>
-    public class LoopIndex : IConvertible
+    public class LoopIndex : IConvertible, IComparable
     {
         /// <summary>
         /// 
@@ -212,6 +212,29 @@ namespace VTemplate.Engine
         public ulong ToUInt64(IFormatProvider provider)
         {
             return Convert.ToUInt64(this.Value, provider);
+        }
+
+        #endregion
+
+        #region IComparable 成员
+        /// <summary>
+        /// 比较器
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public int CompareTo(object obj)
+        {
+            if (obj == null || obj == DBNull.Value) return 1;
+            decimal d;
+            if (!(obj is decimal))
+            {
+                d = Utility.ConverToDecimal(obj);
+            }
+            else
+            {
+                d = (decimal)obj;
+            }
+            return this.Value.CompareTo(d);
         }
 
         #endregion

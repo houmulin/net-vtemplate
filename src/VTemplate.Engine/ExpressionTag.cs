@@ -24,7 +24,7 @@ namespace VTemplate.Engine
         internal ExpressionTag(Template ownerTemplate)
             : base(ownerTemplate)
         {
-            this.ExpArgs = new ElementCollection<VariableExpression>();
+            this.ExpArgs = new ElementCollection<IExpression>();
         }
 
         #region 重写Tag的方法
@@ -48,13 +48,19 @@ namespace VTemplate.Engine
         /// <summary>
         /// 参与表达式运算的变量参数列表
         /// </summary>
-        public virtual ElementCollection<VariableExpression> ExpArgs { get; protected set; }
+        public virtual ElementCollection<IExpression> ExpArgs { get; protected set; }
 
         /// <summary>
         /// 表达式.
         /// </summary>
         /// <remarks>表达式中可用"{0}","{1}"..之类的标记符表示变量参数的值</remarks>
-        public string Expression { get; protected set; }
+        public Attribute Expression
+        {
+            get
+            {
+                return this.Attributes["Expression"];
+            }
+        }
 
         /// <summary>
         /// 存储表达式结果的变量
@@ -78,16 +84,13 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "args":
-                    this.ExpArgs.Add(ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Value));
-                    break;
-                case "expression":
-                    this.Expression = item.Value;
+                    this.ExpArgs.Add(item.Value);
                     break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                    this.Output = Utility.ConverToBoolean(item.Text);
                     break;
             }
         }
@@ -103,13 +106,13 @@ namespace VTemplate.Engine
             //计算表达式的值
             object value = null;
             List<object> expParams = new List<object>();
-            foreach (VariableExpression exp in this.ExpArgs)
+            foreach (IExpression exp in this.ExpArgs)
             {
                 expParams.Add(exp.GetValue());
             }
             try
             {
-                value = Evaluator.ExpressionEvaluator.Eval(string.Format(this.Expression, expParams.ToArray()));
+                value = Evaluator.ExpressionEvaluator.Eval(string.Format(this.Expression.GetTextValue(), expParams.ToArray()));
             }
             catch
             {
@@ -135,7 +138,7 @@ namespace VTemplate.Engine
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
             if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
-            if (string.IsNullOrEmpty(this.Expression)) throw new ParserException(string.Format("{0}标签中缺少expression属性", this.TagName));
+            if (this.Expression == null) throw new ParserException(string.Format("{0}标签中缺少expression属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
         }
@@ -151,12 +154,11 @@ namespace VTemplate.Engine
         {
             ExpressionTag tag = new ExpressionTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Expression = this.Expression;
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
-            foreach (VariableExpression exp in this.ExpArgs)
+            foreach (IExpression exp in this.ExpArgs)
             {
-                tag.ExpArgs.Add((VariableExpression)(exp.Clone(ownerTemplate)));
+                tag.ExpArgs.Add(exp.Clone(ownerTemplate));
             }
             return tag;
         }

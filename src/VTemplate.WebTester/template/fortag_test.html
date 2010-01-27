@@ -6,7 +6,7 @@
 <body>
 <vt:for from="1" to="9" index="i">
 <vt:for from="1" to="$i" index="j">
-<vt:expression var="r" args="i" args="j" expression="{0}*{1}" />{$:i}*{$:j}={$:r}&nbsp;&nbsp;&nbsp;&nbsp;
+<vt:expression var="r" args="$i" args="$j" expression="{0}*{1}" />{$:i}*{$:j}={$:r}&nbsp;&nbsp;&nbsp;&nbsp;
 </vt:for>
 <br />
 </vt:for>

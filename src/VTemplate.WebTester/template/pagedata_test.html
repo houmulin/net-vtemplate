@@ -20,7 +20,7 @@
 <div id="list">
   <vt:foreach id="pagetable" from="#.pagedata" item="data" index="i" pagesize="10" remark="pagedata变量只接收当前页的数据列表集合">
   <ul>
-     <li><vt:expression expression="{0}+({1}-1)*{2}" args="#.i.value" args="this.pagenumber" args="this.pagesize" output="true" /></li>
+     <li><vt:expression expression="{0}+({1}-1)*{2}" args="#.i.value" args="$this.pagenumber" args="$this.pagesize" output="true" /></li>
      <li>{$:#.data}</li>
   </ul>
   </vt:foreach>
@@ -50,9 +50,9 @@
 
 页码:<strong>{$:this.pagenumber}</strong>/<strong>{$:this.pagecount}</strong>&nbsp;&nbsp;
 <vt:if var="this.pagenumber" value="1" compare="<=">[首页] [上页]<vt:else />[<a href="{$:#.firstpageurl}">首页</a>] [<a href="{$:#.previouspageurl}">上页</a>]</vt:if> 
-<vt:expression var="firstpageno" expression="{0}-5" args="this.pagenumber" />
+<vt:expression var="firstpageno" expression="{0}-5" args="$this.pagenumber" />
 <vt:function var="firstpageno" method="Max" type="System.Math" args="$#.firstpageno" args="1"  />
-<vt:expression var="lastpageno" expression="{0}+10" args="firstpageno" />
+<vt:expression var="lastpageno" expression="{0}+10" args="$firstpageno" />
 <vt:function var="lastpageno" method="Min" type="System.Math" args="$#.lastpageno" args="$this.pagecount"  />
 <vt:for from="$#.firstpageno" to="$#.lastpageno" index="i">
 <vt:if var="#.i.value" value="$this.pagenumber">

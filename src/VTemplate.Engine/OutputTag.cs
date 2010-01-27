@@ -25,9 +25,7 @@ namespace VTemplate.Engine
         /// <param name="ownerTemplate"></param>
         internal OutputTag(Template ownerTemplate)
             : base(ownerTemplate)
-        {
-            this.Charset = ownerTemplate.Charset;
-        }
+        {  }
 
         #region 重写Tag的方法
         /// <summary>
@@ -59,9 +57,9 @@ namespace VTemplate.Engine
             get
             {
                 if (this.outputTarget == null
-                    && !string.IsNullOrEmpty(this.TagId))
+                    && this.TagId != null && !string.IsNullOrEmpty(this.TagId.GetTextValue()))
                 {
-                    this.outputTarget = this.OwnerDocument.GetChildTagById(this.TagId);
+                    this.outputTarget = this.OwnerDocument.GetChildTagById(this.TagId.GetTextValue());
                 }
                 return this.outputTarget;
             }
@@ -69,37 +67,32 @@ namespace VTemplate.Engine
         /// <summary>
         /// 需要输出数据的标签的Id
         /// </summary>
-        public string TagId { get; set; }
+        public Attribute TagId
+        {
+            get
+            {
+                return this.Attributes["TagId"];
+            }
+        }
 
         /// <summary>
         /// 需要输出数据的文件
         /// </summary>
-        public string File { get; private set; }
+        public Attribute File
+        {
+            get
+            {
+                return this.Attributes["File"];
+            }
+        }
         /// <summary>
         /// 文件编码
         /// </summary>
-        public Encoding Charset { get; private set; }
-        #endregion
-
-        #region 添加标签属性时的触发函数.用于设置自身的某些属性值
-        /// <summary>
-        /// 添加标签属性时的触发函数.用于设置自身的某些属性值
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="item"></param>
-        protected override void OnAddingAttribute(string name, Attribute item)
+        public Attribute Charset
         {
-            switch (name)
+            get
             {
-                case "tagid":
-                    this.TagId = item.Value;
-                    break;
-                case "file":
-                    this.File = item.Value;
-                    break;
-                case "charset":
-                    this.Charset = Utility.GetEncodingFromCharset(item.Value, this.OwnerTemplate.Charset);
-                    break;
+                return this.Attributes["Charset"];
             }
         }
         #endregion
@@ -115,16 +108,19 @@ namespace VTemplate.Engine
             this.OnBeforeRender(args);
             if (!args.Cancel)
             {
+                string file = this.File == null ? string.Empty : Utility.ResolveFilePath(this.Parent, this.File.GetTextValue());
+                Encoding charset = this.Charset == null ? this.OwnerTemplate.Charset : Utility.GetEncodingFromCharset(this.Charset.GetTextValue(), this.OwnerTemplate.Charset);
+
                 if (this.OutputTarget != null)
                     this.OutputTarget.Render(writer);
 
-                if (!string.IsNullOrEmpty(this.File))
+                if (!string.IsNullOrEmpty(file))
                 {
                     try
                     {
-                        if (System.IO.File.Exists(this.File))
+                        if (System.IO.File.Exists(file))
                         {
-                            writer.Write(System.IO.File.ReadAllText(this.File, this.Charset));
+                            writer.Write(System.IO.File.ReadAllText(file, charset));
                         }
                     }
                     catch { }
@@ -151,13 +147,9 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (string.IsNullOrEmpty(this.TagId) && string.IsNullOrEmpty(this.File)) throw new ParserException(string.Format("{0}标签中必须定义tagid或file属性", this.TagName));
+            if (this.TagId == null && this.File == null) throw new ParserException(string.Format("{0}标签中必须定义tagid或file属性", this.TagName));
 
             bool flag = base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
-
-            //修正文件地址
-            if(!string.IsNullOrEmpty(this.File))
-                this.File = Utility.ResolveFilePath(this.Parent, this.File);
 
             return flag;
         }
@@ -173,9 +165,6 @@ namespace VTemplate.Engine
         {
             OutputTag tag = new OutputTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.TagId = this.TagId;
-            tag.File = this.File;
-            tag.Charset = this.Charset;
             return tag;
         }
         #endregion

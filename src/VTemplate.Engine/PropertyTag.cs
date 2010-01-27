@@ -47,12 +47,24 @@ namespace VTemplate.Engine
         /// <summary>
         /// 调用的属性或字段
         /// </summary>
-        public string Field { get; protected set; }
+        public Attribute Field
+        {
+            get
+            {
+                return this.Attributes["Field"];
+            }
+        }
 
         /// <summary>
         /// 包含属性或字段的类型
         /// </summary>
-        public IExpression Type { get; protected set; }
+        public Attribute Type
+        {
+            get
+            {
+                return this.Attributes["Type"];
+            }
+        }
 
         /// <summary>
         /// 存储表达式结果的变量
@@ -75,17 +87,11 @@ namespace VTemplate.Engine
         {
             switch (name)
             {
-                case "field":
-                    this.Field = item.Value.Trim();
-                    break;
-                case "type":
-                    this.Type = ParserHelper.CreateExpression(this.OwnerTemplate, item.Value.Trim());
-                    break;
                 case "var":
-                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Value);
+                    this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "output":
-                    this.Output = Utility.ConverToBoolean(item.Value);
+                    this.Output = Utility.ConverToBoolean(item.Text);
                     break;
             }
         }
@@ -99,9 +105,9 @@ namespace VTemplate.Engine
         protected override void RenderTagData(System.IO.TextWriter writer)
         {
             //如果类型定义的是变量表达式则获取表达式的值,否则建立类型
-            object container = this.Type is VariableExpression ? this.Type.GetValue() : Utility.CreateType(this.Type.GetValue().ToString());
+            object container = this.Type.Value is VariableExpression ? this.Type.Value.GetValue() : Utility.CreateType(this.Type.Value.GetValue().ToString());
             bool exits;
-            object value = container == null ? null : Utility.GetPropertyValue(container, this.Field, out exits);
+            object value = container == null ? null : Utility.GetPropertyValue(container, this.Field.GetTextValue(), out exits);
             if (this.Variable != null) this.Variable.Value = value;
 
             if (this.Output && value != null) writer.Write(value);
@@ -123,7 +129,7 @@ namespace VTemplate.Engine
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
             if (this.Variable == null && !this.Output) throw new ParserException(string.Format("{0}标签中如果未定义Output属性为true则必须定义var属性", this.TagName));
-            if (string.IsNullOrEmpty(this.Field)) throw new ParserException(string.Format("{0}标签中缺少field属性", this.TagName));
+            if (this.Field == null || string.IsNullOrEmpty(this.Field.Text)) throw new ParserException(string.Format("{0}标签中缺少field属性", this.TagName));
             if (this.Type == null) throw new ParserException(string.Format("{0}标签中缺少type属性", this.TagName));
 
             return base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
@@ -140,8 +146,6 @@ namespace VTemplate.Engine
         {
             PropertyTag tag = new PropertyTag(ownerTemplate);
             this.CopyTo(tag);
-            tag.Field = this.Field;
-            tag.Type = (IExpression)this.Type.Clone(ownerTemplate);
             tag.Variable = this.Variable == null ? null : this.Variable.Clone(ownerTemplate);
             tag.Output = this.Output;
             return tag;

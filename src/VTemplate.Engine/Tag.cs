@@ -26,10 +26,11 @@ namespace VTemplate.Engine
         protected Tag(Template ownerTemplate) : base(ownerTemplate)
         {            
             this.InnerElements = new ElementCollection<Element>();
-            this.Attributes = new AttributeCollection();
+            this.Attributes = new AttributeCollection(this);
             //注册添加属性时触发事件.用于设置自身的某些属性值
             this.Attributes.Adding += OnAddingAttribute;
         }
+
         #region 属性定义
         /// <summary>
         /// 返回标签的名称.如for,foreach等等
@@ -90,10 +91,10 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "id":
-                    this.Id = e.Item.Value.Trim();
+                    this.Id = e.Item.Text.Trim();
                     break;
                 case "name":
-                    this.Name = e.Item.Value.Trim();
+                    this.Name = e.Item.Text.Trim();
                     break;
             }
             OnAddingAttribute(name, e.Item);
@@ -440,7 +441,7 @@ namespace VTemplate.Engine
             buffer.AppendFormat("<vt:{0}", this.TagName);
             foreach (Attribute attribute in this.Attributes)
             {
-                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Value));
+                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Text));
             }
             buffer.AppendFormat(">");
             return buffer.ToString();
@@ -456,7 +457,10 @@ namespace VTemplate.Engine
         {
             tag.Id = this.Id;
             tag.Name = this.Name;
-            tag.Attributes = this.Attributes;
+            foreach (var att in this.Attributes)
+            {
+                tag.Attributes.Add(att.Clone(tag.OwnerTemplate));
+            }
             foreach (Element element in this.InnerElements)
             {
                 tag.AppendChild(element.Clone(tag.OwnerTemplate));

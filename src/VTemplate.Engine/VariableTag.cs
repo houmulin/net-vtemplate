@@ -28,11 +28,10 @@ namespace VTemplate.Engine
             : base(ownerTemplate)
         {
             //注册添加属性时触发事件.用于设置自身的某些属性值
-            this.Attributes = new AttributeCollection();
+            this.Attributes = new AttributeCollection(this);
             this.Attributes.Adding += OnAddingAttribute;
             this.VarExpression = varExp;
-            this.Charset = ownerTemplate.Charset;
-            this.callFunctions = new List<string>();
+            this.CallFunctions = new List<IExpression>();
         }
 
         #region 属性定义
@@ -49,72 +48,128 @@ namespace VTemplate.Engine
         /// <summary>
         /// 是否需要对输出数据进行HTML数据格式化
         /// </summary>
-        public bool HtmlEncode { get; protected set; }
+        public Attribute HtmlEncode
+        {
+            get
+            {
+                return this.Attributes["HtmlEncode"];
+            }
+        }
 
         /// <summary>
         /// 是否需要对输出数据进行JS脚本格式化
         /// </summary>
-        public bool JsEncode { get; protected set; }
+        public Attribute JsEncode
+        {
+            get
+            {
+                return this.Attributes["JsEncode"];
+            }
+        }
 
         /// <summary>
         /// 是否需要对输出数据进行XML数据格式化
         /// </summary>
-        public bool XmlEncode { get; protected set; }
+        public Attribute XmlEncode
+        {
+            get
+            {
+                return this.Attributes["XmlEncode"];
+            }
+        }
 
         /// <summary>
         /// 是否需要对输出数据进行URL地址编码
         /// </summary>
-        public bool UrlEncode { get; protected set; }
+        public Attribute UrlEncode
+        {
+            get
+            {
+                return this.Attributes["UrlEncode"];
+            }
+        }
 
         /// <summary>
         /// 是否需要对输出数据进行文本数据格式化(先HtmlEncode格式化,再将"空格"转换为"&amp;nbsp;", "\n"转换为"&lt;br /&gt;")
         /// </summary>
-        public bool TextEncode { get; protected set; }
+        public Attribute TextEncode
+        {
+            get
+            {
+                return this.Attributes["TextEncode"];
+            }
+        }
 
         /// <summary>
         /// 是否需要对输出数据进行文本压缩(删除换行符和换行符前后的空格)
         /// </summary>
-        public bool CompressText { get; protected set; }
+        public Attribute CompressText
+        {
+            get
+            {
+                return this.Attributes["CompressText"];
+            }
+        }
 
         /// <summary>
         /// 数据的输出长度
         /// </summary>
-        public int Length { get; protected set; }
+        public Attribute Length
+        {
+            get
+            {
+                return this.Attributes["Length"];
+            }
+        }
 
         /// <summary>
         /// 附加文本(此属性只能配合Length属性使用.即当文本有被裁剪时才附加此文本)
         /// </summary>
-        public string AppendText { get; protected set; }
+        public Attribute AppendText
+        {
+            get
+            {
+                return this.Attributes["AppendText"];
+            }
+        }
 
         /// <summary>
         /// 数据的编码
         /// </summary>
-        public Encoding Charset { get; protected set; }
+        public Attribute Charset
+        {
+            get
+            {
+                return this.Attributes["Charset"];
+            }
+        }
 
         /// <summary>
         /// 数据输出时的格式化表达式
         /// </summary>
-        public string Format { get; protected set; }
+        public Attribute Format
+        {
+            get
+            {
+                return this.Attributes["Format"];
+            }
+        }
 
         /// <summary>
         /// 数据输出时是否删除HTML代码
         /// </summary>
-        public bool RemoveHtml { get; protected set; }
+        public Attribute RemoveHtml
+        {
+            get
+            {
+                return this.Attributes["RemoveHtml"];
+            }
+        }
 
         /// <summary>
         /// 要调用的函数列表
         /// </summary>
-        private List<string> callFunctions { get; set; }
-        /// <summary>
-        /// 要调用的函数列表
-        /// </summary>
-        public string[] CallFunctions
-        {
-            get
-            {
-                return this.callFunctions.ToArray();
-            }
-        }
+        public List<IExpression> CallFunctions { get; protected set; }
         #endregion
 
         #region 添加标签属性时的触发事件函数.用于设置自身的某些属性值
@@ -127,60 +182,9 @@ namespace VTemplate.Engine
         {
             switch (e.Item.Name.ToLower())
             {
-                case "length":
-                    //显示字符串的长度
-                    this.Length = Utility.ConverToInt32(e.Item.Value);
-                    break;
-                case "format":
-                    //数据格式化表达式
-                    this.Format = e.Item.Value;
-                    break;
-                case "htmlencode":
-                    //数据输出时是否进行HTML编码
-                    this.HtmlEncode = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "jsencode":
-                    //数据输出时是否进行Js脚本编码
-                    this.JsEncode = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "xmlencode":
-                    //数据输出时是否进行Xml字符编码
-                    this.XmlEncode = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "textencode":
-                    //数据输出时是否进行文本字符编码
-                    this.TextEncode = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "urlencode":
-                    //数据输出时是否进行URL地址编码
-                    this.UrlEncode = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "compresstext":
-                    //是否需要对输出数据进行文本压缩(删除换行符和换行符前后的空格)
-                    this.CompressText = Utility.ConverToBoolean(e.Item.Value);
-                    break;
-                case "charset":
-                    //进行URL编码时使用的文本编码
-                    this.Charset = Utility.GetEncodingFromCharset(e.Item.Value, this.OwnerTemplate.Charset);
-                    break;
-                case "appendtext":
-                    //附加文本
-                    this.AppendText = e.Item.Value;
-                    break;
-                case "removehtml":
-                    //是否在输出数据时删除其中的HTML代码
-                    this.RemoveHtml = Utility.ConverToBoolean(e.Item.Value);
-                    break;
                 case "call":
                     //要调用的方法
-                    string method = e.Item.Value.Trim();
-                    if (!string.IsNullOrEmpty(method))
-                    {
-                        if (!this.callFunctions.Exists(x => x.Equals(method, StringComparison.InvariantCultureIgnoreCase)))
-                        {
-                            this.callFunctions.Add(method);
-                        }
-                    }
+                    this.CallFunctions.Add(e.Item.Value);
                     break;
             }
         }
@@ -197,14 +201,18 @@ namespace VTemplate.Engine
             object value = this.VarExpression.GetValue();
 
             //调用自定函数处理此变量的值
-            if (this.callFunctions.Count > 0)
+            if (this.CallFunctions.Count > 0)
             {
-                foreach (string method in this.callFunctions)
+                foreach (var exp in this.CallFunctions)
                 {
-                    UserDefinedFunction func;
-                    if (this.OwnerTemplate.UserDefinedFunctions.TryGetValue(method, out func))
+                    object method = exp.GetValue();
+                    if (!Utility.IsNothing(method))
                     {
-                        value = func(new object[] { value });
+                        UserDefinedFunction func;
+                        if (this.OwnerTemplate.UserDefinedFunctions.TryGetValue(method.ToString(), out func))
+                        {
+                            value = func(new object[] { value });
+                        }
                     }
                 }
             }
@@ -213,20 +221,21 @@ namespace VTemplate.Engine
 
             bool formated = false;
             string text = string.Empty;
+            string format = this.Format == null ? string.Empty : this.Format.GetTextValue();
             if (value is string)
             {
                 //字符串
                 text = (string)value;
             }
             else
-            {
+            {                
                 //非字符串.则判断处理format
-                if (!string.IsNullOrEmpty(this.Format))
+                if (!string.IsNullOrEmpty(format))
                 {
                     IFormattable iformat = value as IFormattable;
                     if (iformat != null)
                     {
-                        text = iformat.ToString(this.Format, CultureInfo.InvariantCulture);
+                        text = iformat.ToString(format, CultureInfo.InvariantCulture);
                         formated = true;
                     }
                 }
@@ -263,24 +272,36 @@ namespace VTemplate.Engine
 
             if (text.Length > 0)
             {
-                if (this.RemoveHtml) text = Utility.RemoveHtmlCode(text);
-                if (this.Length > 0) text = Utility.CutString(text, this.Length, this.Charset, this.AppendText);
-                if (this.TextEncode)
+                bool removeHtml = this.RemoveHtml == null ? false : Utility.ConverToBoolean(this.RemoveHtml.GetTextValue());
+                bool textEncode = this.TextEncode == null ? false : Utility.ConverToBoolean(this.TextEncode.GetTextValue());
+                bool htmlEncode = this.HtmlEncode == null ? false : Utility.ConverToBoolean(this.HtmlEncode.GetTextValue());
+                bool xmlEncode = this.XmlEncode == null ? false : Utility.ConverToBoolean(this.XmlEncode.GetTextValue());                
+                bool jsEncode = this.JsEncode == null ? false : Utility.ConverToBoolean(this.JsEncode.GetTextValue());
+                bool urlEncode = this.UrlEncode == null ? false : Utility.ConverToBoolean(this.UrlEncode.GetTextValue());
+                bool compressText = this.CompressText == null ? false : Utility.ConverToBoolean(this.CompressText.GetTextValue());
+
+                int length = this.Length == null ? 0 : Utility.ConverToInt32(this.Length.GetTextValue());
+                string appendText = this.AppendText == null ? string.Empty : this.AppendText.GetTextValue();
+                Encoding charset = this.Charset == null ? this.OwnerTemplate.Charset : Utility.GetEncodingFromCharset(this.Charset.GetTextValue(), this.OwnerTemplate.Charset);
+
+                if (removeHtml) text = Utility.RemoveHtmlCode(text);
+                if (length > 0) text = Utility.CutString(text, length, charset, appendText);
+                if (textEncode)
                 {
                     text = Utility.TextEncode(text);
                 }
-                else if (this.HtmlEncode)
+                else if (htmlEncode)
                 {
                     text = HttpUtility.HtmlEncode(text);
                 }
-                if (this.XmlEncode) text = Utility.XmlEncode(text);
-                if (this.JsEncode) text = Utility.JsEncode(text);
-                if (this.UrlEncode) text = HttpUtility.UrlEncode(text, this.Charset);
-                if (this.CompressText) text = Utility.CompressText(text);
+                if (xmlEncode) text = Utility.XmlEncode(text);
+                if (jsEncode) text = Utility.JsEncode(text);
+                if (urlEncode) text = HttpUtility.UrlEncode(text, charset);
+                if (compressText) text = Utility.CompressText(text);
 
-                if (!formated && !string.IsNullOrEmpty(this.Format))
+                if (!formated && !string.IsNullOrEmpty(format))
                 {
-                    text = string.Format(this.Format, text);
+                    text = string.Format(format, text);
                 }
                 
 
@@ -301,7 +322,7 @@ namespace VTemplate.Engine
             buffer.Append(this.VarExpression.ToString());
             foreach (Attribute attribute in this.Attributes)
             {
-                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Value));
+                buffer.AppendFormat(" {0}=\"{1}\"", attribute.Name, HttpUtility.HtmlEncode(attribute.Text));
             }
             buffer.Append("}");
             return buffer.ToString();
@@ -317,19 +338,14 @@ namespace VTemplate.Engine
         internal override Element Clone(Template ownerTemplate)
         {
             VariableTag tag = new VariableTag(ownerTemplate, (VariableExpression)this.VarExpression.Clone(ownerTemplate));
-            tag.Attributes = this.Attributes;
-            tag.Charset = this.Charset;
-            tag.Format = this.Format;
-            tag.HtmlEncode = this.HtmlEncode;
-            tag.JsEncode = this.JsEncode;
-            tag.Length = this.Length;
-            tag.TextEncode = this.TextEncode;
-            tag.UrlEncode = this.UrlEncode;
-            tag.XmlEncode = this.XmlEncode;
-            tag.CompressText = this.CompressText;
-            tag.AppendText = this.AppendText;
-            tag.RemoveHtml = this.RemoveHtml;
-            tag.callFunctions = this.callFunctions;
+            foreach (var att in this.Attributes)
+            {
+                tag.Attributes.Add(att.Clone(ownerTemplate));
+            }
+            foreach (IExpression exp in this.CallFunctions)
+            {
+                tag.CallFunctions.Add(exp.Clone(ownerTemplate));
+            }
             return tag;
         }
         #endregion

@@ -3,14 +3,15 @@
   <Class Name="VTemplate.Engine.Attribute" Collapsed="true">
     <Position X="26.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAQAAAAAAAAAAAAgCAAAABA=</HashCode>
       <FileName>Attribute.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="VTemplate.Engine.AttributeCollection" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="28.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAAIAEAABAACAAEAQQAAAAAAAAEAAAAAABQAAA=</HashCode>
+      <HashCode>AAIAAAgAIAEAABAACAAEAQQAAAAAAAAEAAAAAABQAAA=</HashCode>
       <FileName>AttributeCollection.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />

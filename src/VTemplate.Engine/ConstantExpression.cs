@@ -39,6 +39,14 @@ namespace VTemplate.Engine
             return this.Value;
         }
 
+        /// <summary>
+        /// 输出为字符串
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Value == null ? string.Empty : this.Value.ToString();
+        }
         #endregion
 
         #region ICloneableElement<IExpression> 成员
