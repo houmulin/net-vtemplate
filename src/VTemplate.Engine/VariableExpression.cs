@@ -112,8 +112,8 @@ namespace VTemplate.Engine
                     {
                         value = Utility.GetPropertyValue(data, this.FieldName, out exist);
                     }
-                    //缓存数据
-                    this.VariableId.Variable.AddExpValue(expPath, value);
+                    //3.4版本以后不再缓存数据
+                    //this.VariableId.Variable.AddExpValue(expPath, value);
                 }
             }
 
