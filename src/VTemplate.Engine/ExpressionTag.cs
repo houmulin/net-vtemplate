@@ -84,7 +84,13 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "args":
-                    this.ExpArgs.Add(item.Value);
+                    IExpression exp = item.Value;
+                    if (this.OwnerDocument.DocumentConfig.CompatibleMode)
+                    {
+                        if (!(exp is VariableExpression))
+                            exp = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                    }
+                    this.ExpArgs.Add(exp);
                     break;
                 case "var":
                     this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);

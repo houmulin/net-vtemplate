@@ -12,7 +12,7 @@
 <th>姓名</th>
 <th>年龄</th>
 </tr>
-<vt:foreach from="users" item="user" index="i">
+<vt:foreach from="$users" item="user" index="i">
 <tr>
 <td>{$:i}</td>
 <td>{$:user.name htmlencode='true'}</td>
@@ -33,7 +33,7 @@
 <th>姓名</th>
 <th>年龄</th>
 </tr>
-<vt:foreach from="#.users" item="#.user" index="#.i">
+<vt:foreach from="$#.users" item="#.user" index="#.i">
 <tr>
 <td>{$:#.i}</td>
 <td>{$:#.user.name htmlencode='true'}</td>

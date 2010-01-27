@@ -32,7 +32,7 @@
     </vt:if><br />
     <vt:function var="newsdata" method="GetNewsData" type="VTemplate.WebTester.Core.NewsDbProvider" args="$#.type">
     <ul class="topnews block_list bt">
-        <vt:foreach from="#.newsdata" item="news" index="i" id="newslist">
+        <vt:foreach from="$#.newsdata" item="news" index="i" id="newslist">
         <vt:function var="newsurl" method="GetNewsUrl" type="VTemplate.WebTester.Core.NewsDbProvider" args="$#.news" />
       <li>
         <a href="{$:#.newsurl}" title="{$:#.news.title htmlencode='true'}">{$:#.news.title htmlencode='true'}...</a>

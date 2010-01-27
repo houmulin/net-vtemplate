@@ -18,7 +18,7 @@
 </head>
 <body>
 <div id="list">
-  <vt:foreach id="pagetable" from="#.pagedata" item="data" index="i" pagesize="10" remark="pagedata变量只接收当前页的数据列表集合">
+  <vt:foreach id="pagetable" from="$#.pagedata" item="data" index="i" pagesize="10" remark="pagedata变量只接收当前页的数据列表集合">
   <ul>
      <li><vt:expression expression="{0}+({1}-1)*{2}" args="#.i.value" args="$this.pagenumber" args="$this.pagesize" output="true" /></li>
      <li>{$:#.data}</li>

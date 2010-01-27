@@ -12,7 +12,7 @@
       <th>性别</th>
     </tr>
     <vt:datareader var="users" connection="MemberDb" commandtext="select * from [member]" />
-    <vt:foreach from="users" item="user" index="i">
+    <vt:foreach from="$users" item="user" index="i">
     <tr>
       <td>{$:i}</td>
       <td>{$:user.name htmlencode='true'}</td>

@@ -155,7 +155,12 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "from":
-                    this.From = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                    VariableExpression ve = item.Value as VariableExpression;
+                    if (ve == null && this.OwnerDocument.DocumentConfig.CompatibleMode)
+                    {
+                        ve = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                    }
+                    this.From = ve;
                     break;
                 case "item":
                     this.Item = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);

@@ -4,7 +4,7 @@
 <th>姓名</th>
 <th>年龄</th>
 </tr>
-<vt:foreach from="#.users" item="#.user" index="#.i">
+<vt:foreach from="$#.users" item="#.user" index="#.i">
 <vt:if var="#.i.IsEven" value="true">
 <tr>
 <td style="background-color:#EAEAEA">{$:#.i}</td>

@@ -11,7 +11,7 @@
 <hr />
 服务器变量列表：<br />
 <hr />
-<vt:foreach from="request.ServerVariables" item="key" index="i">
+<vt:foreach from="$request.ServerVariables" item="key" index="i">
 {$:i}、{$:key} = <vt:serverdata type="ServerVariables" item="$#.key" output="true" /> <br />
 <hr />
 </vt:foreach>

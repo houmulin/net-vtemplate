@@ -10,7 +10,7 @@
 <vt:set var="#.deep" value="0" />
 <select name="categories" multiple="multiple" size="20" style="width:200px">
 <vt:include id="looplist">
-<vt:foreach from="#.categories" item="#.category" index="#.i">
+<vt:foreach from="$#.categories" item="#.category" index="#.i">
 <option value="{$:#.category.id}"><vt:for from="1" to="$#.deep">&nbsp;&nbsp;&nbsp;&nbsp;</vt:for>{$:#.category.name}</option>
 <vt:function var="#.child" method="GetCategories" type="$this" args="$#.category" />
 <vt:if var="#.child.count" value="0" compare=">"> 

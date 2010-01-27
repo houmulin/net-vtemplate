@@ -130,7 +130,13 @@ namespace VTemplate.Engine
                     this.Variable = ParserHelper.CreateVariableIdentity(this.OwnerTemplate, item.Text);
                     break;
                 case "parameters":
-                    this.Parameters.Add(item.Value);
+                    IExpression exp = item.Value;
+                    if (this.OwnerDocument.DocumentConfig.CompatibleMode)
+                    {
+                        if (!(exp is VariableExpression))
+                            exp = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                    }
+                    this.Parameters.Add(exp);
                     break;
             }
         }

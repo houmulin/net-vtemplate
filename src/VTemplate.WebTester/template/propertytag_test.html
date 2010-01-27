@@ -20,7 +20,7 @@
     <h3 class="title_yellow">热点新闻</h3>
     <ul class="topnews block_list bt">
     <vt:property var="hotingnewsdata" field="HotingNews" type="VTemplate.WebTester.propertytag_test" />
-    <vt:foreach from="#.hotingnewsdata" item="news" index="i">
+    <vt:foreach from="$#.hotingnewsdata" item="news" index="i">
     <vt:function var="newsurl" method="GetNewsUrl" type="VTemplate.WebTester.Core.NewsDbProvider" args="$#.news" />
     <li>
     <a href="{$:#.newsurl}" title="{$:#.news.title htmlencode='true'}">{$:#.news.title htmlencode='true'}...</a>
