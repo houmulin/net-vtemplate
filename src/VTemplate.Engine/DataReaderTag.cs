@@ -134,7 +134,7 @@ namespace VTemplate.Engine
                     if (this.OwnerDocument.DocumentConfig.CompatibleMode)
                     {
                         if (!(exp is VariableExpression))
-                            exp = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                            exp = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text, false);
                     }
                     this.Parameters.Add(exp);
                     break;

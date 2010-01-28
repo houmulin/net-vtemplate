@@ -158,7 +158,7 @@ namespace VTemplate.Engine
                     VariableExpression ve = item.Value as VariableExpression;
                     if (ve == null && this.OwnerDocument.DocumentConfig.CompatibleMode)
                     {
-                        ve = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                        ve = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text, false);
                     }
                     this.From = ve;
                     break;

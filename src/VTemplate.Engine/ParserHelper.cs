@@ -202,11 +202,12 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="variableId"></param>
         /// <param name="match"></param>
+        /// <param name="needCacheData"></param>
         /// <returns></returns>
-        internal static VariableExpression CreateVariableExpression(VariableIdentity variableId, Match match)
+        internal static VariableExpression CreateVariableExpression(VariableIdentity variableId, Match match, bool needCacheData)
         {
             //解析变量字段列表
-            VariableExpression field = new VariableExpression(variableId);
+            VariableExpression field = new VariableExpression(variableId, needCacheData);
             CaptureCollection fields = match.Groups["field"].Captures;
             CaptureCollection methods = match.Groups["method"].Captures;
             VariableExpression item = field;
@@ -225,8 +226,9 @@ namespace VTemplate.Engine
         /// </summary>
         /// <param name="ownerTemplate"></param>
         /// <param name="expressionText"></param>
+        /// <param name="needCacheData"></param>
         /// <returns></returns>
-        internal static VariableExpression CreateVariableExpression(Template ownerTemplate, string expressionText)
+        internal static VariableExpression CreateVariableExpression(Template ownerTemplate, string expressionText, bool needCacheData)
         {
             if (string.IsNullOrEmpty(expressionText)) return null;
 
@@ -236,7 +238,8 @@ namespace VTemplate.Engine
                 string prefix;
                 Variable variable = CreateVariable(ownerTemplate, match, out prefix);
                 VariableIdentity variableId = new VariableIdentity(ownerTemplate, variable, prefix);
-                return CreateVariableExpression(variableId, match);
+
+                return CreateVariableExpression(variableId, match, needCacheData);
             }
             else
             {
@@ -265,7 +268,7 @@ namespace VTemplate.Engine
                 else
                 {
                     //变量表达式
-                    return CreateVariableExpression(ownerTemplate, expressionText);
+                    return CreateVariableExpression(ownerTemplate, expressionText, false);
                 }
             }
             else
@@ -278,7 +281,7 @@ namespace VTemplate.Engine
         }
 
         /// <summary>
-        /// 构建变量元素
+        /// 构建变量标签元素
         /// </summary>
         /// <param name="ownerTemplate">宿主模板</param>
         /// <param name="container">标签的容器</param>
@@ -288,7 +291,9 @@ namespace VTemplate.Engine
             string prefix;
             Variable variable = CreateVariable(ownerTemplate, match, out prefix);
             VariableIdentity variableId = new VariableIdentity(ownerTemplate, variable, prefix);
-            VariableExpression varExp = CreateVariableExpression(variableId, match);
+
+            //变量标签元素则需要缓存表达式的值
+            VariableExpression varExp = CreateVariableExpression(variableId, match, true);
 
             VariableTag tag = new VariableTag(ownerTemplate, varExp);
             //解析属性列表

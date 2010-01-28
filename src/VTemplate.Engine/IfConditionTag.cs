@@ -129,7 +129,7 @@ namespace VTemplate.Engine
             switch (name)
             {
                 case "var":
-                    this.VarExpression = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text);
+                    this.VarExpression = ParserHelper.CreateVariableExpression(this.OwnerTemplate, item.Text, false);
                     break;
                 case "value":
                     this.Values.Add(item.Value);

@@ -19,18 +19,23 @@ namespace VTemplate.Engine
         /// 变量表达式
         /// </summary>
         /// <param name="variableId"></param>
-        internal VariableExpression(VariableIdentity variableId) : this(variableId, null, false) { }
+        /// <param name="needCacheData"></param>
+        internal VariableExpression(VariableIdentity variableId, bool needCacheData) 
+            : this(variableId, null, false, needCacheData)
+        { }
         /// <summary>
         /// 变量表达式
         /// </summary>
         /// <param name="variableId"></param>
         /// <param name="fieldName"></param>
         /// <param name="isMethod"></param>
-        internal VariableExpression(VariableIdentity variableId, string fieldName, bool isMethod)
+        /// <param name="needCacheData"></param>
+        internal VariableExpression(VariableIdentity variableId, string fieldName, bool isMethod, bool needCacheData)
         {
             this.VariableId = variableId;
             this.FieldName = fieldName;
             this.IsMethod = isMethod;
+            this.NeedCacheData = needCacheData;
         }
         /// <summary>
         /// 变量表达式
@@ -45,6 +50,7 @@ namespace VTemplate.Engine
             this.VariableId = parentExp.VariableId;
             this.FieldName = fieldName;
             this.IsMethod = isMethod;
+            this.NeedCacheData = parentExp.NeedCacheData;
         }
         /// <summary>
         /// 变量标识
@@ -58,6 +64,12 @@ namespace VTemplate.Engine
         /// 是否是方法
         /// </summary>
         public bool IsMethod { get; private set; }
+
+        /// <summary>
+        /// 是否需要缓存数据
+        /// </summary>
+        /// <remarks>一般在变量标签出现的变量表达式的值都需要缓存.其它地方出现的则不需要缓存</remarks>
+        private bool NeedCacheData { get; set; }
 
         /// <summary>
         /// 取得父级表达式
@@ -112,8 +124,9 @@ namespace VTemplate.Engine
                     {
                         value = Utility.GetPropertyValue(data, this.FieldName, out exist);
                     }
-                    //3.4版本以后不再缓存数据
-                    //this.VariableId.Variable.AddExpValue(expPath, value);
+                    //如果需要的话就缓存数据
+                    if(this.NeedCacheData)
+                        this.VariableId.Variable.AddExpValue(expPath, value);
                 }
             }
 
@@ -161,7 +174,7 @@ namespace VTemplate.Engine
         public IExpression Clone(Template ownerTemplate)
         {
             VariableIdentity variableId = this.VariableId.Clone(ownerTemplate);
-            VariableExpression exp = new VariableExpression(variableId, this.FieldName, this.IsMethod);
+            VariableExpression exp = new VariableExpression(variableId, this.FieldName, this.IsMethod, this.NeedCacheData);
             if (this.NextExpression != null)
             {
                 exp.NextExpression = (VariableExpression)(this.NextExpression.Clone(ownerTemplate));
