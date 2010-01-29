@@ -64,5 +64,7 @@
 </vt:for>
 <vt:if var="this.pagenumber" value="$this.pagecount" compare=">=">[下页] [尾页]<vt:else />[<a href="{$:#.nextpageurl}">下页</a>] [<a href="{$:#.lastpageurl}">尾页</a>]</vt:if>
 </div>
+
+<vt:include file="iftag_test.html" />
 </body>
 </html>

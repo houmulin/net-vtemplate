@@ -139,7 +139,7 @@ namespace VTemplate.Engine
                 if (item.Equals(fileName, StringComparison.InvariantCultureIgnoreCase)) return;
             }
             this.fileDependencies.Add(fileName);
-            if (this.OwnerTemplate != null) this.OwnerTemplate.AddFileDependency(this.File);
+            if (this.OwnerTemplate != null) this.OwnerTemplate.AddFileDependency(fileName);
         }
         #endregion
 
