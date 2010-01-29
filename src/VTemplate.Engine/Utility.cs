@@ -107,12 +107,12 @@ namespace VTemplate.Engine
                 }
             }
 
-            if (value1 is IComparable)
+            if (value1 != null && value1 is IComparable)
             {
                 success = true;
                 return ((IComparable)value1).CompareTo(value2);
             }
-            else if (value2 is IComparable)
+            else if (value2 != null && value2 is IComparable)
             {
                 success = true;
                 //value2 与 value1相比较.所以结果为相反
