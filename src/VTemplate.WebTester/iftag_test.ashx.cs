@@ -14,12 +14,19 @@ namespace VTemplate.WebTester
     /// </summary>
     public class iftag_test : PageBase
     {
+        public enum UserTypes
+        {
+            A,
+            B,
+            C,
+            D
+        }
         /// <summary>
         /// 初始化当前页面模板数据
         /// </summary>
         protected override void InitPageTemplate()
         {
-            this.Document.Variables.SetValue("user", new { name = "张三", age = 20 });
+            this.Document.Variables.SetValue("user", new { name = "张三", age = 20, Type = UserTypes.B  });
         }
     }
 }

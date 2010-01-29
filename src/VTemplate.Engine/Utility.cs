@@ -68,32 +68,42 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static int CompareTo(object value1, object value2, out bool success)
         {
-            bool isSystemType1 = Type.GetTypeCode(value1.GetType()) != TypeCode.Object;
-            bool isSystemType2 = Type.GetTypeCode(value2.GetType()) != TypeCode.Object;
+            Type type1 = value1.GetType();
+            Type type2 = value2.GetType();
+            bool isSystemType1 = Type.GetTypeCode(type1) != TypeCode.Object;
+            bool isSystemType2 = Type.GetTypeCode(type2) != TypeCode.Object;
 
             success = false;
             if (isSystemType1)
             {
-                //如果value1是基础类型.value2不是基础类型.但已实现IConvertible接口.则将value2转为value1类型
-                if (!isSystemType2 && value2 is IConvertible)
-                {
-                    value2 = ((IConvertible)value2).ToType(value1.GetType(), null);
-                }
-                else if (value1.GetType() != value2.GetType() && value2 is IConvertible)
-                {
-                    value2 = ((IConvertible)value2).ToType(value1.GetType(), null);
+                //如果value1是基础类型.但两者类型不相同.则将value2转为value1类型
+                if (type1 != type2)
+                {                    
+                    if (type1.IsEnum)
+                    {
+                        //枚举值.则特殊转换
+                        value2 = Utility.ConvertTo(value2.ToString(), type1);
+                    }
+                    else
+                    {
+                        value2 = Convert.ChangeType(value2, type1);
+                    }
                 }
             }
             else if (isSystemType2)
             {
-                //如果value2是基础类型.value1不是基础类型.但已实现IConvertible接口.则将value1转为value2类型
-                if (!isSystemType1 && value1 is IConvertible)
+                //如果value2是基础类型.但两者类型不相同.则将value1转为value2类型
+                if (type1 != type2)
                 {
-                    value1 = ((IConvertible)value1).ToType(value2.GetType(), null);
-                }
-                else if (value1.GetType() != value2.GetType() && value1 is IConvertible)
-                {
-                    value1 = ((IConvertible)value1).ToType(value2.GetType(), null);
+                    if (type2.IsEnum)
+                    {
+                        //枚举值.则特殊转换
+                        value1 = Utility.ConvertTo(value1.ToString(), type2);
+                    }
+                    else
+                    {
+                        value1 = Convert.ChangeType(value1, type2);
+                    }
                 }
             }
 
