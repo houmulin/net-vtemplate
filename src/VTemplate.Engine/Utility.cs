@@ -155,8 +155,8 @@ namespace VTemplate.Engine
             if (!string.IsNullOrEmpty(value))
             {
                 value = HttpUtility.HtmlEncode(value);
-                value = value.Replace(" ", "&nbsp;");
-                value = value.Replace("\t", "&nbsp;&nbsp;");
+                //两个的空格或制表符则转换
+                value = Regex.Replace(value, "  |\t", "&nbsp;&nbsp;");
                 value = Regex.Replace(value, "\r\n|\r|\n", "<br />");
             }
             return value;
