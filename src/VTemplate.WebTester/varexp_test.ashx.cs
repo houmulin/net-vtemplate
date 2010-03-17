@@ -6,6 +6,7 @@ using System.Web.Services;
 using System.Web.Services.Protocols;
 using VTemplate.Engine;
 using System.Text;
+using System.Collections.Generic;
 
 namespace VTemplate.WebTester
 {
@@ -25,6 +26,9 @@ namespace VTemplate.WebTester
             this.Document.Variables.SetValue("user", new { name = "张三", age = 20, description = "<font color=red>I am man</font>", needencode = false });
             this.Document.GetChildTemplateById("t1").Variables.SetValue("user", new { name = "李四", age = 35, description = "<font color=red>I am superman</font>", needencode = true});
             this.Document.GetChildTemplateById("t2").Variables.SetValue("user", new { name = "王五", age = 50, description = "<font color=red>I am women</font>", needencode = false });
+
+            this.Document.Variables.SetValue("IntArr", new int[] { 1, 2, 3, 4 });
+            this.Document.Variables.SetValue("ListArr", new List<string>() { "A", "B", "C", "D", "E" });
         }
 
         /// <summary>

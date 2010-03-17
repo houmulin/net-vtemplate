@@ -27,5 +27,22 @@
 <br />
 </vt:template>
 </vt:template>
+
+<br />
+数组的"动态下标"测试:
+<br />
+<vt:for from="1" to="$IntArr.Length" index="i">
+    <vt:expression var="index" expression="{0}-1" args="$i" />
+    下标: {$:index}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值: <vt:function method="GetValue" type="$IntArr" args="$index" output="true" />
+    <br />
+</vt:for>
+<br />
+List集合的"动态下标"测试:
+<br />
+<vt:for from="1" to="$ListArr.Count" index="i">
+    <vt:expression var="index" expression="{0}-1" args="$i" />
+    下标: {$:index}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;值: <vt:function method="get_Item" type="$ListArr" args="$index" output="true" />
+    <br />
+</vt:for>
 </body>
 </html>
