@@ -177,6 +177,10 @@ namespace VTemplate.Engine
                             if (value != string.Empty) return true;
                         }
                         return false;
+                    case IfConditionCompareType.LT:
+                    case IfConditionCompareType.LTAndEqual:
+                        //小于比较,因为null都认为比所有值小.所以等式成立
+                        return true;
                     default:
                         //其它比较方式.都认为条件不成立
                         return false;
