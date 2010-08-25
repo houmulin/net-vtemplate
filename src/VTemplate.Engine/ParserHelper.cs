@@ -28,12 +28,17 @@ namespace VTemplate.Engine
         /// </summary>
         public const string CommentTagEnd = "]-->";
         /// <summary>
+        /// VT表达头的标记
+        /// </summary>
+        public const string VTExpressionHead = "vt=";
+
+        /// <summary>
         /// 读取某个偏移位置的字符.如果超出则返回特殊字符"\0x0"
         /// </summary>
         /// <param name="text"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
-        private static char ReadChar(string text, int offset)
+        internal static char ReadChar(string text, int offset)
         {
             if (offset < text.Length) return text[offset];
             return (char)0;
@@ -85,6 +90,21 @@ namespace VTemplate.Engine
                 IsChars(ReadChar(text, offset + 2), 'v', 'V') &&
                 IsChars(ReadChar(text, offset + 3), 't', 'T') && 
                 ReadChar(text, offset + 4) == ':');
+        }
+
+        /// <summary>
+        /// 判断是否是VT表达式的开始. vt="&lt;vt: 或者 vt='&lt;vt:
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        internal static bool IsVTExpressionStart(string text, int offset)
+        {
+            return (IsChars(ReadChar(text, offset), 'v', 'V') &&
+                    IsChars(ReadChar(text, offset + 1), 't', 'T') &&
+                    ReadChar(text, offset + 2) == '=' &&
+                    IsChars(ReadChar(text, offset + 3), '"', '\'') &&
+                    IsTagStart(text, offset + 4));
         }
 
         /// <summary>

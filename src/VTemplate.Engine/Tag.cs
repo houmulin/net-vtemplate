@@ -317,6 +317,24 @@ namespace VTemplate.Engine
                     }
                     break;
                 }
+                else if (ParserHelper.IsVTExpressionStart(text, offset))
+                {
+                    char s = ParserHelper.ReadChar(text, offset + ParserHelper.VTExpressionHead.Length);
+                    int startOffset = offset + ParserHelper.VTExpressionHead.Length + 1;
+                    int lastOffset = text.IndexOf(s, offset + ParserHelper.VTExpressionHead.Length + 1);
+                    if (lastOffset == -1) throw new ParserException(string.Format("无法找到VT表达式[{0}{1}]的结束标记[{1}]", ParserHelper.VTExpressionHead, s));
+                    string code = text.Substring(startOffset, lastOffset - startOffset);
+                    if (code.Length > 0)
+                    {
+                        //构建文本节点
+                        ParserHelper.CreateTextNode(ownerTemplate, container, text, charOffset, offset - charOffset);
+                        //解析表达式里的代码
+                        new TemplateDocument(ownerTemplate, container, code, ownerTemplate.OwnerDocument.DocumentConfig);
+                    }
+                    offset = lastOffset + 1;
+                    charOffset = offset;
+                    continue;
+                }
                 else if (ParserHelper.IsCommentTagStart(text, offset))
                 {
                     //构建文本节点
