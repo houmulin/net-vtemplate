@@ -12,6 +12,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
+using System.Runtime.Remoting.Messaging;
 
 namespace VTemplate.Engine
 {
@@ -141,13 +142,55 @@ namespace VTemplate.Engine
         public TemplateDocumentConfig DocumentConfig { get; private set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        private const string CallContext_RenderingTag_Key = "VTemplate.TemplateDocument.CurrentRenderingTag";
+        /// <summary>
+        /// 
+        /// </summary>
+        private const string CallContext_RenderingDocument_Key = "VTemplate.TemplateDocument.CurrentRenderingDocument";
+        /// <summary>
         /// 返回当前正在呈现数据的标签
         /// </summary>
-        public Tag CurrentRenderingTag { get; private set; }
+        public Tag CurrentRenderingTag
+        {
+            get
+            {
+                return CallContext.GetData(CallContext_RenderingTag_Key) as Tag;
+            }
+            private set
+            {
+                if (value == null)
+                {
+                    CallContext.FreeNamedDataSlot(CallContext_RenderingTag_Key);
+                }
+                else
+                {
+                    CallContext.SetData(CallContext_RenderingTag_Key, value);
+                }
+            }
+        }
         /// <summary>
         /// 当前正在呈现数据的文档
         /// </summary>
-        public static TemplateDocument CurrentRenderingDocument { get; private set; }
+        public static TemplateDocument CurrentRenderingDocument
+        {
+            get
+            {
+                return CallContext.GetData(CallContext_RenderingDocument_Key) as TemplateDocument;
+            }
+            private set
+            {
+                if (value == null)
+                {
+                    CallContext.FreeNamedDataSlot(CallContext_RenderingDocument_Key);
+                }
+                else
+                {
+                    CallContext.SetData(CallContext_RenderingDocument_Key, value);
+                }
+            }
+        }
         #endregion
 
         #region 方法定义
@@ -173,8 +216,7 @@ namespace VTemplate.Engine
             this.CurrentRenderingTag = tag;
         }
         #endregion
-
-
+        
         #region 解析字符串
         /// <summary>
         /// 解析字符串
