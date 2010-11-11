@@ -86,7 +86,14 @@ namespace VTemplate.Engine
                     }
                     else
                     {
-                        value2 = Convert.ChangeType(value2, type1);
+                        if (value2 is IConvertible)
+                        {
+                            value2 = Convert.ChangeType(value2, type1);
+                        }
+                        else
+                        {
+                            value2 = null;
+                        }
                     }
                 }
             }
@@ -102,7 +109,14 @@ namespace VTemplate.Engine
                     }
                     else
                     {
-                        value1 = Convert.ChangeType(value1, type2);
+                        if (value1 is IConvertible)
+                        {
+                            value1 = Convert.ChangeType(value1, type2);
+                        }
+                        else
+                        {
+                            value1 = null;
+                        }
                     }
                 }
             }
