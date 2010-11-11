@@ -60,6 +60,23 @@ namespace VTemplate.Engine
             return int.TryParse(value, out i);
         }
         /// <summary>
+        /// 转移为某种类型
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="conversionType"></param>
+        /// <returns></returns>
+        internal static object ChangeType(object value, Type conversionType)
+        {
+            try
+            {
+                return Convert.ChangeType(value, conversionType);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        /// <summary>
         /// 比较两个值
         /// </summary>
         /// <param name="value1"></param>
@@ -88,7 +105,7 @@ namespace VTemplate.Engine
                     {
                         if (value2 is IConvertible)
                         {
-                            value2 = Convert.ChangeType(value2, type1);
+                            value2 = Utility.ChangeType(value2, type1);
                         }
                         else
                         {
@@ -111,7 +128,7 @@ namespace VTemplate.Engine
                     {
                         if (value1 is IConvertible)
                         {
-                            value1 = Convert.ChangeType(value1, type2);
+                            value1 = Utility.ChangeType(value1, type2);
                         }
                         else
                         {
