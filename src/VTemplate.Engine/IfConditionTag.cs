@@ -253,7 +253,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string || obj is string)
+                                if (testValue is string)
                                 {
                                     //字符串比较.则不区分大小写
                                     if(!string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase))return true;
@@ -263,7 +263,7 @@ namespace VTemplate.Engine
                                     //优先进行类型比较
                                     if (obj is Type)
                                     {
-                                        if(testValue.GetType() != (Type)obj)return true;
+                                        if (testValue.GetType() != (Type)obj) return true;
                                     }
                                     else if (testValue.GetType() == obj.GetType())
                                     {
@@ -292,7 +292,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string || obj is string)
+                                if (testValue is string)
                                 {
                                     //字符串比较.则不区分大小写
                                     if (string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase)) return true;
