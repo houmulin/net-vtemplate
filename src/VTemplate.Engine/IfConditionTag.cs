@@ -253,7 +253,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string)
+                                if (testValue is string || (obj is string && !(testValue is IConvertible)))
                                 {
                                     //字符串比较.则不区分大小写
                                     if(!string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase))return true;
@@ -292,7 +292,7 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (testValue is string)
+                                if (testValue is string || (obj is string && !(testValue is IConvertible)))
                                 {
                                     //字符串比较.则不区分大小写
                                     if (string.Equals(obj.ToString(), testValue.ToString(), StringComparison.InvariantCultureIgnoreCase)) return true;
