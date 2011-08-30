@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace VTemplate.Engine
 {
@@ -141,14 +142,11 @@ namespace VTemplate.Engine
         /// </summary>
         public TemplateDocumentConfig DocumentConfig { get; private set; }
 
+
         /// <summary>
         /// 
         /// </summary>
-        private const string CallContext_RenderingTag_Key = "VTemplate.TemplateDocument.CurrentRenderingTag";
-        /// <summary>
-        /// 
-        /// </summary>
-        private const string CallContext_RenderingDocument_Key = "VTemplate.TemplateDocument.CurrentRenderingDocument";
+        private Tag _CurrentRenderingTag;
         /// <summary>
         /// 返回当前正在呈现数据的标签
         /// </summary>
@@ -156,20 +154,19 @@ namespace VTemplate.Engine
         {
             get
             {
-                return CallContext.GetData(CallContext_RenderingTag_Key) as Tag;
+                return this._CurrentRenderingTag;
             }
             private set
             {
-                if (value == null)
-                {
-                    CallContext.FreeNamedDataSlot(CallContext_RenderingTag_Key);
-                }
-                else
-                {
-                    CallContext.SetData(CallContext_RenderingTag_Key, value);
-                }
+                this._CurrentRenderingTag = value;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ThreadStatic]
+        private static TemplateDocument _CurrentRenderingDocument;
         /// <summary>
         /// 当前正在呈现数据的文档
         /// </summary>
@@ -177,18 +174,11 @@ namespace VTemplate.Engine
         {
             get
             {
-                return CallContext.GetData(CallContext_RenderingDocument_Key) as TemplateDocument;
+                return _CurrentRenderingDocument;
             }
             private set
             {
-                if (value == null)
-                {
-                    CallContext.FreeNamedDataSlot(CallContext_RenderingDocument_Key);
-                }
-                else
-                {
-                    CallContext.SetData(CallContext_RenderingDocument_Key, value);
-                }
+                _CurrentRenderingDocument = value;
             }
         }
         #endregion

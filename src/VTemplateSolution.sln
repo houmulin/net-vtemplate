@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTemplate.Engine", "VTemplate.Engine\VTemplate.Engine.csproj", "{FFE421FA-C56D-466D-BCBE-5C451F2C82BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTemplate.WebTester", "VTemplate.WebTester\VTemplate.WebTester.csproj", "{3A84BBBF-4E73-4D1D-BD96-AD6458655294}"

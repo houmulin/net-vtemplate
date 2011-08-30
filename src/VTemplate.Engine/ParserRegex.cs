@@ -33,6 +33,7 @@ namespace VTemplate.Engine
         /// 如果变量只有前缀"#."(如#.member.name)则表示当前模板的变量
         /// 如果变量只有前缀"##."(如##.member.name)则表示是当前模板的父级模板的变量.如果不存在父级模板.则归为当前模板.
         /// 如果变量是前缀"#"加其它字符.(如(#t1.member.name).则表示此变量是属于Id为"t1"的模板.如果不存在Id为"t1"的模板.则将产生解析错误.
+        /// 注: 3.7版本以上，可以不写“:”号，如“{$member.name}”与“{$:member.name}”表示相同
         /// </summary>
         internal static readonly Regex VarTagRegex;
 
@@ -42,7 +43,8 @@ namespace VTemplate.Engine
         internal static readonly Regex VarExpRegex;
 
         /// <summary>
-        /// 变量标识的正则表达式.如变量:member 或带前缀 #.member
+        /// 变量标识的正则表达式.如变量:member 或带前缀 #.member。
+        /// 注：3.7版本以上支持前缀“$”，如“$member”与“member”表示相同的变量标识
         /// </summary>
         internal static readonly Regex VarIdRegex;
         /// <summary>
@@ -56,11 +58,11 @@ namespace VTemplate.Engine
 
             string varExp = @"(?:#(?<prefix>#|[\-\w]*)\.)?(?<name>(?!\d)\w+)(?:\.(?<field>\d+|(?!\d)\w+)(?<method>(?:\( *\))?))*";
 
-            VarTagRegex = new Regex(@"\G{\$\:\s*" + varExp + @"(\s+(?<attrname>[\-\w]+)(\s*=\s*""(?<attrval>[^""]*)""|\s*=\s*'(?<attrval>[^']*)'|\s*=\s*(?<attrval>[^\s=}]*)|(?<attrval>\s*?)))*\s*}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            VarTagRegex = new Regex(@"\G{\$\:?\s*" + varExp + @"(\s+(?<attrname>[\-\w]+)(\s*=\s*""(?<attrval>[^""]*)""|\s*=\s*'(?<attrval>[^']*)'|\s*=\s*(?<attrval>[^\s=}]*)|(?<attrval>\s*?)))*\s*}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             VarExpRegex = new Regex(@"^\s*" + varExp + @"\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-            VarIdRegex = new Regex(@"^\s*(?:#(?<prefix>#|[\-\w]*)\.)?(?<name>(?!\d)\w+)\s*$", RegexOptions.Compiled);
+            VarIdRegex = new Regex(@"^\s*\$?(?:#(?<prefix>#|[\-\w]*)\.)?(?<name>(?!\d)\w+)\s*$", RegexOptions.Compiled);
         }
     }
 }
