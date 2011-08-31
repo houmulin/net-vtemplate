@@ -62,7 +62,7 @@ namespace VTemplate.Engine
         /// <returns></returns>
         internal static bool IsVariableTagStart(string text, int offset)
         {
-            return (ReadChar(text, offset) == '{' && ReadChar(text, offset + 1) == '$' && ReadChar(text, offset + 2) == ':');
+            return (ReadChar(text, offset) == '{' && ReadChar(text, offset + 1) == '$');
         }
         /// <summary>
         /// 判断是否是某种标签的开始
