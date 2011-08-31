@@ -41,7 +41,19 @@ namespace VTemplate.Engine
         /// <summary>
         /// 不等于比较"&lt;&gt;"或"!="
         /// </summary>
-        UnEqual
+        UnEqual,
+        /// <summary>
+        /// 是否以某些值开始"^="
+        /// </summary>
+        StartWith,
+        /// <summary>
+        /// 是否以某些值结束"$="
+        /// </summary>
+        EndWith,
+        /// <summary>
+        /// 是否包含某些值"*="
+        /// </summary>
+        Contains
     }
     #endregion
 
@@ -160,7 +172,8 @@ namespace VTemplate.Engine
                 switch (compare)
                 {
                     case IfConditionCompareType.Equal:
-                        //如果相等比较.则比较值列表中是否有空值比较,如果有则认为成立.否则不成立
+                    case IfConditionCompareType.Contains:
+                        //如果相等或者包含比较.则比较值列表中是否有空值比较,如果有则认为成立.否则不成立
                         foreach (IExpression exp in this.Values)
                         {
                             object obj = exp.GetValue();
@@ -243,6 +256,39 @@ namespace VTemplate.Engine
                             if (!Utility.IsNothing(obj))
                             {
                                 if (Utility.CompareTo(testValue, obj, out success) <= 0 && success) return true;
+                            }
+                        }
+                        return false;
+                    case IfConditionCompareType.StartWith:
+                        string testValueString1 = testValue.ToString();
+                        foreach (IExpression exp in this.Values)
+                        {
+                            object obj = exp.GetValue();
+                            if (!Utility.IsNothing(obj))
+                            {
+                                if (obj.ToString().StartsWith(testValueString1, StringComparison.OrdinalIgnoreCase)) return true;
+                            }
+                        }
+                        return false;
+                    case IfConditionCompareType.EndWith:
+                        string testValueString2 = testValue.ToString();
+                        foreach (IExpression exp in this.Values)
+                        {
+                            object obj = exp.GetValue();
+                            if (!Utility.IsNothing(obj))
+                            {
+                                if (obj.ToString().EndsWith(testValueString2, StringComparison.OrdinalIgnoreCase)) return true;
+                            }
+                        }
+                        return false;
+                    case IfConditionCompareType.Contains:
+                        string testValueString3 = testValue.ToString();
+                        foreach (IExpression exp in this.Values)
+                        {
+                            object obj = exp.GetValue();
+                            if (!Utility.IsNothing(obj))
+                            {
+                                if (obj.ToString().IndexOf(testValueString3, StringComparison.OrdinalIgnoreCase) != -1) return true;
                             }
                         }
                         return false;

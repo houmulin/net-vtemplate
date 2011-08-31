@@ -108,6 +108,11 @@ namespace VTemplate.Engine
             this.OnBeforeRender(args);
             if (!args.Cancel)
             {
+                foreach (Element item in this.InnerElements)
+                {
+                    item.Render(writer);
+                }
+
                 string file = this.File == null ? string.Empty : Utility.ResolveFilePath(this.Parent, this.File.GetTextValue());
                 Encoding charset = this.Charset == null ? this.OwnerTemplate.Charset : Utility.GetEncodingFromCharset(this.Charset.GetTextValue(), this.OwnerTemplate.Charset);
 
@@ -124,10 +129,6 @@ namespace VTemplate.Engine
                         }
                     }
                     catch { }
-                }
-                foreach (Element item in this.InnerElements)
-                {
-                    item.Render(writer);
                 }
             }
             this.OnAfterRender(EventArgs.Empty); 

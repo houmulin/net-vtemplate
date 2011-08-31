@@ -95,13 +95,13 @@ namespace VTemplate.Engine
             this.OnBeforeRender(args);
             if (!args.Cancel)
             {
-                foreach (var panelTag in this.Panels)
-                {
-                    panelTag.RenderToContainer(writer);
-                }
                 foreach (Element item in this.InnerElements)
                 {
                     item.Render(writer);
+                }
+                foreach (var panelTag in this.Panels)
+                {
+                    panelTag.RenderToContainer(writer);
                 }
             }
             this.OnAfterRender(EventArgs.Empty);

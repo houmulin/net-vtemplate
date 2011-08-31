@@ -450,6 +450,15 @@ namespace VTemplate.Engine
                     case "!=":
                         icct = IfConditionCompareType.UnEqual;
                         break;
+                    case "^=":
+                        icct = IfConditionCompareType.StartWith;
+                        break;
+                    case "$=":
+                        icct = IfConditionCompareType.EndWith;
+                        break;
+                    case "*=":
+                        icct = IfConditionCompareType.Contains;
+                        break;
                     default:
                         icct = IfConditionCompareType.Equal;
                         break;
