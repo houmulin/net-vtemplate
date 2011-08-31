@@ -58,8 +58,6 @@ namespace VTemplate.Engine
                         return new ImportTag(ownerTemplate);
                     case "output":
                         return new OutputTag(ownerTemplate);
-                    case "container":
-                        return new ContainerTag(ownerTemplate);
                     case "panel":
                         return new PanelTag(ownerTemplate);
                     case "datareader":

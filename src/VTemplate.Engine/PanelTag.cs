@@ -9,11 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace VTemplate.Engine
 {
     /// <summary>
-    /// 面板数据标签,如: &lt;vt:panel container="header"&gt;&lt;/vt:panel&gt;
+    /// 面板数据标签,如: &lt;vt:panel id="header" /&gt;或者 &lt;vt:panel container="header"&gt;&lt;/vt:panel&gt;
     /// </summary>
     public class PanelTag : Tag
     {
@@ -23,7 +24,9 @@ namespace VTemplate.Engine
         /// <param name="ownerTemplate"></param>
         internal PanelTag(Template ownerTemplate)
             : base(ownerTemplate)
-        {  }
+        {
+            this.Panels = new List<PanelTag>();
+        }
 
         #region 重写Tag的方法
         /// <summary>
@@ -42,6 +45,8 @@ namespace VTemplate.Engine
         }
         #endregion
 
+
+
         #region 属性定义
         /// <summary>
         /// 面板所在的容器标签
@@ -51,6 +56,11 @@ namespace VTemplate.Engine
             get;
             protected set;
         }
+
+        /// <summary>
+        /// 此容器下所拥有的面板标签
+        /// </summary>
+        protected List<PanelTag> Panels { get; private set; }
         #endregion
 
         #region 呈现本元素的数据
@@ -60,15 +70,41 @@ namespace VTemplate.Engine
         /// <param name="writer"></param>
         public override void Render(System.IO.TextWriter writer)
         {
-            //不能直接呈现数据
+            if (string.IsNullOrEmpty(this.Container))
+            {
+                //不存在容器定义则直接呈现数据
+                base.Render(writer);
+            }
         }
         /// <summary>
         /// 呈现数据到容器里
         /// </summary>
         /// <param name="writer"></param>
-        internal void RenderToContainer(System.IO.TextWriter writer)
+        private void RenderToContainer(System.IO.TextWriter writer)
         {
             base.Render(writer);
+        }
+
+        /// <summary>
+        /// 呈现本元素的数据
+        /// </summary>
+        /// <param name="writer"></param>
+        protected override void RenderTagData(System.IO.TextWriter writer)
+        {
+            CancelEventArgs args = new CancelEventArgs(); 
+            this.OnBeforeRender(args);
+            if (!args.Cancel)
+            {
+                foreach (var panelTag in this.Panels)
+                {
+                    panelTag.RenderToContainer(writer);
+                }
+                foreach (Element item in this.InnerElements)
+                {
+                    item.Render(writer);
+                }
+            }
+            this.OnAfterRender(EventArgs.Empty);
         }
         #endregion
 
@@ -85,11 +121,14 @@ namespace VTemplate.Engine
         /// <returns>如果需要继续处理EndTag则返回true.否则请返回false</returns>
         internal override bool ProcessBeginTag(Template ownerTemplate, Tag container, Stack<Tag> tagStack, string text, ref Match match, bool isClosedTag)
         {
-            if (string.IsNullOrEmpty(this.Container)) throw new ParserException(string.Format("{0}标签中必须定义container属性", this.TagName));
-            
-            var conTag = this.OwnerDocument.GetChildTagById(this.Container) as ContainerTag;
-            if (conTag == null) throw new ParserException(string.Format("{0}标签中定义的Container“{1}”不存在", this.TagName, this.Container));
-            conTag.AddPanel(this);
+            if (string.IsNullOrEmpty(this.Container) && string.IsNullOrEmpty(this.Id)) throw new ParserException(string.Format("{0}标签中必须定义id或者container属性", this.TagName));
+
+            if (!string.IsNullOrEmpty(this.Container))
+            {
+                var conTag = this.OwnerDocument.GetChildTagById(this.Container) as PanelTag;
+                if (conTag == null) throw new ParserException(string.Format("{0}标签中Container属性定义的“{1}”<vt:panel>标签不存在", this.TagName, this.Container));
+                conTag.Panels.Add(this);
+            }
 
             bool flag = base.ProcessBeginTag(ownerTemplate, container, tagStack, text, ref match, isClosedTag);
 
@@ -126,8 +165,11 @@ namespace VTemplate.Engine
             tag.Container = this.Container;
             this.CopyTo(tag);
 
-            var conTag = ownerTemplate.OwnerDocument.GetChildTagById(this.Container) as ContainerTag;
-            if (conTag != null) conTag.AddPanel(tag);
+            if (!string.IsNullOrEmpty(this.Container))
+            {
+                var conTag = ownerTemplate.OwnerDocument.GetChildTagById(this.Container) as PanelTag;
+                if (conTag != null) conTag.Panels.Add(tag);
+            }
 
             return tag;
         }

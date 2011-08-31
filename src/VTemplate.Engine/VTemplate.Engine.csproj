@@ -64,7 +64,6 @@
     <Compile Include="Attribute.cs" />
     <Compile Include="AttributeCollection.cs" />
     <Compile Include="ConstantExpression.cs" />
-    <Compile Include="ContainerTag.cs" />
     <Compile Include="DataReaderTag.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementCollection.cs" />
