@@ -26,7 +26,7 @@ namespace VTemplate.WebTester
         /// </summary>
         protected override void InitPageTemplate()
         {
-            this.Document.Variables.SetValue("user", new { name = "张三", age = 20, Type = UserTypes.B  });
+            this.Document.Variables.SetValue("user", new { name = "三王", age = 20, Type = UserTypes.B });
         }
     }
 }

@@ -266,7 +266,9 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (obj.ToString().StartsWith(testValueString1, StringComparison.OrdinalIgnoreCase)) return true;
+                                string s = obj.ToString();
+                                if(!string.IsNullOrEmpty(s))
+                                    if (testValueString1.StartsWith(s, StringComparison.OrdinalIgnoreCase)) return true;
                             }
                         }
                         return false;
@@ -277,7 +279,9 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (obj.ToString().EndsWith(testValueString2, StringComparison.OrdinalIgnoreCase)) return true;
+                                string s = obj.ToString();
+                                if (!string.IsNullOrEmpty(s))
+                                    if (testValueString2.EndsWith(s, StringComparison.OrdinalIgnoreCase)) return true;
                             }
                         }
                         return false;
@@ -288,7 +292,9 @@ namespace VTemplate.Engine
                             object obj = exp.GetValue();
                             if (!Utility.IsNothing(obj))
                             {
-                                if (obj.ToString().IndexOf(testValueString3, StringComparison.OrdinalIgnoreCase) != -1) return true;
+                                string s = obj.ToString();
+                                if (!string.IsNullOrEmpty(s))
+                                    if (testValueString3.IndexOf(s, StringComparison.OrdinalIgnoreCase) != -1) return true;
                             }
                         }
                         return false;

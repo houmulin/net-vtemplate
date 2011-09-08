@@ -20,5 +20,12 @@ B
 <vt:elseif value="2" />
 C
 </vt:if>
+
+<vt:if var="user.name" value="张" compare="$=">张先生
+<vt:elseif value="王" compare="$=" />
+王先生
+<vt:else />
+先生
+</vt:if>
 </body>
 </html>
