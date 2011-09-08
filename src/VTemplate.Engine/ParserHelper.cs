@@ -277,7 +277,7 @@ namespace VTemplate.Engine
         {
             if (string.IsNullOrEmpty(expressionText)) return new ConstantExpression(expressionText);
 
-            if (expressionText.StartsWith("$"))
+            if (expressionText.StartsWith("$") && !"$=".Equals(expressionText)) //"$="认为是字符串常量
             {
                 expressionText = expressionText.Remove(0, 1);
                 if (expressionText.StartsWith("$"))
